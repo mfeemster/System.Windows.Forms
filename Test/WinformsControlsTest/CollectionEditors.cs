@@ -1,0 +1,44 @@
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using System.Collections.ObjectModel;
+using System.Drawing;
+#if NETCORE
+using System.ComponentModel.Design;
+using System.Drawing.Design;
+using System.Windows.Forms.Design;
+#endif
+
+namespace WinformsControlsTest.UserControls;
+
+[DesignerCategory("Default")]
+internal partial class CollectionEditors : Form
+{
+    private readonly string[] _stringArray = ["Lorem ipsum dolor sit amet", "id quo accusamus definitionem", "graeco salutandi sed te", "mei in solum primis definitionem."];
+    private readonly List<string> _stringList = ["Lorem ipsum dolor sit amet", "id quo accusamus definitionem", "graeco salutandi sed te", "mei in solum primis definitionem."];
+    private readonly Collection<string> _stringCollection = ["Lorem ipsum dolor sit amet", "id quo accusamus definitionem", "graeco salutandi sed te", "mei in solum primis definitionem."];
+
+    public CollectionEditors()
+    {
+        InitializeComponent();
+
+        ImageList imageList = new();
+		var prefix = "Images" + System.IO.Path.DirectorySeparatorChar;
+        imageList.Images.Add("SmallA", Image.FromFile($"{prefix}SmallA.bmp"));
+        imageList.Images.Add(Image.FromFile($"{prefix}SmallABlue.bmp"));
+        imageList.Images.Add("LargeA", Image.FromFile($"{prefix}LargeA.bmp"));
+        imageList.Images.Add(Image.FromFile($"{prefix}LargeABlue.bmp"));
+
+        textBox1.Lines = _stringArray;
+        domainUpDown1.Items.AddRange(_stringCollection);
+        listView1.LargeImageList = imageList;
+        _stringList.ForEach(s => listView1.Items.Add(s));
+        _stringList.ForEach(s => comboBox1.Items.Add(s));
+    }
+
+    private void control_Enter(object sender, System.EventArgs e)
+    {
+        label1.Text = sender.GetType().FullName;
+        propertyGrid1.SelectedObject = sender;
+    }
+}

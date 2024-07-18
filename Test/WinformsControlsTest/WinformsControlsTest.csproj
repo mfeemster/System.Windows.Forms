@@ -1,0 +1,128 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>WinformsControlsTest</AssemblyName>
+    <RootNamespace>WinformsControlsTest</RootNamespace>
+    <ApplicationIcon />
+    <OutputType>WinExe</OutputType>
+    <StartupObject />
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <EnableXlfLocalization>false</EnableXlfLocalization>
+    <UpdateXlfOnBuild>false</UpdateXlfOnBuild>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
+    <GenerateResourceWarnOnBinaryFormatterUse>false</GenerateResourceWarnOnBinaryFormatterUse>
+    <SignAssembly>false</SignAssembly>
+    <DelaySign>false</DelaySign>
+  </PropertyGroup>
+
+  <!--ApplicationConfiguration specific settings.-->
+  <!--https://github.com/dotnet/designs/blob/main/accepted/2021/winforms/streamline-application-bootstrap.md-->
+  <PropertyGroup>
+    <ApplicationDefaultFont>Calibri, 11pt, style=regular</ApplicationDefaultFont>
+    <ApplicationHighDpiMode>SystemAware</ApplicationHighDpiMode>
+    <ApplicationVisualStyles>true</ApplicationVisualStyles>
+    <ApplicationUseCompatibleTextRendering>false</ApplicationUseCompatibleTextRendering>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);WFDEV001</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\OpenDialog.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Data\DragDrop\DragAccept.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\DragDrop\DragAccept.rtf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\DragDrop\NyanCat1.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\DragDrop\NyanCat2.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\DragDrop\NyanCat3.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\DragDrop\NyanCat4.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\DragDrop\NyanCat5.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\DragDrop\NyanCatAscii.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\DragDrop\NyanCatAscii_301.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\DragDrop\ToolStripAsciiCat.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\DragDrop\ToolStripDragAccept.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\DragDrop\ToolStripNyanCat.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\SmallA.bmp">
+      <LogicalName>WinFormsControlsTest.SmallA.bmp</LogicalName>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\SmallABlue.bmp">
+      <LogicalName>WinFormsControlsTest.SmallABlue.bmp</LogicalName>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\LargeA.bmp">
+      <LogicalName>WinFormsControlsTest.LargeA.bmp</LogicalName>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images\LargeABlue.bmp">
+      <LogicalName>WinFormsControlsTest.LargeABlue.bmp</LogicalName>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\OpenDialog.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\System.Drawing.Design\System.Drawing.Design.csproj" />
+    <ProjectReference Include="..\..\System.Windows.Forms\System.Windows.Forms.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Update="Data\example.rtf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+
+    <!--
+      Library of Congress, Motion Picture, Broadcasting and Recorded Sound Division.
+      Blechynden, Frederick, Camera, Inc Thomas A. Edison, and Paper Print Collection. Tourists going round
+      Yellowstone Park. produceds by White, James H. Uction United States: Edison Manufacturing Co, 1899. Video.
+      https://www.loc.gov/item/00694320/.
+    -->
+    <None Update="Resources\media.mpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <!--
+
+      Reference local analyzers for test purposes
+
+    -->
+  <PropertyGroup>
+    <!-- Don't try to resolve analyzers from <repo root>\.dotnet\packs\Microsoft.WindowsDesktop.App.Ref\<version>\ref\net6.0 -->
+    <ResolveWinFormsAnalyzersFromSdkRefPack>false</ResolveWinFormsAnalyzersFromSdkRefPack>
+  </PropertyGroup>
+
+</Project>

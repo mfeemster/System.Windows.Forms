@@ -48,3 +48,23 @@ Thumbs.db
 *.mov
 *.wmv
 
+*.user
+
+/.vs
+/Mono.Common/.vs
+/Mono.Common/bin
+/Mono.Common/obj
+/Mono.WebBrowser/bin
+/Mono.WebBrowser/obj
+/System.Drawing.Common/.vs
+/System.Drawing.Common/bin
+/System.Drawing.Common/obj
+/System.Drawing.Design/bin
+/System.Drawing.Design/obj
+/System.Windows.Forms/bin
+/System.Windows.Forms/Documentation
+/System.Windows.Forms/obj
+/System.Windows.Forms.DataVisualization/bin
+/System.Windows.Forms.DataVisualization/obj
+/Test/WinformsControlsTest/bin
+/Test/WinformsControlsTest/obj

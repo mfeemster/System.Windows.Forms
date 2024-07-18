@@ -1,0 +1,66 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Authors>Microsoft, Matt Feemster</Authors>
+    <RepositoryUrl>https://bitbucket.org/mfeemster/system.windows.forms</RepositoryUrl>
+    <Description>A .NET 6+ linux implementation of the Microsoft System.Drawing.Common library.</Description>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Version>1.0.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <SignAssembly>false</SignAssembly>
+    <DelaySign>false</DelaySign>
+    <DefineConstants>$(DefineConstants);DRAWING_NAMESPACE</DefineConstants>
+    <NoWarn>$(NoWarn);CS8981</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="misc\**" />
+    <EmbeddedResource Remove="misc\**" />
+    <None Remove="misc\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\Application.ico" />
+    <None Remove="Resources\Asterisk.ico" />
+    <None Remove="Resources\DefaultComponent.bmp" />
+    <None Remove="Resources\Error.ico" />
+    <None Remove="Resources\Exclamation.ico" />
+    <None Remove="Resources\Hand.ico" />
+    <None Remove="Resources\Information.ico" />
+    <None Remove="Resources\Mono.ico" />
+    <None Remove="Resources\PrintDocument.bmp" />
+    <None Remove="Resources\Question.ico" />
+    <None Remove="Resources\Shield.ico" />
+    <None Remove="Resources\ShieldIcon.ico" />
+    <None Remove="Resources\Warning.ico" />
+    <None Remove="Resources\WinLogo.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Application.ico" />
+    <EmbeddedResource Include="Resources\Asterisk.ico" />
+    <EmbeddedResource Include="Resources\DefaultComponent.bmp" />
+    <EmbeddedResource Include="Resources\Error.ico" />
+    <EmbeddedResource Include="Resources\Exclamation.ico" />
+    <EmbeddedResource Include="Resources\Hand.ico" />
+    <EmbeddedResource Include="Resources\Information.ico" />
+    <EmbeddedResource Include="Resources\Mono.ico" />
+    <EmbeddedResource Include="Resources\PrintDocument.bmp" />
+    <EmbeddedResource Include="Resources\Question.ico" />
+    <EmbeddedResource Include="Resources\Shield.ico" />
+    <EmbeddedResource Include="Resources\ShieldIcon.ico" />
+    <EmbeddedResource Include="Resources\Warning.ico" />
+    <EmbeddedResource Include="Resources\WinLogo.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\Strings.resx">
+      <Generator>MSBuild:_GenerateResxSource</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,352 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Copyright>(c) Various Mono authors, Daniel Van Noord 2019</Copyright>
+    <Authors>Various Mono authors, Daniel Van Noord, Matt Feemster</Authors>
+    <RepositoryUrl>https://bitbucket.org/mfeemster/system.windows.forms</RepositoryUrl>
+    <Description>A .NET 6+ linux implementation of the Mono System.Windows.Forms library. This is built on top of our custom build of System.Drawing.Common for linux.</Description>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Version>1.0.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <SignAssembly>false</SignAssembly>
+    <DelaySign>false</DelaySign>
+    <NoWarn>$(NoWarn);SYSLIB0050;SYSLIB0011;CS8981</NoWarn>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <Compile Remove="System.Windows.Forms.RTF\test.cs" />
+    <None Remove="resources\1-up.png" />
+    <None Remove="resources\16_computer.png" />
+    <None Remove="resources\16_dialog-error.png" />
+    <None Remove="resources\16_dialog-information.png" />
+    <None Remove="resources\16_dialog-warning.png" />
+    <None Remove="resources\16_document-open.png" />
+    <None Remove="resources\16_folder-remote.png" />
+    <None Remove="resources\16_folder.png" />
+    <None Remove="resources\16_printer.png" />
+    <None Remove="resources\16_user-desktop.png" />
+    <None Remove="resources\16_user-home.png" />
+    <None Remove="resources\2-up.png" />
+    <None Remove="resources\22_page-magnifier.png" />
+    <None Remove="resources\3-up.png" />
+    <None Remove="resources\32_computer.png" />
+    <None Remove="resources\32_document-open.png" />
+    <None Remove="resources\32_folder-remote.png" />
+    <None Remove="resources\32_printer.png" />
+    <None Remove="resources\32_user-desktop.png" />
+    <None Remove="resources\32_user-home.png" />
+    <None Remove="resources\4-up.png" />
+    <None Remove="resources\6-up.png" />
+    <None Remove="resources\computer.png" />
+    <None Remove="resources\DnDCopy.cur" />
+    <None Remove="resources\DnDLink.cur" />
+    <None Remove="resources\DnDMove.cur" />
+    <None Remove="resources\DnDNo.cur" />
+    <None Remove="resources\document-open.png" />
+    <None Remove="resources\errorProvider.ico" />
+    <None Remove="resources\EventsTab.bmp" />
+    <None Remove="resources\folder-new.png" />
+    <None Remove="resources\folder-remote.png" />
+    <None Remove="resources\folder.png" />
+    <None Remove="resources\go-previous.png" />
+    <None Remove="resources\go-top.png" />
+    <None Remove="resources\image-missing.png" />
+    <None Remove="resources\image-x-generic.png" />
+    <None Remove="resources\keyboards.resources.prebuilt" />
+    <None Remove="resources\mono.ico" />
+    <None Remove="resources\nav_delete.png" />
+    <None Remove="resources\nav_end.png" />
+    <None Remove="resources\nav_first.png" />
+    <None Remove="resources\nav_next.png" />
+    <None Remove="resources\nav_plus.png" />
+    <None Remove="resources\nav_previous.png" />
+    <None Remove="resources\NESW.cur" />
+    <None Remove="resources\NWSE.cur" />
+    <None Remove="resources\preferences-system-windows.png" />
+    <None Remove="resources\PropertiesTab.bmp" />
+    <None Remove="resources\propertygrid-alphabetical.png" />
+    <None Remove="resources\propertygrid-categorized.png" />
+    <None Remove="resources\propertygrid-propertypages.png" />
+    <None Remove="resources\SplitterNS.cur" />
+    <None Remove="resources\SplitterWE.cur" />
+    <None Remove="resources\text-x-generic.png" />
+    <None Remove="resources\user-desktop.png" />
+    <None Remove="resources\user-home.png" />
+    <None Include="..\License.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Mono.Shared\AssemblyRef.cs" Link="AssemblyRef.cs" />
+    <Compile Include="..\Mono.Shared\Consts.cs" Link="Consts.cs" />
+    <Compile Include="..\Mono.Shared\MonoTODOAttribute.cs" Link="MonoTODOAttribute.cs" />
+    <Compile Include="..\Mono.Shared\MonoToolsLocator.cs" Link="MonoToolsLocator.cs" />
+    <Compile Include="..\System.Drawing.Design\System.Drawing.Design\BitmapEditor.cs" Link="System.Windows.Forms.Design\BitmapEditor.cs" />
+    <Compile Include="..\System.Drawing.Design\System.Drawing.Design\ColorEditor.cs" Link="System.Windows.Forms.Design\ColorEditor.cs" />
+    <Compile Include="..\System.Drawing.Design\System.Drawing.Design\ContentAlignmentEditor.cs" Link="System.Windows.Forms.Design\ContentAlignmentEditor.cs" />
+    <Compile Include="..\System.Drawing.Design\System.Drawing.Design\CursorEditor.cs" Link="System.Windows.Forms.Design\CursorEditor.cs" />
+    <Compile Include="..\System.Drawing.Design\System.Drawing.Design\FontEditor.cs" Link="System.Windows.Forms.Design\FontEditor.cs" />
+    <Compile Include="..\System.Drawing.Design\System.Drawing.Design\FontNameEditor.cs" Link="System.Windows.Forms.Design\FontNameEditor.cs" />
+    <Compile Include="..\System.Drawing.Design\System.Drawing.Design\IconEditor.cs" Link="System.Windows.Forms.Design\IconEditor.cs" />
+    <Compile Include="..\System.Drawing.Design\System.Drawing.Design\ImageEditor.cs" Link="System.Windows.Forms.Design\ImageEditor.cs" />
+    <Compile Include="..\System.Drawing.Design\System.Drawing.Design\IToolboxService.cs" Link="System.Windows.Forms.Design\IToolboxService.cs" />
+    <Compile Include="..\System.Drawing.Design\System.Drawing.Design\MetafileEditor.cs" Link="System.Windows.Forms.Design\MetafileEditor.cs" />
+    <Compile Include="..\System.Drawing.Design\System.Drawing.Design\ToolboxComponentsCreatedEventArgs.cs" Link="System.Windows.Forms.Design\ToolboxComponentsCreatedEventArgs.cs" />
+    <Compile Include="..\System.Drawing.Design\System.Drawing.Design\ToolboxComponentsCreatedEventHandler.cs" Link="System.Windows.Forms.Design\ToolboxComponentsCreatedEventHandler.cs" />
+    <Compile Include="..\System.Drawing.Design\System.Drawing.Design\ToolboxComponentsCreatingEventArgs.cs" Link="System.Windows.Forms.Design\ToolboxComponentsCreatingEventArgs.cs" />
+    <Compile Include="..\System.Drawing.Design\System.Drawing.Design\ToolboxComponentsCreatingEventHandler.cs" Link="System.Windows.Forms.Design\ToolboxComponentsCreatingEventHandler.cs" />
+    <Compile Include="..\System.Drawing.Design\System.Drawing.Design\ToolboxItem.cs" Link="System.Windows.Forms.Design\ToolboxItem.cs" />
+    <Compile Include="..\System.Drawing.Design\System.Drawing.Design\ToolboxItemCollection.cs" Link="System.Windows.Forms.Design\ToolboxItemCollection.cs" />
+    <Compile Include="..\System.Drawing.Design\System.Drawing.Design\ToolboxItemContainer.cs" Link="System.Windows.Forms.Design\ToolboxItemContainer.cs" />
+    <Compile Include="..\System.Drawing.Design\System.Drawing.Design\ToolboxItemCreator.cs" Link="System.Windows.Forms.Design\ToolboxItemCreator.cs" />
+    <Compile Include="..\System.Drawing.Design\System.Drawing.Design\ToolboxItemCreatorCallback.cs" Link="System.Windows.Forms.Design\ToolboxItemCreatorCallback.cs" />
+    <Compile Include="..\System.Drawing.Design\System.Drawing.Design\ToolboxService.cs" Link="System.Windows.Forms.Design\ToolboxService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="resources/16_computer.png">
+      <LogicalName>16_computer.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/16_dialog-error.png">
+      <LogicalName>16_dialog-error.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/16_dialog-information.png">
+      <LogicalName>16_dialog-information.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/16_dialog-warning.png">
+      <LogicalName>16_dialog-warning.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/16_document-open.png">
+      <LogicalName>16_document-open.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/16_folder.png">
+      <LogicalName>16_folder.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/16_folder-remote.png">
+      <LogicalName>16_folder-remote.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/16_printer.png">
+      <LogicalName>16_printer.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/16_user-desktop.png">
+      <LogicalName>16_user-desktop.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/16_user-home.png">
+      <LogicalName>16_user-home.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/1-up.png">
+      <LogicalName>1-up.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/22_page-magnifier.png">
+      <LogicalName>22_page-magnifier.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/2-up.png">
+      <LogicalName>2-up.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/32_computer.png">
+      <LogicalName>32_computer.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/32_document-open.png">
+      <LogicalName>32_document-open.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/32_folder-remote.png">
+      <LogicalName>32_folder-remote.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/32_printer.png">
+      <LogicalName>32_printer.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/32_user-desktop.png">
+      <LogicalName>32_user-desktop.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/32_user-home.png">
+      <LogicalName>32_user-home.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/3-up.png">
+      <LogicalName>3-up.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/4-up.png">
+      <LogicalName>4-up.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/6-up.png">
+      <LogicalName>6-up.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/computer.png">
+      <LogicalName>computer.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/DnDCopy.cur">
+      <LogicalName>System.Windows.Forms.DnDCopy.cur</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/DnDLink.cur">
+      <LogicalName>System.Windows.Forms.DnDLink.cur</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/DnDMove.cur">
+      <LogicalName>System.Windows.Forms.DnDMove.cur</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/DnDNo.cur">
+      <LogicalName>System.Windows.Forms.DnDNo.cur</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/document-open.png">
+      <LogicalName>document-open.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/errorProvider.ico">
+      <LogicalName>errorProvider.ico</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/EventsTab.bmp">
+      <LogicalName>System.Windows.Forms.Design.EventsTab.bmp</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/folder.png">
+      <LogicalName>folder.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/folder-new.png">
+      <LogicalName>folder-new.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/folder-remote.png">
+      <LogicalName>folder-remote.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/go-previous.png">
+      <LogicalName>go-previous.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/go-top.png">
+      <LogicalName>go-top.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/image-missing.png">
+      <LogicalName>image-missing.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/image-x-generic.png">
+      <LogicalName>image-x-generic.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/keyboards.resources.prebuilt">
+      <LogicalName>keyboards.resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/mono.ico">
+      <LogicalName>mono.ico</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/nav_delete.png">
+      <LogicalName>nav_delete.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/nav_end.png">
+      <LogicalName>nav_end.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/nav_first.png">
+      <LogicalName>nav_first.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/nav_next.png">
+      <LogicalName>nav_next.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/nav_plus.png">
+      <LogicalName>nav_plus.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/nav_previous.png">
+      <LogicalName>nav_previous.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/NESW.cur">
+      <LogicalName>System.Windows.Forms.NESW.cur</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/NWSE.cur">
+      <LogicalName>System.Windows.Forms.NWSE.cur</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/preferences-system-windows.png">
+      <LogicalName>preferences-system-windows.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/PropertiesTab.bmp">
+      <LogicalName>System.Windows.Forms.PropertyGridInternal.PropertiesTab.bmp</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/propertygrid-alphabetical.png">
+      <LogicalName>System.Windows.Forms.propertygrid-alphabetical.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/propertygrid-categorized.png">
+      <LogicalName>System.Windows.Forms.propertygrid-categorized.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/propertygrid-propertypages.png">
+      <LogicalName>System.Windows.Forms.propertygrid-propertypages.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/SplitterNS.cur">
+      <LogicalName>System.Windows.Forms.SplitterNS.cur</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/SplitterWE.cur">
+      <LogicalName>System.Windows.Forms.SplitterWE.cur</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/System.Windows.Forms.resources.prebuilt">
+      <LogicalName>System.Windows.Forms.resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/text-x-generic.png">
+      <LogicalName>text-x-generic.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/user-desktop.png">
+      <LogicalName>user-desktop.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/user-home.png">
+      <LogicalName>user-home.png</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Accessibility" Version="4.6.0-preview3-27504-2" />
+    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
+    <PackageReference Include="Mono.Posix.NETStandard" Version="1.0.0" />
+    <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
+    <PackageReference Include="System.Security.Permissions" Version="8.0.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Mono.WebBrowser\Mono.WebBrowser.csproj" />
+    <ProjectReference Include="..\System.Drawing.Design\System.Drawing.Design.csproj" />
+  </ItemGroup>
+
+  <!--
+  Windows will only run with the System.Drawing.Common package, however if you need to test building something
+  then comment out the code with the OS switch and just link directly to the System.Drawing.Common project.
+  Note: this project is only ever meant to be used on linux.
+  -->
+  
+  <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Linux'))">
+    <ProjectReference Include="..\System.Drawing.Common\System.Drawing.Common.csproj" />
+  </ItemGroup>
+  
+  <!--
+  <ItemGroup>
+    <ProjectReference Include="..\System.Drawing.Common\System.Drawing.Common.csproj" />
+  </ItemGroup>
+  -->
+
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+    <DefineConstants>WINDOWS</DefineConstants>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <Compile Update="resources\keyboards.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>keyboards.resx</DependentUpon>
+    </Compile>
+    <Compile Update="resources\System.Windows.Forms.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>System.Windows.Forms.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="resources\keyboards.resx">
+      <LastGenOutput>keyboards.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="resources\System.Windows.Forms.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>System.Windows.Forms.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="System.Windows.Forms.Design\System\ComponentModel\Design\" />
+  </ItemGroup>
+
+</Project>
