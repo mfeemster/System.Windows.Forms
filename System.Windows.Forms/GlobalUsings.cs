@@ -21,6 +21,7 @@ global using global::System.Globalization;
 global using global::System.IO;
 global using global::System.Linq;
 global using global::System.Net;
+global using global::System.Net.Mime;
 global using global::System.Net.Sockets;
 global using global::System.Reflection;
 global using global::System.Resources;

@@ -26,34 +26,35 @@
 //  Jonathan Pobst (monkey@jpobst.com)
 //
 
+
 namespace System.Windows.Forms
 {
-	[ComVisibleAttribute (true)]
-	[ClassInterfaceAttribute (ClassInterfaceType.AutoDispatch)]
-	[ProvideProperty ("FlowBreak", typeof (Control))]
-	[DefaultProperty ("FlowDirection")]
-	[Docking (DockingBehavior.Ask)]
-	[Designer ("System.Windows.Forms.Design.FlowLayoutPanelDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+	[ComVisibleAttribute(true)]
+	[ClassInterfaceAttribute(ClassInterfaceType.AutoDispatch)]
+	[ProvideProperty("FlowBreak", typeof(Control))]
+	[DefaultProperty("FlowDirection")]
+	[Docking(DockingBehavior.Ask)]
+	[Designer("System.Windows.Forms.Design.FlowLayoutPanelDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class FlowLayoutPanel : Panel, IExtenderProvider
 	{
 		private FlowLayoutSettings settings;
 
-		public FlowLayoutPanel () : base ()
+		public FlowLayoutPanel() : base()
 		{
-			CreateDockPadding ();
+			CreateDockPadding();
 		}
 
 		#region Properties
-		[Localizable (true)]
-		[DefaultValue (FlowDirection.LeftToRight)]
+		[Localizable(true)]
+		[DefaultValue(FlowDirection.LeftToRight)]
 		public FlowDirection FlowDirection
 		{
 			get { return LayoutSettings.FlowDirection; }
 			set { LayoutSettings.FlowDirection = value; }
 		}
 
-		[LocalizableAttribute (true)]
-		[DefaultValue (true)]
+		[LocalizableAttribute(true)]
+		[DefaultValue(true)]
 		public bool WrapContents
 		{
 			get { return LayoutSettings.WrapContents; }
@@ -70,30 +71,42 @@ namespace System.Windows.Forms
 			get
 			{
 				if (this.settings == null)
-					this.settings = new FlowLayoutSettings (this);
+					this.settings = new FlowLayoutSettings(this);
 
 				return this.settings;
 			}
 		}
 		#endregion
 
-		#region Public Methods
-		[DefaultValue (false)]
-		[DisplayName ("FlowBreak")]
-		public bool GetFlowBreak (Control control)
+		#region Internal and Protected Methods
+
+		protected override void OnControlRemoved(ControlEventArgs e)
 		{
-			return LayoutSettings.GetFlowBreak (control);
+			if (settings != null)
+				settings.RemoveFlowBreak(e.Control);
+
+			base.OnControlRemoved(e);
 		}
 
-		[DisplayName ("FlowBreak")]
-		public void SetFlowBreak (Control control, bool value)
+		#endregion
+
+		#region Public Methods
+		[DefaultValue(false)]
+		[DisplayName("FlowBreak")]
+		public bool GetFlowBreak(Control control)
 		{
-			LayoutSettings.SetFlowBreak (control, value);
+			return LayoutSettings.GetFlowBreak(control);
+		}
+
+		[DisplayName("FlowBreak")]
+		public void SetFlowBreak(Control control, bool value)
+		{
+			LayoutSettings.SetFlowBreak(control, value);
 		}
 		#endregion
 
 		#region IExtenderProvider Members
-		bool IExtenderProvider.CanExtend (object obj)
+		bool IExtenderProvider.CanExtend(object obj)
 		{
 			if (obj is Control)
 				if ((obj as Control).Parent == this)

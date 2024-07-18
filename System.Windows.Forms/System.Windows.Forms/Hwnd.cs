@@ -35,62 +35,63 @@ namespace System.Windows.Forms
 	internal class Hwnd : IDisposable
 	{
 		#region Local Variables
-		private static Hashtable    windows = new Hashtable(100, 0.5f);
+		private static Hashtable windows = new Hashtable(100, 0.5f);
 		//private const int menu_height = 14;           // FIXME - Read this value from somewhere
+		private static Dictionary<IntPtr, int> destroyed_windows = new Dictionary<IntPtr, int>();       // destroyed Hwnds for which we haven't gotten DestroyNotify yet
 
-		private IntPtr      handle;
-		internal IntPtr     client_window;
-		internal IntPtr     whole_window;
-		internal IntPtr     cursor;
-		internal Menu       menu;
+		private IntPtr handle;
+		internal IntPtr client_window;
+		internal IntPtr whole_window;
+		internal IntPtr cursor;
+		internal Menu menu;
 		internal TitleStyle title_style;
-		internal FormBorderStyle    border_style;
-		internal bool       border_static;
-		internal int        x;
-		internal int        y;
-		internal int        width;
-		internal int        height;
-		internal bool       allow_drop;
-		internal Hwnd       parent;
-		internal Hwnd       owner;
-		internal bool       visible;
-		internal bool       mapped;
-		internal uint       opacity;
-		internal bool       enabled;
-		internal bool       zero_sized;
-		internal ArrayList  invalid_list;
-		internal Rectangle  nc_invalid;
-		internal bool       expose_pending;
-		internal bool       nc_expose_pending;
-		internal bool       configure_pending;
-		internal bool       resizing_or_moving; // Used by the X11 backend to track form resize/move
-		internal bool       reparented;
-		internal object     user_data;
-		internal Rectangle  client_rectangle;
-		internal int        caption_height;
-		internal int        tool_caption_height;
-		internal bool       whacky_wm;
-		internal bool       fixed_size;
-		internal bool       zombie; /* X11 only flag.  true if the X windows have been destroyed but we haven't been Disposed */
-		internal bool       topmost; /* X11 only. */
-		internal Region     user_clip;
-		internal XEventQueue    queue;
+		internal FormBorderStyle border_style;
+		internal bool border_static;
+		internal int x;
+		internal int y;
+		internal int width;
+		internal int height;
+		internal bool allow_drop;
+		internal Hwnd parent;
+		internal Hwnd owner;
+		internal bool visible;
+		internal bool mapped;
+		internal uint opacity;
+		internal bool enabled;
+		internal bool zero_sized;
+		internal ArrayList invalid_list;
+		internal Rectangle nc_invalid;
+		internal bool expose_pending;
+		internal bool nc_expose_pending;
+		internal bool configure_pending;
+		internal bool resizing_or_moving; // Used by the X11 backend to track form resize/move
+		internal bool reparented;
+		internal object user_data;
+		internal Rectangle client_rectangle;
+		internal int caption_height;
+		internal int tool_caption_height;
+		internal bool whacky_wm;
+		internal bool fixed_size;
+		internal bool zombie; /* X11 only flag.  true if the X windows have been destroyed but we haven't been Disposed */
+		internal bool topmost; /* X11 only. */
+		internal Region user_clip;
+		internal XEventQueue queue;
 		internal WindowExStyles initial_ex_style;
-		internal WindowStyles   initial_style;
+		internal WindowStyles initial_style;
 		internal FormWindowState cached_window_state = (FormWindowState)(-1);  /* X11 only field */
-		internal Point      previous_child_startup_location = new Point (int.MinValue, int.MinValue);
-		static internal Point   previous_main_startup_location = new Point (int.MinValue, int.MinValue);
+		internal Point previous_child_startup_location = new Point(int.MinValue, int.MinValue);
+		static internal Point previous_main_startup_location = new Point(int.MinValue, int.MinValue);
 		internal ArrayList children;
 
 		[ThreadStatic]
 		private static Bitmap bmp;
 		[ThreadStatic]
 		private static Graphics bmp_g;
-		#endregion  // Local Variables
+		#endregion    // Local Variables
 
 		// locks for some operations (used in XplatUIX11.cs)
-		internal object configure_lock = new object ();
-		internal object expose_lock = new object ();
+		internal object configure_lock = new object();
+		internal object expose_lock = new object();
 
 		#region Constructors and destructors
 		public Hwnd()
@@ -115,7 +116,7 @@ namespace System.Windows.Forms
 			client_rectangle = Rectangle.Empty;
 			opacity = 0xffffffff;
 			fixed_size = false;
-			children = new ArrayList ();
+			children = new ArrayList();
 			resizing_or_moving = false;
 			whacky_wm = false;
 			topmost = false;
@@ -184,7 +185,7 @@ namespace System.Windows.Forms
 
 		public static IntPtr GetHandleFromWindow(IntPtr window)
 		{
-			Hwnd    hwnd;
+			Hwnd hwnd;
 
 			lock (windows)
 			{
@@ -201,92 +202,92 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public static Borders GetBorderWidth (CreateParams cp)
+		public static Borders GetBorderWidth(CreateParams cp)
 		{
-			Borders border_size = new Borders ();
+			Borders border_size = new Borders();
 			Size windowborder = ThemeEngine.Current.BorderSize; /*new Size (1, 1);*/ // This is the only one that can be changed from the display properties in windows.
 			Size border = ThemeEngine.Current.BorderStaticSize; /*new Size (1, 1);*/
 			Size clientedge = ThemeEngine.Current.Border3DSize; /*new Size (2, 2);*/
-			Size thickframe = new Size (2 + windowborder.Width, 2 + windowborder.Height);
+			Size thickframe = new Size(2 + windowborder.Width, 2 + windowborder.Height);
 			Size dialogframe = ThemeEngine.Current.BorderSizableSize; /* new Size (3, 3);*/
 
-			if (cp.IsSet (WindowStyles.WS_CAPTION))
+			if (cp.IsSet(WindowStyles.WS_CAPTION))
 			{
-				border_size.Inflate (dialogframe);
+				border_size.Inflate(dialogframe);
 			}
-			else if (cp.IsSet (WindowStyles.WS_BORDER))
+			else if (cp.IsSet(WindowStyles.WS_BORDER))
 			{
-				if (cp.IsSet (WindowExStyles.WS_EX_DLGMODALFRAME))
+				if (cp.IsSet(WindowExStyles.WS_EX_DLGMODALFRAME))
 				{
-					if (cp.IsSet (WindowStyles.WS_THICKFRAME) && (cp.IsSet (WindowExStyles.WS_EX_STATICEDGE) || cp.IsSet (WindowExStyles.WS_EX_CLIENTEDGE)))
+					if (cp.IsSet(WindowStyles.WS_THICKFRAME) && (cp.IsSet(WindowExStyles.WS_EX_STATICEDGE) || cp.IsSet(WindowExStyles.WS_EX_CLIENTEDGE)))
 					{
-						border_size.Inflate (border);
+						border_size.Inflate(border);
 					}
 				}
 				else
 				{
-					border_size.Inflate (border);
+					border_size.Inflate(border);
 				}
 			}
-			else if (cp.IsSet (WindowStyles.WS_DLGFRAME))
+			else if (cp.IsSet(WindowStyles.WS_DLGFRAME))
 			{
-				border_size.Inflate (dialogframe);
+				border_size.Inflate(dialogframe);
 			}
 
-			if (cp.IsSet (WindowStyles.WS_THICKFRAME))
+			if (cp.IsSet(WindowStyles.WS_THICKFRAME))
 			{
-				if (cp.IsSet (WindowStyles.WS_DLGFRAME))
+				if (cp.IsSet(WindowStyles.WS_DLGFRAME))
 				{
-					border_size.Inflate (border);
+					border_size.Inflate(border);
 				}
 				else
 				{
-					border_size.Inflate (thickframe);
+					border_size.Inflate(thickframe);
 				}
 			}
 
 			bool only_small_border;
 			Size small_border = Size.Empty;
-			only_small_border = cp.IsSet (WindowStyles.WS_THICKFRAME) || cp.IsSet (WindowStyles.WS_DLGFRAME);
+			only_small_border = cp.IsSet(WindowStyles.WS_THICKFRAME) || cp.IsSet(WindowStyles.WS_DLGFRAME);
 
-			if (only_small_border && cp.IsSet (WindowStyles.WS_THICKFRAME) && !cp.IsSet (WindowStyles.WS_BORDER) && !cp.IsSet (WindowStyles.WS_DLGFRAME))
+			if (only_small_border && cp.IsSet(WindowStyles.WS_THICKFRAME) && !cp.IsSet(WindowStyles.WS_BORDER) && !cp.IsSet(WindowStyles.WS_DLGFRAME))
 			{
 				small_border = border;
 			}
 
-			if (cp.IsSet (WindowExStyles.WS_EX_CLIENTEDGE | WindowExStyles.WS_EX_DLGMODALFRAME))
+			if (cp.IsSet(WindowExStyles.WS_EX_CLIENTEDGE | WindowExStyles.WS_EX_DLGMODALFRAME))
 			{
-				border_size.Inflate (clientedge + (only_small_border ? small_border : dialogframe));
+				border_size.Inflate(clientedge + (only_small_border ? small_border : dialogframe));
 			}
-			else if (cp.IsSet (WindowExStyles.WS_EX_STATICEDGE | WindowExStyles.WS_EX_DLGMODALFRAME))
+			else if (cp.IsSet(WindowExStyles.WS_EX_STATICEDGE | WindowExStyles.WS_EX_DLGMODALFRAME))
 			{
-				border_size.Inflate (only_small_border ? small_border : dialogframe);
+				border_size.Inflate(only_small_border ? small_border : dialogframe);
 			}
-			else if (cp.IsSet (WindowExStyles.WS_EX_STATICEDGE | WindowExStyles.WS_EX_CLIENTEDGE))
+			else if (cp.IsSet(WindowExStyles.WS_EX_STATICEDGE | WindowExStyles.WS_EX_CLIENTEDGE))
 			{
-				border_size.Inflate (border + (only_small_border ? Size.Empty : clientedge));
+				border_size.Inflate(border + (only_small_border ? Size.Empty : clientedge));
 			}
 			else
 			{
-				if (cp.IsSet (WindowExStyles.WS_EX_CLIENTEDGE))
+				if (cp.IsSet(WindowExStyles.WS_EX_CLIENTEDGE))
 				{
-					border_size.Inflate (clientedge);
+					border_size.Inflate(clientedge);
 				}
 
-				if (cp.IsSet (WindowExStyles.WS_EX_DLGMODALFRAME) && !cp.IsSet (WindowStyles.WS_DLGFRAME))
+				if (cp.IsSet(WindowExStyles.WS_EX_DLGMODALFRAME) && !cp.IsSet(WindowStyles.WS_DLGFRAME))
 				{
-					border_size.Inflate (cp.IsSet (WindowStyles.WS_THICKFRAME) ? border : dialogframe);
+					border_size.Inflate(cp.IsSet(WindowStyles.WS_THICKFRAME) ? border : dialogframe);
 				}
 
-				if (cp.IsSet (WindowExStyles.WS_EX_STATICEDGE))
+				if (cp.IsSet(WindowExStyles.WS_EX_STATICEDGE))
 				{
-					if (cp.IsSet (WindowStyles.WS_THICKFRAME) || cp.IsSet (WindowStyles.WS_DLGFRAME))
+					if (cp.IsSet(WindowStyles.WS_THICKFRAME) || cp.IsSet(WindowStyles.WS_DLGFRAME))
 					{
-						border_size.Inflate (new Size (-border.Width, -border.Height));
+						border_size.Inflate(new Size(-border.Width, -border.Height));
 					}
 					else
 					{
-						border_size.Inflate (border);
+						border_size.Inflate(border);
 					}
 				}
 			}
@@ -294,17 +295,17 @@ namespace System.Windows.Forms
 			return border_size;
 		}
 
-		public static Rectangle GetWindowRectangle (CreateParams cp, Menu menu)
+		public static Rectangle GetWindowRectangle(CreateParams cp, Menu menu)
 		{
-			return GetWindowRectangle (cp, menu, Rectangle.Empty);
+			return GetWindowRectangle(cp, menu, Rectangle.Empty);
 		}
 
-		public static Rectangle GetWindowRectangle (CreateParams cp, Menu menu, Rectangle client_rect)
+		public static Rectangle GetWindowRectangle(CreateParams cp, Menu menu, Rectangle client_rect)
 		{
 			Rectangle rect;
 			Borders borders;
-			borders = GetBorders (cp, menu);
-			rect = new Rectangle (Point.Empty, client_rect.Size);
+			borders = GetBorders(cp, menu);
+			rect = new Rectangle(Point.Empty, client_rect.Size);
 			rect.Y -= borders.top;
 			rect.Height += borders.top + borders.bottom;
 			rect.X -= borders.left;
@@ -315,38 +316,38 @@ namespace System.Windows.Forms
 			return rect;
 		}
 
-		public Rectangle GetClientRectangle (int width, int height)
+		public Rectangle GetClientRectangle(int width, int height)
 		{
-			CreateParams cp = new CreateParams ();
+			CreateParams cp = new CreateParams();
 			cp.WindowStyle = initial_style;
 			cp.WindowExStyle = initial_ex_style;
-			return GetClientRectangle (cp, menu, width, height);
+			return GetClientRectangle(cp, menu, width, height);
 		}
 
 		// This could be greatly optimized by caching the outputs and only updating when something is moved
 		// in the parent planar space.  To do that we need to track z-order in the parent space as well
-		public ArrayList GetClippingRectangles ()
+		public ArrayList GetClippingRectangles()
 		{
-			ArrayList masks = new ArrayList ();
+			ArrayList masks = new ArrayList();
 
 			if (x < 0)
 			{
-				masks.Add (new Rectangle (0, 0, x * -1, Height));
+				masks.Add(new Rectangle(0, 0, x * -1, Height));
 
 				if (y < 0)
 				{
-					masks.Add (new Rectangle (x * -1, 0, Width, y * -1));
+					masks.Add(new Rectangle(x * -1, 0, Width, y * -1));
 				}
 			}
 			else if (y < 0)
 			{
-				masks.Add (new Rectangle (0, 0, Width, y * -1));
+				masks.Add(new Rectangle(0, 0, Width, y * -1));
 			}
 
 			foreach (Hwnd child in children)
 			{
 				if (child.visible)
-					masks.Add (new Rectangle (child.X, child.Y, child.Width, child.Height));
+					masks.Add(new Rectangle(child.X, child.Y, child.Width, child.Height));
 			}
 
 			if (parent == null)
@@ -366,18 +367,18 @@ namespace System.Windows.Forms
 				// This entire method should be cached to find all higher views at the time of query
 				do
 				{
-					sibling_handle = XplatUI.GetPreviousWindow (sibling_handle);
+					sibling_handle = XplatUI.GetPreviousWindow(sibling_handle);
 
 					if (sibling_handle == sibling.WholeWindow && sibling.visible)
 					{
-						Rectangle intersect = Rectangle.Intersect (new Rectangle (X, Y, Width, Height), new Rectangle (sibling.X, sibling.Y, sibling.Width, sibling.Height));
+						Rectangle intersect = Rectangle.Intersect(new Rectangle(X, Y, Width, Height), new Rectangle(sibling.X, sibling.Y, sibling.Width, sibling.Height));
 
 						if (intersect == Rectangle.Empty)
 							continue;
 
 						intersect.X -= X;
 						intersect.Y -= Y;
-						masks.Add (intersect);
+						masks.Add(intersect);
 					}
 				} while (sibling_handle != IntPtr.Zero);
 			}
@@ -385,25 +386,25 @@ namespace System.Windows.Forms
 			return masks;
 		}
 
-		public static Borders GetBorders (CreateParams cp, Menu menu)
+		public static Borders GetBorders(CreateParams cp, Menu menu)
 		{
-			Borders borders = new Borders ();
+			Borders borders = new Borders();
 
 			if (menu != null)
 			{
 				int menu_height = menu.Rect.Height;
 
 				if (menu_height == 0)
-					menu_height = ThemeEngine.Current.CalcMenuBarSize (GraphicsContext, menu, cp.Width);
+					menu_height = ThemeEngine.Current.CalcMenuBarSize(GraphicsContext, menu, cp.Width);
 
 				borders.top += menu_height;
 			}
 
-			if (cp.IsSet (WindowStyles.WS_CAPTION))
+			if (cp.IsSet(WindowStyles.WS_CAPTION))
 			{
 				int caption_height;
 
-				if (cp.IsSet (WindowExStyles.WS_EX_TOOLWINDOW))
+				if (cp.IsSet(WindowExStyles.WS_EX_TOOLWINDOW))
 				{
 					caption_height = ThemeEngine.Current.ToolWindowCaptionHeight;
 				}
@@ -415,7 +416,7 @@ namespace System.Windows.Forms
 				borders.top += caption_height;
 			}
 
-			Borders border_width = GetBorderWidth (cp);
+			Borders border_width = GetBorderWidth(cp);
 			borders.left += border_width.left;
 			borders.right += border_width.right;
 			borders.top += border_width.top;
@@ -427,7 +428,7 @@ namespace System.Windows.Forms
 		{
 			Rectangle rect;
 			Borders borders;
-			borders = GetBorders (cp, menu);
+			borders = GetBorders(cp, menu);
 			rect = new Rectangle(0, 0, width, height);
 			rect.Y += borders.top;
 			rect.Height -= borders.top + borders.bottom;
@@ -445,14 +446,47 @@ namespace System.Windows.Forms
 			{
 				if (bmp_g == null)
 				{
-					bmp = new Bitmap (1, 1, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-					bmp_g = Graphics.FromImage (bmp);
+					bmp = new Bitmap(1, 1, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+					bmp_g = Graphics.FromImage(bmp);
 				}
 
 				return bmp_g;
 			}
 		}
-		#endregion  // Static Methods
+
+		private static void AddDestroyedWindow(IntPtr window)
+		{
+			int refcount;
+
+			if (window != IntPtr.Zero)
+			{
+				destroyed_windows.TryGetValue(window, out refcount);
+				destroyed_windows[window] = refcount + 1;
+			}
+		}
+
+		public static bool IsBeingDestroyed(IntPtr window)
+		{
+			lock (destroyed_windows)
+			{
+				return destroyed_windows.ContainsKey(window);
+			}
+		}
+
+		public static void FinishAsyncDestroy(IntPtr window)
+		{
+			lock (destroyed_windows)
+			{
+				if (destroyed_windows.TryGetValue(window, out int refcount))
+				{
+					if (refcount <= 1)
+						destroyed_windows.Remove(window);
+					else
+						destroyed_windows[window] = refcount - 1;
+				}
+			}
+		}
+		#endregion // Static Methods
 
 		#region Instance Properties
 		public FormBorderStyle BorderStyle
@@ -539,11 +573,11 @@ namespace System.Windows.Forms
 			{
 				// We pass a Zero for the menu handle so the menu size is
 				// not computed this is done via an WM_NCCALC
-				CreateParams cp = new CreateParams ();
+				CreateParams cp = new CreateParams();
 				Rectangle rect;
 				cp.WindowStyle = initial_style;
 				cp.WindowExStyle = initial_ex_style;
-				rect = GetClientRectangle (cp, null, width, height);
+				rect = GetClientRectangle(cp, null, width, height);
 				return rect;
 			}
 		}
@@ -668,13 +702,13 @@ namespace System.Windows.Forms
 		{
 			get
 			{
-				Form frm = Control.FromHandle (handle) as Form;
+				Form frm = Control.FromHandle(handle) as Form;
 
 				if (frm != null && frm.window_manager != null)
-					return frm.window_manager.GetMenuOrigin ();
+					return frm.window_manager.GetMenuOrigin();
 
-				Point   pt;
-				Size    border_3D_size = ThemeEngine.Current.Border3DSize;
+				Point pt;
+				Size border_3D_size = ThemeEngine.Current.Border3DSize;
 				pt = new Point(0, 0);
 
 				if (border_style == FormBorderStyle.Fixed3D)
@@ -710,9 +744,9 @@ namespace System.Windows.Forms
 
 				Rectangle result = (Rectangle)invalid_list[0];
 
-				for (int i = 1; i < invalid_list.Count; i ++)
+				for (int i = 1; i < invalid_list.Count; i++)
 				{
-					result = Rectangle.Union (result, (Rectangle)invalid_list[i]);
+					result = Rectangle.Union(result, (Rectangle)invalid_list[i]);
 				}
 
 				return result;
@@ -723,7 +757,7 @@ namespace System.Windows.Forms
 		{
 			get
 			{
-				return (Rectangle[]) invalid_list.ToArray (typeof (Rectangle));
+				return (Rectangle[])invalid_list.ToArray(typeof(Rectangle));
 			}
 		}
 
@@ -750,12 +784,12 @@ namespace System.Windows.Forms
 			set
 			{
 				if (parent != null)
-					parent.children.Remove (this);
+					parent.children.Remove(this);
 
 				parent = value;
 
 				if (parent != null)
-					parent.children.Add (this);
+					parent.children.Add(this);
 			}
 		}
 
@@ -889,7 +923,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		#endregion  // Instance properties
+		#endregion // Instance properties
 
 		#region Methods
 		public void AddInvalidArea(int x, int y, int width, int height)
@@ -899,17 +933,17 @@ namespace System.Windows.Forms
 
 		public void AddInvalidArea(Rectangle rect)
 		{
-			ArrayList tmp = new ArrayList ();
+			ArrayList tmp = new ArrayList();
 
 			foreach (Rectangle r in invalid_list)
 			{
-				if (!rect.Contains (r))
+				if (!rect.Contains(r))
 				{
-					tmp.Add (r);
+					tmp.Add(r);
 				}
 			}
 
-			tmp.Add (rect);
+			tmp.Add(rect);
 			invalid_list = tmp;
 		}
 
@@ -923,15 +957,15 @@ namespace System.Windows.Forms
 		{
 			if (nc_invalid == Rectangle.Empty)
 			{
-				nc_invalid = new Rectangle (x, y, width, height);
+				nc_invalid = new Rectangle(x, y, width, height);
 				return;
 			}
 
 			int right, bottom;
-			right = Math.Max (nc_invalid.Right, x + width);
-			bottom = Math.Max (nc_invalid.Bottom, y + height);
-			nc_invalid.X = Math.Min (nc_invalid.X, x);
-			nc_invalid.Y = Math.Min (nc_invalid.Y, y);
+			right = Math.Max(nc_invalid.Right, x + width);
+			bottom = Math.Max(nc_invalid.Bottom, y + height);
+			nc_invalid.X = Math.Min(nc_invalid.X, x);
+			nc_invalid.Y = Math.Min(nc_invalid.Y, y);
 			nc_invalid.Width = right - nc_invalid.X;
 			nc_invalid.Height = bottom - nc_invalid.Y;
 		}
@@ -944,7 +978,7 @@ namespace System.Windows.Forms
 				return;
 			}
 
-			nc_invalid = Rectangle.Union (nc_invalid, rect);
+			nc_invalid = Rectangle.Union(nc_invalid, rect);
 		}
 
 		public void ClearNcInvalidArea()
@@ -958,7 +992,7 @@ namespace System.Windows.Forms
 			return String.Format("Hwnd, Mapped:{3} ClientWindow:0x{0:X}, WholeWindow:0x{1:X}, Zombie={4}, Parent:[{2:X}]", client_window.ToInt32(), whole_window.ToInt32(), parent != null ? parent.ToString() : "<null>", Mapped, zombie);
 		}
 
-		public static Point GetNextStackedFormLocation (CreateParams cp)
+		public static Point GetNextStackedFormLocation(CreateParams cp)
 		{
 			if (cp.control == null)
 				return Point.Empty;
@@ -966,7 +1000,7 @@ namespace System.Windows.Forms
 			MdiClient parent = cp.control.Parent as MdiClient;
 
 			if (parent != null)
-				return parent.GetNextStackedFormLocation (cp);
+				return parent.GetNextStackedFormLocation(cp);
 
 			int X = cp.X;
 			int Y = cp.Y;
@@ -981,24 +1015,43 @@ namespace System.Windows.Forms
 			}
 			else
 			{
-				next = new Point (previous.X + 22, previous.Y + 22);
+				next = new Point(previous.X + 22, previous.Y + 22);
 			}
 
-			if (!within.Contains (next.X * 3, next.Y * 3))
+			if (!within.Contains(next.X * 3, next.Y * 3))
 			{
 				next = Point.Empty;
 			}
 
 			if (next == Point.Empty && cp.Parent == IntPtr.Zero)
 			{
-				next = new Point (22, 22);
+				next = new Point(22, 22);
 			}
 
 			Hwnd.previous_main_startup_location = next;
 			return next;
 		}
 
-		#endregion  // Methods
+		public void BeginAsyncDestroy()
+		{
+			// In X11, an XDestroyWindow call may not take effect immediately. In case
+			// the window id is reassigned, we have to ignore any events up to and
+			// including the DestroyNotify, but we also have to remove them from the
+			// hwnd table so we can track the current Hwnd in case of reuse.
+			//
+			// Therefore, window destruction is a multi-step process: StartAsyncDestroy
+			// when we call XDestroyWindow and FinishAsyncDestroy(hwnd) when we get a
+			// DestroyNotify.
+			lock (destroyed_windows)
+			{
+				AddDestroyedWindow(client_window);
+				AddDestroyedWindow(whole_window);
+			}
+
+			Dispose();
+		}
+
+		#endregion // Methods
 
 		internal struct Borders
 		{
@@ -1007,7 +1060,7 @@ namespace System.Windows.Forms
 			public int left;
 			public int right;
 
-			public void Inflate (Size size)
+			public void Inflate(Size size)
 			{
 				left += size.Width;
 				right += size.Width;
@@ -1015,29 +1068,29 @@ namespace System.Windows.Forms
 				bottom += size.Height;
 			}
 
-			public override string ToString ()
+			public override string ToString()
 			{
 				return string.Format("{{top={0}, bottom={1}, left={2}, right={3}}}", top, bottom, left, right);
 			}
 
-			public static bool operator == (Borders a, Borders b)
+			public static bool operator ==(Borders a, Borders b)
 			{
 				return (a.left == b.left && a.right == b.right && a.top == b.top && a.bottom == b.bottom);
 			}
 
-			public static bool operator != (Borders a, Borders b)
+			public static bool operator !=(Borders a, Borders b)
 			{
 				return !(a == b);
 			}
 
-			public override bool Equals (object obj)
+			public override bool Equals(object obj)
 			{
-				return base.Equals (obj);
+				return base.Equals(obj);
 			}
 
-			public override int GetHashCode ()
+			public override int GetHashCode()
 			{
-				return base.GetHashCode ();
+				return base.GetHashCode();
 			}
 		}
 	}

@@ -5,10 +5,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -20,7 +20,7 @@
 // Copyright (c) 2004-2006 Novell, Inc.
 //
 // Authors:
-//  Peter Bartok    pbartok@novell.com
+//	Peter Bartok	pbartok@novell.com
 
 // NOT COMPLETE
 
@@ -31,15 +31,13 @@
 #undef DriverDebugDestroy
 #undef DriverDebugState
 
-namespace System.Windows.Forms
-{
-	internal class XplatUI
-	{
+namespace System.Windows.Forms {
+	internal class XplatUI {
 		#region Local Variables
-		static XplatUIDriver        driver;
-		//      static String           default_class_name;
+		static XplatUIDriver		driver;
+//		static String			default_class_name;
 		internal static ArrayList key_filters = new ArrayList ();
-		#endregion  // Local Variables
+		#endregion	// Local Variables
 
 		#region Private Methods
 		internal static string Window (IntPtr handle)
@@ -52,38 +50,31 @@ namespace System.Windows.Forms
 		{
 			Console.WriteLine (String.Format (format, args));
 		}
-
-		#endregion  // Private Methods
+		
+		#endregion	// Private Methods
 
 		#region Subclasses
-		public class State
-		{
-			static public Keys ModifierKeys
-			{
-				get
-				{
+		public class State {
+			static public Keys ModifierKeys {
+				get {
 					return driver.ModifierKeys;
 				}
 			}
 
-			static public MouseButtons MouseButtons
-			{
-				get
-				{
+			static public MouseButtons MouseButtons {
+				get {
 					return driver.MouseButtons;
 				}
 			}
 
-			static public Point MousePosition
-			{
-				get
-				{
+			static public Point MousePosition {
+				get {
 					return driver.MousePosition;
 				}
 			}
 
 		}
-		#endregion  // Subclasses
+		#endregion	// Subclasses
 
 		#region Constructor & Destructor
 		static XplatUI ()
@@ -91,80 +82,64 @@ namespace System.Windows.Forms
 			// Compose name with current domain id because on Win32 we register class name
 			// and name must be unique to process. If we load MWF into multiple appdomains
 			// and try to register same class name we fail.
-			//          default_class_name = "SWFClass" + System.Threading.Thread.GetDomainID ().ToString ();
-			if (RunningOnUnix)
-			{
+//			default_class_name = "SWFClass" + System.Threading.Thread.GetDomainID ().ToString ();
+
+			if (RunningOnUnix) {
 				//if (Environment.GetEnvironmentVariable ("not_supported_MONO_MWF_USE_NEW_X11_BACKEND") != null) {
 				//        driver=XplatUIX11_new.GetInstance ();
 				//} else
 				var loadable = Environment.GetEnvironmentVariable ("MONO_MWF_DRIVER");
-
-				if (loadable != null)
-				{
+				if (loadable != null){
 					var a = System.Reflection.Assembly.LoadFile (loadable);
 					var mi = a?.GetType ("Bootstrap")?.GetMethod ("CreateInstance");
-
 					if (mi != null)
 						driver = (XplatUIDriver) mi.Invoke (null, null);
-				}
-				else
-				{
-					if (Environment.GetEnvironmentVariable ("MONO_MWF_MAC_FORCE_X11") != null)
-					{
+				} else {
+					if (Environment.GetEnvironmentVariable ("MONO_MWF_MAC_FORCE_X11") != null) {
 						driver = XplatUIX11.GetInstance ();
-					}
-					else
-					{
+					} else {
 						IntPtr buf = Marshal.AllocHGlobal (8192);
-
 						// This is a hacktastic way of getting sysname from uname ()
-						if (uname (buf) != 0)
-						{
+						if (uname (buf) != 0) {
 							// WTF: We cannot run uname
-							driver = XplatUIX11.GetInstance ();
-						}
-						else
-						{
+							driver=XplatUIX11.GetInstance ();
+						} else {
 							string os = Marshal.PtrToStringAnsi (buf);
-
 							if (os == "Darwin")
-								driver = XplatUICarbon.GetInstance ();
+								driver=XplatUICarbon.GetInstance ();
 							else
-								driver = XplatUIX11.GetInstance ();
+								driver=XplatUIX11.GetInstance ();
 						}
-
 						Marshal.FreeHGlobal (buf);
 					}
 				}
-			}
-			else
-			{
-				driver = XplatUIWin32.GetInstance ();
+			} else {
+				driver=XplatUIWin32.GetInstance ();
 			}
 
 			driver.InitializeDriver ();
+
 			// Initialize things that need to be done after the driver is ready
 			DataFormats.GetFormat (0);
+
 			// Signal that the Application loop can be run.
 			// This allows UIA to initialize a11y support for MWF
 			// before the main loop begins.
 			Application.FirePreRun ();
 		}
-		#endregion  // Constructor & Destructor
+		#endregion	// Constructor & Destructor
 
 		#region Public Static Properties
 
-		public static bool RunningOnUnix
-		{
-			get
-			{
+		public static bool RunningOnUnix {
+			get {
 				int p = (int) Environment.OSVersion.Platform;
+				
 				return (p == 4 || p == 6 || p == 128);
 			}
 		}
 
-		public static int ActiveWindowTrackingDelay
-		{
+		public static int ActiveWindowTrackingDelay {
 			get { return driver.ActiveWindowTrackingDelay; }
 		}
 
@@ -176,85 +151,65 @@ namespace System.Windows.Forms
 			return "SWFClass" + Thread.GetDomainID ().ToString () + "." + type.ToString ();
 		}
 
-		static public Size Border3DSize
-		{
-			get
-			{
+		static public Size Border3DSize {
+			get {
 				return driver.Border3DSize;
 			}
 		}
 
-		static public Size BorderSize
-		{
-			get
-			{
+		static public Size BorderSize {
+			get {
 				return driver.BorderSize;
 			}
 		}
 
-		static public Size CaptionButtonSize
-		{
-			get
-			{
+		static public Size CaptionButtonSize {
+			get {
 				return driver.CaptionButtonSize;
 			}
 		}
 
-		static public int CaptionHeight
-		{
-			get
-			{
+		static public int CaptionHeight {
+			get {
 				return driver.CaptionHeight;
 			}
 		}
 
 		public static int CaretBlinkTime { get { return driver.CaretBlinkTime; } }
 		public static int CaretWidth { get { return driver.CaretWidth; } }
-
-		static public Size CursorSize
-		{
-			get
-			{
+		
+		static public Size CursorSize {
+			get {
 				return driver.CursorSize;
 			}
 		}
 
-		static public Size DoubleClickSize
-		{
-			get
-			{
+		static public Size DoubleClickSize {
+			get {
 				return driver.DoubleClickSize;
 			}
 		}
 
-		static public int DoubleClickTime
-		{
-			get
-			{
+		static public int DoubleClickTime {
+			get {
 				return driver.DoubleClickTime;
 			}
 		}
 
-		static public bool DragFullWindows
-		{
-			get
-			{
+		static public bool DragFullWindows {
+			get {
 				return driver.DragFullWindows;
 			}
 		}
 
-		static public Size DragSize
-		{
-			get
-			{
+		static public Size DragSize {
+			get {
 				return driver.DragSize;
 			}
 		}
 
-		static public Size FixedFrameBorderSize
-		{
-			get
-			{
+		static public Size FixedFrameBorderSize {
+			get {
 				return driver.FixedFrameBorderSize;
 			}
 		}
@@ -262,28 +217,22 @@ namespace System.Windows.Forms
 		public static int FontSmoothingContrast { get { return driver.FontSmoothingContrast; } }
 		public static int FontSmoothingType { get { return driver.FontSmoothingType; } }
 
-		public static Size FrameBorderSize
-		{
-			get
-			{
+		public static Size FrameBorderSize {
+			get {
 				return driver.FrameBorderSize;
 			}
 		}
 
 		public static int HorizontalResizeBorderThickness { get { return driver.HorizontalResizeBorderThickness; } }
-
-		static public int HorizontalScrollBarHeight
-		{
-			get
-			{
+		
+		static public int HorizontalScrollBarHeight {
+			get {
 				return driver.HorizontalScrollBarHeight;
 			}
 		}
 
-		static public Size IconSize
-		{
-			get
-			{
+		static public Size IconSize {
+			get {
 				return driver.IconSize;
 			}
 		}
@@ -299,286 +248,222 @@ namespace System.Windows.Forms
 		public static bool IsMenuAnimationEnabled { get { return driver.IsMenuAnimationEnabled; } }
 		public static bool IsMenuFadeEnabled { get { return driver.IsMenuFadeEnabled; } }
 		public static bool IsMinimizeRestoreAnimationEnabled { get { return driver.IsMinimizeRestoreAnimationEnabled; } }
-		public static bool IsSelectionFadeEnabled { get { return driver.IsSelectionFadeEnabled; } }
+		public static bool IsSelectionFadeEnabled { get	{ return driver.IsSelectionFadeEnabled; } }
 		public static bool IsSnapToDefaultEnabled { get { return driver.IsSnapToDefaultEnabled; } }
 		public static bool IsTitleBarGradientEnabled { get { return driver.IsTitleBarGradientEnabled; } }
 		public static bool IsToolTipAnimationEnabled { get { return driver.IsToolTipAnimationEnabled; } }
-
-		static public int KeyboardSpeed
-		{
-			get
-			{
+		
+		static public int KeyboardSpeed {
+			get {
 				return driver.KeyboardSpeed;
 			}
 		}
 
-		static public int KeyboardDelay
-		{
-			get
-			{
+		static public int KeyboardDelay {
+			get {
 				return driver.KeyboardDelay;
 			}
 		}
 
-		static public Size MaxWindowTrackSize
-		{
-			get
-			{
+		static public Size MaxWindowTrackSize {
+			get {
 				return driver.MaxWindowTrackSize;
 			}
 		}
 
-		static public bool MenuAccessKeysUnderlined
-		{
-			get
-			{
+		static public bool MenuAccessKeysUnderlined {
+			get {
 				return driver.MenuAccessKeysUnderlined;
 			}
 		}
 
 		static public Size MenuBarButtonSize { get { return driver.MenuBarButtonSize; } }
 
-		public static Size MenuButtonSize
-		{
-			get
-			{
+		public static Size MenuButtonSize {
+			get {
 				return driver.MenuButtonSize;
 			}
 		}
 
 		static public int MenuShowDelay { get { return driver.MenuShowDelay; } }
-
-		static public Size MinimizedWindowSize
-		{
-			get
-			{
+		
+		static public Size MinimizedWindowSize {
+			get {
 				return driver.MinimizedWindowSize;
 			}
 		}
 
-		static public Size MinimizedWindowSpacingSize
-		{
-			get
-			{
+		static public Size MinimizedWindowSpacingSize {
+			get {
 				return driver.MinimizedWindowSpacingSize;
 			}
 		}
 
-		static public Size MinimumWindowSize
-		{
-			get
-			{
+		static public Size MinimumWindowSize {
+			get {
 				return driver.MinimumWindowSize;
 			}
 		}
 
-		static public Size MinimumFixedToolWindowSize
-		{
+		static public Size MinimumFixedToolWindowSize {
 			get { return driver.MinimumFixedToolWindowSize; }
 		}
 
-		static public Size MinimumSizeableToolWindowSize
-		{
+		static public Size MinimumSizeableToolWindowSize {
 			get { return driver.MinimumSizeableToolWindowSize; }
 		}
 
-		static public Size MinimumNoBorderWindowSize
-		{
+		static public Size MinimumNoBorderWindowSize {
 			get { return driver.MinimumNoBorderWindowSize; }
 		}
 
-		static public Size MinWindowTrackSize
-		{
-			get
-			{
+		static public Size MinWindowTrackSize {
+			get {
 				return driver.MinWindowTrackSize;
 			}
 		}
 
-		public static int MouseSpeed
-		{
+		public static int MouseSpeed {
 			get { return driver.MouseSpeed; }
 		}
-
-		static public Size SmallIconSize
-		{
-			get
-			{
+		
+		static public Size SmallIconSize {
+			get {
 				return driver.SmallIconSize;
 			}
 		}
 
-		static public int MenuHeight
-		{
-			get
-			{
+		static public int MenuHeight {
+			get {
 				return driver.MenuHeight;
 			}
 		}
 
-		static public int MouseButtonCount
-		{
-			get
-			{
+		static public int MouseButtonCount {
+			get {
 				return driver.MouseButtonCount;
 			}
 		}
 
-		static public bool MouseButtonsSwapped
-		{
-			get
-			{
+		static public bool MouseButtonsSwapped {
+			get {
 				return driver.MouseButtonsSwapped;
 			}
 		}
 
-		static public Size MouseHoverSize
-		{
-			get
-			{
+		static public Size MouseHoverSize {
+			get {
 				return driver.MouseHoverSize;
 			}
 		}
 
-		static public int MouseHoverTime
-		{
-			get
-			{
+		static public int MouseHoverTime {
+			get {
 				return driver.MouseHoverTime;
 			}
 		}
 
-		static public int MouseWheelScrollDelta
-		{
-			get
-			{
+		static public int MouseWheelScrollDelta {
+			get {
 				return driver.MouseWheelScrollDelta;
 			}
 		}
-
-		static public bool MouseWheelPresent
-		{
-			get
-			{
+		
+		static public bool MouseWheelPresent {
+			get {
 				return driver.MouseWheelPresent;
 			}
 		}
 
-		public static LeftRightAlignment PopupMenuAlignment
-		{
+		public static LeftRightAlignment PopupMenuAlignment {
 			get { return driver.PopupMenuAlignment; }
 		}
-
-		public static PowerStatus PowerStatus
-		{
+		
+		public static PowerStatus PowerStatus {
 			get { return driver.PowerStatus; }
 		}
 
-		public static bool RequiresPositiveClientAreaSize
-		{
-			get
-			{
+		public static bool RequiresPositiveClientAreaSize {
+			get {
 				return driver.RequiresPositiveClientAreaSize;
 			}
 		}
 
-		public static int SizingBorderWidth
-		{
+		public static int SizingBorderWidth {
 			get { return driver.SizingBorderWidth; }
 		}
-
-		public static Size SmallCaptionButtonSize
-		{
+		
+		public static Size SmallCaptionButtonSize {
 			get { return driver.SmallCaptionButtonSize; }
 		}
-
-		public static bool UIEffectsEnabled
-		{
+		
+		public static bool UIEffectsEnabled {
 			get { return driver.UIEffectsEnabled; }
 		}
-
-		static public bool UserClipWontExposeParent
-		{
-			get
-			{
+		
+		static public bool UserClipWontExposeParent {
+			get {
 				return driver.UserClipWontExposeParent;
 			}
 		}
 
 		public static int VerticalResizeBorderThickness { get { return driver.VerticalResizeBorderThickness; } }
 
-		static public int VerticalScrollBarWidth
-		{
-			get
-			{
+		static public int VerticalScrollBarWidth {
+			get {
 				return driver.VerticalScrollBarWidth;
 			}
 		}
 
-		static public Rectangle VirtualScreen
-		{
-			get
-			{
+		static public Rectangle VirtualScreen {
+			get {
 				return driver.VirtualScreen;
 			}
 		}
 
-		static public Rectangle WorkingArea
-		{
-			get
-			{
+		static public Rectangle WorkingArea {
+			get {
 				return driver.WorkingArea;
 			}
 		}
 
-		public static Screen[] AllScreens
-		{
-			get
-			{
+		public static Screen[] AllScreens {
+			get {
 				return driver.AllScreens;
 			}
 		}
 
-		public static bool ThemesEnabled
-		{
-			get
-			{
+		public static bool ThemesEnabled {
+			get {
 				return XplatUI.driver.ThemesEnabled;
 			}
 		}
 
-		public static int ToolWindowCaptionHeight
-		{
-			get
-			{
+		public static int ToolWindowCaptionHeight {
+			get {
 				return driver.ToolWindowCaptionHeight;
 			}
 		}
 
-		public static Size ToolWindowCaptionButtonSize
-		{
-			get
-			{
+		public static Size ToolWindowCaptionButtonSize {
+			get {
 				return driver.ToolWindowCaptionButtonSize;
 			}
 		}
-		#endregion  // Public Static Properties
+		#endregion	// Public Static Properties
 
 		#region Events
 
-		internal static event EventHandler Idle
-		{
-			add
-			{
+		internal static event EventHandler Idle {
+			add {
 				driver.Idle += value;
 			}
-			remove
-			{
+			remove {
 				driver.Idle -= value;
 			}
 		}
 
-		#endregion  // Events
+		#endregion	// Events
 
 		#region Public Static Methods
 		internal static void Activate (IntPtr handle)
@@ -618,29 +503,31 @@ namespace System.Windows.Forms
 
 		internal static IntPtr CreateWindow (CreateParams cp)
 		{
-#if DriverDebug || DriverDebugCreate
-			IntPtr handle;
-			handle = driver.CreateWindow (cp);
-			Console.WriteLine ("CreateWindow (): Called, returning {0:X}", handle.ToInt32 ());
-			return handle;
-#else
-			return driver.CreateWindow (cp);
-#endif
+			#if DriverDebug || DriverDebugCreate
+				IntPtr handle;
+
+				handle = driver.CreateWindow (cp);
+
+				Console.WriteLine ("CreateWindow (): Called, returning {0:X}", handle.ToInt32 ());
+				return handle;
+			#else
+				return driver.CreateWindow (cp);
+			#endif
 		}
 
 		internal static IntPtr CreateWindow (IntPtr Parent, int X, int Y, int Width, int Height)
 		{
-#if DriverDebug || DriverDebugCreate
-			Console.WriteLine ("CreateWindow (): Called");
-#endif
+			#if DriverDebug || DriverDebugCreate
+				Console.WriteLine ("CreateWindow (): Called");
+			#endif
 			return driver.CreateWindow (Parent, X, Y, Width, Height);
 		}
 
 		internal static void ClientToScreen (IntPtr handle, ref int x, ref int y)
 		{
-#if DriverDebug
-			Console.WriteLine ("ClientToScreen ({0}, {1}, {2}): Called", Window (handle), x, y);
-#endif
+			#if DriverDebug
+				Console.WriteLine ("ClientToScreen ({0}, {1}, {2}): Called", Window (handle), x, y);
+			#endif
 			driver.ClientToScreen (handle, ref x, ref y);
 		}
 
@@ -690,7 +577,7 @@ namespace System.Windows.Forms
 		{
 			return driver.DefineStdCursor (id);
 		}
-
+		
 		internal static Bitmap DefineStdCursorBitmap (StdCursor id)
 		{
 			return driver.DefineStdCursorBitmap (id);
@@ -800,7 +687,7 @@ namespace System.Windows.Forms
 			driver.GetCursorPos (handle, out x, out y);
 		}
 
-		internal static void GetDisplaySize (out Size size)
+		internal static void GetDisplaySize (out Size size) 
 		{
 			DriverDebug ("GetDisplaySize (): Called");
 			driver.GetDisplaySize (out size);
@@ -817,7 +704,7 @@ namespace System.Windows.Forms
 			DriverDebug ("GetFontMetrics (): Called");
 			return driver.GetFontMetrics (g, font, out ascent, out descent);
 		}
-
+			
 		internal static Point GetMenuOrigin (IntPtr handle)
 		{
 			DriverDebug ("GetMenuOrigin ({0}): Called", Window (handle));
@@ -852,12 +739,12 @@ namespace System.Windows.Forms
 			driver.GetWindowPos (handle, is_toplevel, out x, out y, out width, out height, out client_width, out client_height);
 		}
 
-		/*  this method can (and does, on X11) return
-		    (FormWindowState) (-1), when the state of the window
-		    cannot be determined (in the X11 case, when the
-		    window isn't mapped.)  Checking for the additional
-		    return value is less expensive than
-		    throwing/catching an exception. */
+		/* this method can (and does, on X11) return
+		 * (FormWindowState) (-1), when the state of the window
+		 * cannot be determined (in the X11 case, when the
+		 * window isn't mapped.)  Checking for the additional
+		 * return value is less expensive than
+		 * throwing/catching an exception. */
 		internal static FormWindowState GetWindowState (IntPtr handle)
 		{
 			DriverDebug ("GetWindowState ({0}): Called", Window (handle));
@@ -896,25 +783,25 @@ namespace System.Windows.Forms
 
 		internal static bool IsEnabled (IntPtr handle)
 		{
-#if DriverDebug || DriverDebugState
-			Console.WriteLine ("IsEnabled ({0}): Called, Result={1}", Window (handle), driver.IsEnabled (handle));
-#endif
+			#if DriverDebug || DriverDebugState
+				Console.WriteLine ("IsEnabled ({0}): Called, Result={1}", Window (handle), driver.IsEnabled (handle));
+			#endif
 			return driver.IsEnabled (handle);
 		}
 
 		internal static bool IsKeyLocked (VirtualKeys key)
 		{
-#if DriverDebug || DriverDebugState
-			Console.WriteLine ("IsKeyLocked ({0}): Called, Result={1}", key, driver.IsKeyLocked (key));
-#endif
+			#if DriverDebug || DriverDebugState
+				Console.WriteLine ("IsKeyLocked ({0}): Called, Result={1}", key, driver.IsKeyLocked (key));
+			#endif
 			return driver.IsKeyLocked (key);
 		}
 
 		internal static bool IsVisible (IntPtr handle)
 		{
-#if DriverDebug || DriverDebugState
-			Console.WriteLine ("IsVisible ({0}): Called, Result={1}", Window (handle), driver.IsVisible (handle));
-#endif
+			#if DriverDebug || DriverDebugState
+				Console.WriteLine ("IsVisible ({0}): Called, Result={1}", Window (handle), driver.IsVisible (handle));
+			#endif
 			return driver.IsVisible (handle);
 		}
 
@@ -938,17 +825,17 @@ namespace System.Windows.Forms
 
 		internal static void PaintEventEnd (ref Message msg, IntPtr handle, bool client, PaintEventArgs pevent)
 		{
-#if DriverDebug || DriverDebugPaint
-			Console.WriteLine ("PaintEventEnd ({0}, {1}, {2}): Called from thread {3}", msg, Window (handle), client, Thread.CurrentThread.GetHashCode ());
-#endif
+			#if DriverDebug || DriverDebugPaint
+				Console.WriteLine ("PaintEventEnd ({0}, {1}, {2}): Called from thread {3}", msg, Window (handle), client, Thread.CurrentThread.GetHashCode ());
+			#endif
 			driver.PaintEventEnd (ref msg, handle, client, pevent);
 		}
 
 		internal static PaintEventArgs PaintEventStart (ref Message msg, IntPtr handle, bool client)
 		{
-#if DriverDebug || DriverDebugPaint
-			Console.WriteLine ("PaintEventStart ({0}, {1}, {2}): Called from thread {3}", msg, Window (handle), client, Thread.CurrentThread.GetHashCode ());
-#endif
+			#if DriverDebug || DriverDebugPaint
+				Console.WriteLine ("PaintEventStart ({0}, {1}, {2}): Called from thread {3}", msg, Window (handle), client, Thread.CurrentThread.GetHashCode ());
+			#endif
 			return driver.PaintEventStart (ref msg, handle, client);
 		}
 
@@ -978,9 +865,10 @@ namespace System.Windows.Forms
 		internal static void RaiseIdle (EventArgs e)
 		{
 			DriverDebug ("RaiseIdle ({0}): Called", e.ToString ());
+			
 			driver.RaiseIdle (e);
 		}
-
+		
 		internal static void RequestAdditionalWM_NCMessages (IntPtr handle, bool hover, bool leave)
 		{
 			DriverDebug ("RequestAdditionalWM_NCMessages ({0}, {1}, {2}): Called", Window (handle), hover, leave);
@@ -1139,17 +1027,17 @@ namespace System.Windows.Forms
 
 		internal static bool SetVisible (IntPtr handle, bool visible, bool activate)
 		{
-#if DriverDebug || DriverDebugState
-			Console.WriteLine ("SetVisible ({0}, {1}, {2}): Called", Window (handle), visible, activate);
-#endif
+			#if DriverDebug || DriverDebugState
+				Console.WriteLine ("SetVisible ({0}, {1}, {2}): Called", Window (handle), visible, activate);
+			#endif
 			return driver.SetVisible (handle, visible, activate);
 		}
 
 		internal static void SetWindowMinMax (IntPtr handle, Rectangle maximized, Size min, Size max)
 		{
-#if DriverDebug || DriverDebugState
-			Console.WriteLine ("SetWindowMinMax ({0}, {1}, {2}, {3}): Called", Window (handle), maximized, min, max);
-#endif
+			#if DriverDebug || DriverDebugState
+				Console.WriteLine ("SetWindowMinMax ({0}, {1}, {2}, {3}): Called", Window (handle), maximized, min, max);
+			#endif
 			driver.SetWindowMinMax (handle, maximized, min, max);
 		}
 
@@ -1161,9 +1049,9 @@ namespace System.Windows.Forms
 
 		internal static void SetWindowState (IntPtr handle, FormWindowState state)
 		{
-#if DriverDebug || DriverDebugState
-			Console.WriteLine ("SetWindowState ({0} {1}): Called", Window (handle), state);
-#endif
+			#if DriverDebug || DriverDebugState
+				Console.WriteLine ("SetWindowState ({0} {1}): Called", Window (handle), state);
+			#endif
 			driver.SetWindowState (handle, state);
 		}
 
@@ -1179,7 +1067,7 @@ namespace System.Windows.Forms
 			return driver.GetWindowTransparency (handle);
 		}
 
-		internal static void SetWindowTransparency (IntPtr handle, double transparency, Color key)
+		internal static void SetWindowTransparency (IntPtr handle, double transparency, Color key) 
 		{
 			DriverDebug ("SetWindowTransparency ({0}): Called", Window (handle));
 			driver.SetWindowTransparency (handle, transparency, key);
@@ -1264,12 +1152,12 @@ namespace System.Windows.Forms
 
 		// double buffering
 		internal static void CreateOffscreenDrawable (IntPtr handle,
-				int width, int height,
-				out object offscreen_drawable)
+							    int width, int height,
+							    out object offscreen_drawable)
 		{
 			DriverDebug ("CreateOffscreenDrawable ({2}, {0},{1}): Called", width, height, Window (handle));
 			driver.CreateOffscreenDrawable (handle, width, height,
-											out offscreen_drawable);
+							out offscreen_drawable);
 		}
 
 		internal static void DestroyOffscreenDrawable (object offscreen_drawable)
@@ -1285,10 +1173,10 @@ namespace System.Windows.Forms
 		}
 
 		internal static void BlitFromOffscreen (IntPtr dest_handle,
-												Graphics dest_dc,
-												object offscreen_drawable,
-												Graphics offscreen_dc,
-												Rectangle r)
+						      Graphics dest_dc,
+						      object offscreen_drawable,
+						      Graphics offscreen_dc,
+						      Rectangle r)
 		{
 			DriverDebug ("BlitFromOffscreen ({0}): Called", Window (dest_handle));
 			driver.BlitFromOffscreen (dest_handle, dest_dc, offscreen_drawable, offscreen_dc, r);
@@ -1303,33 +1191,47 @@ namespace System.Windows.Forms
 
 		internal static void AddKeyFilter (IKeyFilter value)
 		{
-			lock (key_filters)
-			{
+			lock (key_filters) {
 				key_filters.Add (value);
 			}
 		}
 
 		internal static bool FilterKey (KeyFilterData key)
 		{
-			lock (key_filters)
-			{
-				for (int i = 0; i < key_filters.Count; i++)
-				{
+			lock (key_filters) {
+				for (int i = 0; i < key_filters.Count; i++) {
 					IKeyFilter filter = (IKeyFilter) key_filters[i];
-
 					if (filter.PreFilterKey (key))
 						return true;
 				}
 			}
-
 			return false;
 		}
-		#endregion  // Public Static Methods
+		#endregion	// Public Static Methods
 
-		#region Delegates
+		#region	Delegates
 		public delegate bool ClipboardToObject (int type, IntPtr data, out object obj);
 		public delegate bool ObjectToClipboard (ref int type, object obj, out byte[] data);
-		#endregion  // Delegates
+
+		#endregion	// Delegates
+
+		#region alternative Clipboard API
+		// This alternative clipboard API is required for X11 as the original API requires
+		// excessive round trips to the clipboard owner and forces multiple, unnecessary
+		// data conversions to be performed by the clipboard owner.
+
+		internal delegate IDataObject ClipboardGetContentDG (bool primary_selection);
+		internal static ClipboardGetContentDG ClipboardGetContent;
+
+		internal delegate string[] ClipboardGetFormatsDG (bool primary_selection);
+		internal static ClipboardGetFormatsDG ClipboardGetFormats;
+
+		internal delegate void ClipboardSetContentDG (bool primary_selection, object data, bool copy);
+		internal static ClipboardSetContentDG ClipboardSetContent;
+
+		internal delegate void ClipboardClearDG (bool primary_selection);
+		internal static ClipboardClearDG ClipboardClear;
+		#endregion      // alternative Clipboard API
 
 		[DllImport ("libc")]
 		static extern int uname (IntPtr buf);

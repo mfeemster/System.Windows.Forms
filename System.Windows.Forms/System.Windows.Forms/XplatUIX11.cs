@@ -60,66 +60,66 @@ namespace System.Windows.Forms
 	{
 		#region Local Variables
 		// General
-		static volatile XplatUIX11  Instance;
-		static int      RefCount;
-		static object       XlibLock;       // Our locking object
-		static bool     themes_enabled;
+		static volatile XplatUIX11 Instance;
+		static int RefCount;
+		static object XlibLock;     // Our locking object
+		static bool themes_enabled;
 
 		// General X11
-		static IntPtr       DisplayHandle;      // X11 handle to display
-		static int      ScreenNo;       // Screen number used
-		static IntPtr       DefaultColormap;    // Colormap for screen
-		static IntPtr       CustomVisual;       // Visual for window creation
-		static IntPtr       CustomColormap;     // Colormap for window creation
-		static IntPtr       RootWindow;     // Handle of the root window for the screen/display
-		static IntPtr       FosterParent;       // Container to hold child windows until their parent exists
-		static XErrorHandler    ErrorHandler;       // Error handler delegate
-		static bool     ErrorExceptions;    // Throw exceptions on X errors
-		int                     render_major_opcode;
-		int                     render_first_event;
-		int                     render_first_error;
+		static IntPtr DisplayHandle;        // X11 handle to display
+		static int ScreenNo;        // Screen number used
+		static IntPtr DefaultColormap;  // Colormap for screen
+		static IntPtr CustomVisual;     // Visual for window creation
+		static IntPtr CustomColormap;       // Colormap for window creation
+		static IntPtr RootWindow;       // Handle of the root window for the screen/display
+		static IntPtr FosterParent;     // Container to hold child windows until their parent exists
+		static XErrorHandler ErrorHandler;      // Error handler delegate
+		static bool ErrorExceptions;    // Throw exceptions on X errors
+		int render_major_opcode;
+		int render_first_event;
+		int render_first_error;
 
 		// Clipboard
-		static IntPtr       ClipMagic;
-		static ClipboardData    Clipboard;      // Our clipboard
+		static X11Clipboard[] Clipboards;       // Our clipboards
+		static X11Selection[] Selections;       // clipboards and DND
 
 		// Communication
-		static IntPtr       PostAtom;       // PostMessage atom
-		static IntPtr       AsyncAtom;      // Support for async messages
+		static IntPtr PostAtom;     // PostMessage atom
+		static IntPtr AsyncAtom;        // Support for async messages
 
 		// Message Loop
-		static Hashtable    MessageQueues;      // Holds our thread-specific XEventQueues
-		static ArrayList    unattached_timer_list; // holds timers that are enabled but not attached to a window.
-		static Pollfd[]     pollfds;        // For watching the X11 socket
+		static Hashtable MessageQueues;     // Holds our thread-specific XEventQueues
+		static ArrayList unattached_timer_list; // holds timers that are enabled but not attached to a window.
+		static Pollfd[] pollfds;        // For watching the X11 socket
 		static bool wake_waiting;
-		static object wake_waiting_lock = new object ();
-		static X11Keyboard  Keyboard;       //
-		static X11Dnd       Dnd;
-		static UnixStream   wake;           //
-		static UnixStream   wake_receive;       //
-		static byte[]       network_buffer;     //
-		static bool     detectable_key_auto_repeat;
+		static object wake_waiting_lock = new object();
+		static X11Keyboard Keyboard;        //
+		static X11Dnd Dnd;
+		static UnixStream wake;         //
+		static UnixStream wake_receive;     //
+		static byte[] network_buffer;       //
+		static bool detectable_key_auto_repeat;
 
 		// Focus tracking
-		static IntPtr       ActiveWindow;       // Handle of the active window
-		static IntPtr       FocusWindow;        // Handle of the window with keyboard focus (if any)
+		static IntPtr ActiveWindow;     // Handle of the active window
+		static IntPtr FocusWindow;      // Handle of the window with keyboard focus (if any)
 
 		// Modality support
-		static Stack        ModalWindows;       // Stack of our modal windows
+		static Stack ModalWindows;      // Stack of our modal windows
 
 		// Systray
-		static IntPtr       SystrayMgrWindow;   // Handle of the Systray Manager window
+		static IntPtr SystrayMgrWindow; // Handle of the Systray Manager window
 
 		// Cursors
-		static IntPtr       LastCursorWindow;   // The last window we set the cursor on
-		static IntPtr       LastCursorHandle;   // The handle that was last set on LastCursorWindow
-		static IntPtr       OverrideCursorHandle;   // The cursor that is set to override any other cursors
+		static IntPtr LastCursorWindow; // The last window we set the cursor on
+		static IntPtr LastCursorHandle; // The handle that was last set on LastCursorWindow
+		static IntPtr OverrideCursorHandle; // The cursor that is set to override any other cursors
 
 		// Caret
-		static CaretStruct  Caret;          //
+		static CaretStruct Caret;           //
 
 		// Last window containing the pointer
-		static IntPtr       LastPointerWindow;  // The last window containing the pointer
+		static IntPtr LastPointerWindow;    // The last window containing the pointer
 
 		// Shape extension
 		bool? hasShapeExtension;
@@ -186,30 +186,24 @@ namespace System.Windows.Forms
 		//static IntPtr _NET_WM_WINDOW_TYPE_SPLASH;
 		// static IntPtr _NET_WM_WINDOW_TYPE_DIALOG;
 		static IntPtr _NET_WM_WINDOW_TYPE_NORMAL;
-		static IntPtr CLIPBOARD;
-		static IntPtr PRIMARY;
 		//static IntPtr DIB;
-		static IntPtr OEMTEXT;
 		static IntPtr UTF8_STRING;
-		static IntPtr UTF16_STRING;
-		static IntPtr RICHTEXTFORMAT;
-		static IntPtr TARGETS;
 
 		// mouse hover message generation
-		static HoverStruct  HoverState;     //
+		static HoverStruct HoverState;      //
 
 		// double click message generation
-		static ClickStruct  ClickPending;       //
+		static ClickStruct ClickPending;        //
 
 		// Support for mouse grab
-		static GrabStruct   Grab;           //
+		static GrabStruct Grab;         //
 
 		// State
-		Point       mouse_position;     // Last position of mouse, in screen coords
-		internal static MouseButtons    MouseState;     // Last state of mouse buttons
+		Point mouse_position;       // Last position of mouse, in screen coords
+		internal static MouseButtons MouseState;        // Last state of mouse buttons
 		internal static bool in_doevents;
 		// 'Constants'
-		static int      DoubleClickInterval;    // msec; max interval between clicks to count as double click
+		static int DoubleClickInterval; // msec; max interval between clicks to count as double click
 
 		const EventMask SelectInputMask = (EventMask.ButtonPressMask |
 										   EventMask.ButtonReleaseMask |
@@ -223,10 +217,10 @@ namespace System.Windows.Forms
 										   EventMask.PointerMotionHintMask |
 										   EventMask.SubstructureNotifyMask);
 
-		static readonly object lockobj = new object ();
+		static readonly object lockobj = new object();
 
 		// messages WaitForHwndMwssage is waiting on
-		static Hashtable    messageHold;
+		static Hashtable messageHold;
 
 		#endregion  // Local Variables
 		#region Constructors
@@ -236,12 +230,11 @@ namespace System.Windows.Forms
 			RefCount = 0;
 			in_doevents = false;
 			// Now regular initialization
-			XlibLock = new object ();
+			XlibLock = new object();
 			X11Keyboard.XlibLock = XlibLock;
-			MessageQueues = Hashtable.Synchronized (new Hashtable(7));
-			unattached_timer_list = ArrayList.Synchronized (new ArrayList (3));
-			messageHold = Hashtable.Synchronized (new Hashtable(3));
-			Clipboard = new ClipboardData ();
+			MessageQueues = Hashtable.Synchronized(new Hashtable(7));
+			unattached_timer_list = ArrayList.Synchronized(new ArrayList(3));
+			messageHold = Hashtable.Synchronized(new Hashtable(3));
 			XInitThreads();
 			ErrorExceptions = false;
 			// X11 Initialization
@@ -251,12 +244,12 @@ namespace System.Windows.Forms
 			// Disable keyboard autorepeat
 			try
 			{
-				XkbSetDetectableAutoRepeat (DisplayHandle, true,  IntPtr.Zero);
+				XkbSetDetectableAutoRepeat(DisplayHandle, true, IntPtr.Zero);
 				detectable_key_auto_repeat = true;
 			}
 			catch
 			{
-				Console.Error.WriteLine ("Could not disable keyboard auto repeat, will attempt to disable manually.");
+				Console.Error.WriteLine("Could not disable keyboard auto repeat, will attempt to disable manually.");
 				detectable_key_auto_repeat = false;
 			}
 
@@ -268,10 +261,10 @@ namespace System.Windows.Forms
 		~XplatUIX11()
 		{
 			// Remove our display handle from S.D
-			Graphics.FromHdcInternal (IntPtr.Zero);
+			Graphics.FromHdcInternal(IntPtr.Zero);
 		}
 
-		#endregion  // Constructors
+		#endregion // Constructors
 
 		#region Singleton Specific Code
 		public static XplatUIX11 GetInstance()
@@ -373,12 +366,12 @@ namespace System.Windows.Forms
 		#region XExceptionClass
 		internal class XException : ApplicationException
 		{
-			IntPtr      Display;
-			IntPtr      ResourceID;
-			IntPtr      Serial;
-			XRequest    RequestCode;
-			byte        ErrorCode;
-			byte        MinorCode;
+			IntPtr Display;
+			IntPtr ResourceID;
+			IntPtr Serial;
+			XRequest RequestCode;
+			byte ErrorCode;
+			byte MinorCode;
 
 			public XException(IntPtr Display, IntPtr ResourceID, IntPtr Serial, byte ErrorCode, XRequest RequestCode, byte MinorCode)
 			{
@@ -400,13 +393,13 @@ namespace System.Windows.Forms
 
 			public static string GetMessage(IntPtr Display, IntPtr ResourceID, IntPtr Serial, byte ErrorCode, XRequest RequestCode, byte MinorCode)
 			{
-				StringBuilder   sb;
-				string      x_error_text;
-				string      error;
-				string      hwnd_text;
-				string      control_text;
-				Hwnd        hwnd;
-				Control     c;
+				StringBuilder sb;
+				string x_error_text;
+				string error;
+				string hwnd_text;
+				string control_text;
+				Hwnd hwnd;
+				Control c;
 				sb = new StringBuilder(160);
 				XGetErrorText(Display, ErrorCode, sb, sb.Capacity);
 				x_error_text = sb.ToString();
@@ -436,14 +429,14 @@ namespace System.Windows.Forms
 				return error;
 			}
 		}
-		#endregion  // XExceptionClass
+		#endregion // XExceptionClass
 
 		#region Internal Methods
 		internal void SetDisplay(IntPtr display_handle)
 		{
 			if (display_handle != IntPtr.Zero)
 			{
-				Hwnd    hwnd;
+				Hwnd hwnd;
 
 				if ((DisplayHandle != IntPtr.Zero) && (FosterParent != IntPtr.Zero))
 				{
@@ -460,21 +453,21 @@ namespace System.Windows.Forms
 				DisplayHandle = display_handle;
 				// We need to tell System.Drawing our DisplayHandle. FromHdcInternal has
 				// been hacked to do this for us.
-				Graphics.FromHdcInternal (DisplayHandle);
+				Graphics.FromHdcInternal(DisplayHandle);
 				// query for the render extension so
 				// we can ignore the spurious
 				// BadPicture errors that are
 				// generated by cairo/render.
-				XQueryExtension (DisplayHandle, "RENDER",
-								 ref render_major_opcode, ref render_first_event, ref render_first_error);
+				XQueryExtension(DisplayHandle, "RENDER",
+								ref render_major_opcode, ref render_first_event, ref render_first_error);
 
 				// Debugging support
-				if (Environment.GetEnvironmentVariable ("MONO_XSYNC") != null)
+				if (Environment.GetEnvironmentVariable("MONO_XSYNC") != null)
 				{
 					XSynchronize(DisplayHandle, true);
 				}
 
-				if (Environment.GetEnvironmentVariable ("MONO_XEXCEPTIONS") != null)
+				if (Environment.GetEnvironmentVariable("MONO_XEXCEPTIONS") != null)
 				{
 					ErrorExceptions = true;
 				}
@@ -492,7 +485,7 @@ namespace System.Windows.Forms
 					Console.WriteLine("XplatUIX11 Constructor failed to create FosterParent");
 				}
 
-				DebugHelper.WriteLine ("FosterParent created 0x{0:x}", FosterParent.ToInt32());
+				DebugHelper.WriteLine("FosterParent created 0x{0:x}", FosterParent.ToInt32());
 				hwnd = new Hwnd();
 				hwnd.Queue = ThreadQueue(Thread.CurrentThread);
 				hwnd.WholeWindow = FosterParent;
@@ -505,22 +498,32 @@ namespace System.Windows.Forms
 				// To wake up when a timer is ready
 				network_buffer = new byte[10];
 				int[] pipefds = new int[2];
-				Syscall.pipe (pipefds);
-				wake = new UnixStream (pipefds [1]);
+				Syscall.pipe(pipefds);
+				wake = new UnixStream(pipefds[1]);
 				// Make this non-blocking, so it doesn't
 				// deadlock if too many wakes are sent
 				// before the wake_receive end is polled
-				Syscall.fcntl (pipefds [1], FcntlCommand.F_SETFL, Syscall.fcntl (pipefds [1], FcntlCommand.F_GETFL) | (int) OpenFlags.O_NONBLOCK);
-				wake_receive = new UnixStream (pipefds [0]);
-				pollfds = new Pollfd [2];
-				pollfds [0] = new Pollfd ();
-				pollfds [0].fd = XConnectionNumber (DisplayHandle);
-				pollfds [0].events = PollEvents.POLLIN;
-				pollfds [1] = new Pollfd ();
-				pollfds [1].fd = pipefds [0];
-				pollfds [1].events = PollEvents.POLLIN;
+				Syscall.fcntl(pipefds[1], FcntlCommand.F_SETFL, Syscall.fcntl(pipefds[1], FcntlCommand.F_GETFL) | (int)OpenFlags.O_NONBLOCK);
+				wake_receive = new UnixStream(pipefds[0]);
+				pollfds = new Pollfd[2];
+				pollfds[0] = new Pollfd();
+				pollfds[0].fd = XConnectionNumber(DisplayHandle);
+				pollfds[0].events = PollEvents.POLLIN;
+				pollfds[1] = new Pollfd();
+				pollfds[1].fd = pipefds[0];
+				pollfds[1].events = PollEvents.POLLIN;
 				Keyboard = new X11Keyboard(DisplayHandle, FosterParent);
-				Dnd = new X11Dnd (DisplayHandle, Keyboard);
+				Dnd = new X11Dnd();
+				Clipboards = new[]
+				{
+					new X11Clipboard (false, UpdateMessageQueue, FosterParent, 10, 120),
+					new X11Clipboard (true, UpdateMessageQueue, FosterParent, 10, 120)
+				};
+				Selections = new X11Selection[] { Dnd, Clipboards[0], Clipboards[1] };
+				XplatUI.ClipboardGetContent = ClipboardGetContentImp;
+				XplatUI.ClipboardGetFormats = ClipboardGetFormatsImp;
+				XplatUI.ClipboardSetContent = ClipboardSetContentImp;
+				XplatUI.ClipboardClear = ClipboardClearImp;
 				DoubleClickInterval = 500;
 				HoverState.Interval = 500;
 				HoverState.Timer = new Timer();
@@ -540,7 +543,7 @@ namespace System.Windows.Forms
 				Caret.Timer.Tick += new EventHandler(CaretCallback);
 				SetupAtoms();
 				// Grab atom changes off the root window to catch certain WM events
-				XSelectInput(DisplayHandle, RootWindow, new IntPtr ((int) (EventMask.PropertyChangeMask | Keyboard.KeyEventMask)));
+				XSelectInput(DisplayHandle, RootWindow, new IntPtr((int)(EventMask.PropertyChangeMask | Keyboard.KeyEventMask)));
 				// Handle any upcoming errors
 				ErrorHandler = new XErrorHandler(HandleError);
 				XSetErrorHandler(ErrorHandler);
@@ -550,25 +553,38 @@ namespace System.Windows.Forms
 				throw new ArgumentNullException("Display", "Could not open display (X-Server required. Check your DISPLAY environment variable)");
 			}
 		}
-		#endregion  // Internal Methods
+
+		internal static string XGetAtomName(IntPtr display, IntPtr atom)
+		{
+			IntPtr buf = _XGetAtomName(display, atom);
+
+			if (buf == IntPtr.Zero)
+				return null;
+
+			string name = Marshal.PtrToStringAuto(buf);
+			XFree(buf);
+			return name;
+		}
+
+		#endregion // Internal Methods
 
 		#region Methods
-		[Conditional ("DriverDebug")]
-		static void DriverDebug (string format, params object [] args)
+		[Conditional("DriverDebug")]
+		static void DriverDebug(string format, params object[] args)
 		{
-			Console.WriteLine (String.Format (format, args));
+			Console.WriteLine(String.Format(format, args));
 		}
 
 		int unixtime()
 		{
 			TimeSpan t = (DateTime.UtcNow - new DateTime(1970, 1, 1));
-			return (int) t.TotalSeconds;
+			return (int)t.TotalSeconds;
 		}
 
 		static void SetupAtoms()
 		{
 			// make sure this array stays in sync with the statements below
-			string [] atom_names = new string[]
+			string[] atom_names = new string[]
 			{
 				"WM_PROTOCOLS",
 				"WM_DELETE_WINDOW",
@@ -630,92 +646,80 @@ namespace System.Windows.Forms
 				// "_NET_WM_WINDOW_TYPE_DIALOG",
 				//"_NET_WM_WINDOW_TYPE_SPLASH",
 				"_NET_WM_WINDOW_TYPE_NORMAL",
-				"CLIPBOARD",
-				"PRIMARY",
-				"COMPOUND_TEXT",
 				"UTF8_STRING",
-				"UTF16_STRING",
-				"RICHTEXTFORMAT",
-				"TARGETS",
 				"_SWF_AsyncAtom",
 				"_SWF_PostMessageAtom",
 				"_SWF_HoverAtom"
 			};
-			IntPtr[] atoms = new IntPtr [atom_names.Length];;
-			XInternAtoms (DisplayHandle, atom_names, atom_names.Length, false, atoms);
+			IntPtr[] atoms = new IntPtr[atom_names.Length]; ;
+			XInternAtoms(DisplayHandle, atom_names, atom_names.Length, false, atoms);
 			int off = 0;
-			WM_PROTOCOLS = atoms [off++];
-			WM_DELETE_WINDOW = atoms [off++];
-			WM_TAKE_FOCUS = atoms [off++];
+			WM_PROTOCOLS = atoms[off++];
+			WM_DELETE_WINDOW = atoms[off++];
+			WM_TAKE_FOCUS = atoms[off++];
 			//_NET_SUPPORTED = atoms [off++];
 			//_NET_CLIENT_LIST = atoms [off++];
 			//_NET_NUMBER_OF_DESKTOPS = atoms [off++];
-			_NET_DESKTOP_GEOMETRY = atoms [off++];
+			_NET_DESKTOP_GEOMETRY = atoms[off++];
 			//_NET_DESKTOP_VIEWPORT = atoms [off++];
-			_NET_CURRENT_DESKTOP = atoms [off++];
+			_NET_CURRENT_DESKTOP = atoms[off++];
 			//_NET_DESKTOP_NAMES = atoms [off++];
-			_NET_ACTIVE_WINDOW = atoms [off++];
-			_NET_WORKAREA = atoms [off++];
+			_NET_ACTIVE_WINDOW = atoms[off++];
+			_NET_WORKAREA = atoms[off++];
 			//_NET_SUPPORTING_WM_CHECK = atoms [off++];
 			//_NET_VIRTUAL_ROOTS = atoms [off++];
 			//_NET_DESKTOP_LAYOUT = atoms [off++];
 			//_NET_SHOWING_DESKTOP = atoms [off++];
 			//_NET_CLOSE_WINDOW = atoms [off++];
 			//_NET_MOVERESIZE_WINDOW = atoms [off++];
-			_NET_WM_MOVERESIZE = atoms [off++];
+			_NET_WM_MOVERESIZE = atoms[off++];
 			//_NET_RESTACK_WINDOW = atoms [off++];
 			//_NET_REQUEST_FRAME_EXTENTS = atoms [off++];
-			_NET_WM_NAME = atoms [off++];
+			_NET_WM_NAME = atoms[off++];
 			//_NET_WM_VISIBLE_NAME = atoms [off++];
 			//_NET_WM_ICON_NAME = atoms [off++];
 			//_NET_WM_VISIBLE_ICON_NAME = atoms [off++];
 			//_NET_WM_DESKTOP = atoms [off++];
-			_NET_WM_WINDOW_TYPE = atoms [off++];
-			_NET_WM_STATE = atoms [off++];
+			_NET_WM_WINDOW_TYPE = atoms[off++];
+			_NET_WM_STATE = atoms[off++];
 			//_NET_WM_ALLOWED_ACTIONS = atoms [off++];
 			//_NET_WM_STRUT = atoms [off++];
 			//_NET_WM_STRUT_PARTIAL = atoms [off++];
 			//_NET_WM_ICON_GEOMETRY = atoms [off++];
-			_NET_WM_ICON = atoms [off++];
+			_NET_WM_ICON = atoms[off++];
 			//_NET_WM_PID = atoms [off++];
 			//_NET_WM_HANDLED_ICONS = atoms [off++];
-			_NET_WM_USER_TIME = atoms [off++];
-			_NET_FRAME_EXTENTS = atoms [off++];
+			_NET_WM_USER_TIME = atoms[off++];
+			_NET_FRAME_EXTENTS = atoms[off++];
 			//_NET_WM_PING = atoms [off++];
 			//_NET_WM_SYNC_REQUEST = atoms [off++];
-			_NET_SYSTEM_TRAY_OPCODE = atoms [off++];
+			_NET_SYSTEM_TRAY_OPCODE = atoms[off++];
 			//_NET_SYSTEM_TRAY_ORIENTATION = atoms [off++];
-			_NET_WM_STATE_MAXIMIZED_HORZ = atoms [off++];
-			_NET_WM_STATE_MAXIMIZED_VERT = atoms [off++];
-			_NET_WM_STATE_HIDDEN = atoms [off++];
-			_XEMBED = atoms [off++];
-			_XEMBED_INFO = atoms [off++];
-			_MOTIF_WM_HINTS = atoms [off++];
-			_NET_WM_STATE_SKIP_TASKBAR = atoms [off++];
-			_NET_WM_STATE_ABOVE = atoms [off++];
-			_NET_WM_STATE_MODAL = atoms [off++];
-			_NET_WM_CONTEXT_HELP = atoms [off++];
-			_NET_WM_WINDOW_OPACITY = atoms [off++];
+			_NET_WM_STATE_MAXIMIZED_HORZ = atoms[off++];
+			_NET_WM_STATE_MAXIMIZED_VERT = atoms[off++];
+			_NET_WM_STATE_HIDDEN = atoms[off++];
+			_XEMBED = atoms[off++];
+			_XEMBED_INFO = atoms[off++];
+			_MOTIF_WM_HINTS = atoms[off++];
+			_NET_WM_STATE_SKIP_TASKBAR = atoms[off++];
+			_NET_WM_STATE_ABOVE = atoms[off++];
+			_NET_WM_STATE_MODAL = atoms[off++];
+			_NET_WM_CONTEXT_HELP = atoms[off++];
+			_NET_WM_WINDOW_OPACITY = atoms[off++];
 			//_NET_WM_WINDOW_TYPE_DESKTOP = atoms [off++];
 			//_NET_WM_WINDOW_TYPE_DOCK = atoms [off++];
 			//_NET_WM_WINDOW_TYPE_TOOLBAR = atoms [off++];
 			//_NET_WM_WINDOW_TYPE_MENU = atoms [off++];
-			_NET_WM_WINDOW_TYPE_UTILITY = atoms [off++];
+			_NET_WM_WINDOW_TYPE_UTILITY = atoms[off++];
 			// _NET_WM_WINDOW_TYPE_DIALOG = atoms [off++];
 			//_NET_WM_WINDOW_TYPE_SPLASH = atoms [off++];
-			_NET_WM_WINDOW_TYPE_NORMAL = atoms [off++];
-			CLIPBOARD = atoms [off++];
-			PRIMARY = atoms [off++];
-			OEMTEXT = atoms [off++];
-			UTF8_STRING = atoms [off++];
-			UTF16_STRING = atoms [off++];
-			RICHTEXTFORMAT = atoms [off++];
-			TARGETS = atoms [off++];
-			AsyncAtom = atoms [off++];
-			PostAtom = atoms [off++];
-			HoverState.Atom = atoms [off++];
+			_NET_WM_WINDOW_TYPE_NORMAL = atoms[off++];
+			UTF8_STRING = atoms[off++];
+			AsyncAtom = atoms[off++];
+			PostAtom = atoms[off++];
+			HoverState.Atom = atoms[off++];
 			//DIB = (IntPtr)Atom.XA_PIXMAP;
-			_NET_SYSTEM_TRAY_S = XInternAtom (DisplayHandle, "_NET_SYSTEM_TRAY_S" + ScreenNo.ToString(), false);
+			_NET_SYSTEM_TRAY_S = XInternAtom(DisplayHandle, "_NET_SYSTEM_TRAY_S" + ScreenNo.ToString(), false);
 		}
 
 		void GetSystrayManagerWindow()
@@ -728,12 +732,12 @@ namespace System.Windows.Forms
 
 		void SendNetWMMessage(IntPtr window, IntPtr message_type, IntPtr l0, IntPtr l1, IntPtr l2)
 		{
-			SendNetWMMessage (window, message_type, l0, l1, l2, IntPtr.Zero);
+			SendNetWMMessage(window, message_type, l0, l1, l2, IntPtr.Zero);
 		}
 
 		void SendNetWMMessage(IntPtr window, IntPtr message_type, IntPtr l0, IntPtr l1, IntPtr l2, IntPtr l3)
 		{
-			XEvent  xev;
+			XEvent xev;
 			xev = new XEvent();
 			xev.ClientMessageEvent.type = XEventName.ClientMessage;
 			xev.ClientMessageEvent.send_event = true;
@@ -744,12 +748,12 @@ namespace System.Windows.Forms
 			xev.ClientMessageEvent.ptr2 = l1;
 			xev.ClientMessageEvent.ptr3 = l2;
 			xev.ClientMessageEvent.ptr4 = l3;
-			XSendEvent(DisplayHandle, RootWindow, false, new IntPtr ((int) (EventMask.SubstructureRedirectMask | EventMask.SubstructureNotifyMask)), ref xev);
+			XSendEvent(DisplayHandle, RootWindow, false, new IntPtr((int)(EventMask.SubstructureRedirectMask | EventMask.SubstructureNotifyMask)), ref xev);
 		}
 
 		void SendNetClientMessage(IntPtr window, IntPtr message_type, IntPtr l0, IntPtr l1, IntPtr l2)
 		{
-			XEvent  xev;
+			XEvent xev;
 			xev = new XEvent();
 			xev.ClientMessageEvent.type = XEventName.ClientMessage;
 			xev.ClientMessageEvent.send_event = true;
@@ -759,7 +763,7 @@ namespace System.Windows.Forms
 			xev.ClientMessageEvent.ptr1 = l0;
 			xev.ClientMessageEvent.ptr2 = l1;
 			xev.ClientMessageEvent.ptr3 = l2;
-			XSendEvent(DisplayHandle, window, false, new IntPtr ((int)EventMask.NoEventMask), ref xev);
+			XSendEvent(DisplayHandle, window, false, new IntPtr((int)EventMask.NoEventMask), ref xev);
 		}
 
 		// For WM_LBUTTONDOWN, WM_MBUTTONDOWN, WM_RBUTTONDOWN, WM_XBUTTONDOWN
@@ -773,7 +777,7 @@ namespace System.Windows.Forms
 				return;
 			}
 
-			hwnd = Hwnd.GetObjectFromWindow (child);
+			hwnd = Hwnd.GetObjectFromWindow(child);
 
 			if (hwnd == null)
 			{
@@ -785,7 +789,7 @@ namespace System.Windows.Forms
 				return;
 			}
 
-			if (ExStyleSet ((int) hwnd.initial_ex_style, WindowExStyles.WS_EX_NOPARENTNOTIFY))
+			if (ExStyleSet((int)hwnd.initial_ex_style, WindowExStyles.WS_EX_NOPARENTNOTIFY))
 			{
 				return;
 			}
@@ -809,25 +813,25 @@ namespace System.Windows.Forms
 				SendMessage(hwnd.Parent.Handle, Msg.WM_PARENTNOTIFY, Control.MakeParam((int)cause, 0), Control.MakeParam(x, y));
 			}
 
-			SendParentNotify (hwnd.Parent.Handle, cause, x, y);
+			SendParentNotify(hwnd.Parent.Handle, cause, x, y);
 		}
 
-		bool StyleSet (int s, WindowStyles ws)
+		bool StyleSet(int s, WindowStyles ws)
 		{
 			return (s & (int)ws) == (int)ws;
 		}
 
-		bool ExStyleSet (int ex, WindowExStyles exws)
+		bool ExStyleSet(int ex, WindowExStyles exws)
 		{
 			return (ex & (int)exws) == (int)exws;
 		}
 
-		internal static Rectangle TranslateClientRectangleToXClientRectangle (Hwnd hwnd)
+		internal static Rectangle TranslateClientRectangleToXClientRectangle(Hwnd hwnd)
 		{
-			return TranslateClientRectangleToXClientRectangle (hwnd, Control.FromHandle (hwnd.Handle));
+			return TranslateClientRectangleToXClientRectangle(hwnd, Control.FromHandle(hwnd.Handle));
 		}
 
-		internal static Rectangle TranslateClientRectangleToXClientRectangle (Hwnd hwnd, Control ctrl)
+		internal static Rectangle TranslateClientRectangleToXClientRectangle(Hwnd hwnd, Control ctrl)
 		{
 			/*
 			    If this is a form with no window manager, X is handling all the border and caption painting
@@ -839,11 +843,11 @@ namespace System.Windows.Forms
 			CreateParams cp = null;
 
 			if (form != null)
-				cp = form.GetCreateParams ();
+				cp = form.GetCreateParams();
 
-			if (form != null && (form.window_manager == null && !cp.IsSet (WindowExStyles.WS_EX_TOOLWINDOW)))
+			if (form != null && (form.window_manager == null && !cp.IsSet(WindowExStyles.WS_EX_TOOLWINDOW)))
 			{
-				Hwnd.Borders borders = Hwnd.GetBorders (cp, null);
+				Hwnd.Borders borders = Hwnd.GetBorders(cp, null);
 				Rectangle xrect = rect;
 				xrect.Y -= borders.top;
 				xrect.X -= borders.left;
@@ -863,12 +867,12 @@ namespace System.Windows.Forms
 			return rect;
 		}
 
-		internal static Size TranslateWindowSizeToXWindowSize (CreateParams cp)
+		internal static Size TranslateWindowSizeToXWindowSize(CreateParams cp)
 		{
-			return TranslateWindowSizeToXWindowSize (cp, new Size (cp.Width, cp.Height));
+			return TranslateWindowSizeToXWindowSize(cp, new Size(cp.Width, cp.Height));
 		}
 
-		internal static Size TranslateWindowSizeToXWindowSize (CreateParams cp, Size size)
+		internal static Size TranslateWindowSizeToXWindowSize(CreateParams cp, Size size)
 		{
 			/*
 			    If this is a form with no window manager, X is handling all the border and caption painting
@@ -877,9 +881,9 @@ namespace System.Windows.Forms
 			*/
 			Form form = cp.control as Form;
 
-			if (form != null && (form.window_manager == null && !cp.IsSet (WindowExStyles.WS_EX_TOOLWINDOW)))
+			if (form != null && (form.window_manager == null && !cp.IsSet(WindowExStyles.WS_EX_TOOLWINDOW)))
 			{
-				Hwnd.Borders borders = Hwnd.GetBorders (cp, null);
+				Hwnd.Borders borders = Hwnd.GetBorders(cp, null);
 				Size xrect = size;
 				xrect.Width -= borders.left + borders.right;
 				xrect.Height -= borders.top + borders.bottom;
@@ -895,19 +899,19 @@ namespace System.Windows.Forms
 			return size;
 		}
 
-		internal static Size TranslateXWindowSizeToWindowSize (CreateParams cp, int xWidth, int xHeight)
+		internal static Size TranslateXWindowSizeToWindowSize(CreateParams cp, int xWidth, int xHeight)
 		{
 			/*
 			    If this is a form with no window manager, X is handling all the border and caption painting
 			    so remove that from the area (since the area we set of the window here is the part of the window
 			    we're painting in only)
 			*/
-			Size rect = new Size (xWidth, xHeight);
+			Size rect = new Size(xWidth, xHeight);
 			Form form = cp.control as Form;
 
-			if (form != null && (form.window_manager == null && !cp.IsSet (WindowExStyles.WS_EX_TOOLWINDOW)))
+			if (form != null && (form.window_manager == null && !cp.IsSet(WindowExStyles.WS_EX_TOOLWINDOW)))
 			{
-				Hwnd.Borders borders = Hwnd.GetBorders (cp, null);
+				Hwnd.Borders borders = Hwnd.GetBorders(cp, null);
 				Size xrect = rect;
 				xrect.Width += borders.left + borders.right;
 				xrect.Height += borders.top + borders.bottom;
@@ -917,16 +921,16 @@ namespace System.Windows.Forms
 			return rect;
 		}
 
-		internal static Point GetTopLevelWindowLocation (Hwnd hwnd)
+		internal static Point GetTopLevelWindowLocation(Hwnd hwnd)
 		{
 			IntPtr dummy;
 			int x, y;
 			Hwnd.Borders frame;
-			XTranslateCoordinates (DisplayHandle, hwnd.whole_window, RootWindow, 0, 0, out x, out y, out dummy);
-			frame = FrameExtents (hwnd.whole_window);
+			XTranslateCoordinates(DisplayHandle, hwnd.whole_window, RootWindow, 0, 0, out x, out y, out dummy);
+			frame = FrameExtents(hwnd.whole_window);
 			x -= frame.left;
 			y -= frame.top;
-			return new Point (x, y);
+			return new Point(x, y);
 		}
 
 		void DeriveStyles(int Style, int ExStyle, out FormBorderStyle border_style, out bool border_static, out TitleStyle title_style, out int caption_height, out int tool_caption_height)
@@ -935,18 +939,18 @@ namespace System.Windows.Forms
 			tool_caption_height = 19;
 			border_static = false;
 
-			if (StyleSet (Style, WindowStyles.WS_CHILD))
+			if (StyleSet(Style, WindowStyles.WS_CHILD))
 			{
-				if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_CLIENTEDGE))
+				if (ExStyleSet(ExStyle, WindowExStyles.WS_EX_CLIENTEDGE))
 				{
 					border_style = FormBorderStyle.Fixed3D;
 				}
-				else if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_STATICEDGE))
+				else if (ExStyleSet(ExStyle, WindowExStyles.WS_EX_STATICEDGE))
 				{
 					border_style = FormBorderStyle.Fixed3D;
 					border_static = true;
 				}
-				else if (!StyleSet (Style, WindowStyles.WS_BORDER))
+				else if (!StyleSet(Style, WindowStyles.WS_BORDER))
 				{
 					border_style = FormBorderStyle.None;
 				}
@@ -957,11 +961,11 @@ namespace System.Windows.Forms
 
 				title_style = TitleStyle.None;
 
-				if (StyleSet (Style, WindowStyles.WS_CAPTION))
+				if (StyleSet(Style, WindowStyles.WS_CAPTION))
 				{
 					caption_height = 19;
 
-					if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW))
+					if (ExStyleSet(ExStyle, WindowExStyles.WS_EX_TOOLWINDOW))
 					{
 						title_style = TitleStyle.Tool;
 					}
@@ -971,14 +975,14 @@ namespace System.Windows.Forms
 					}
 				}
 
-				if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_MDICHILD))
+				if (ExStyleSet(ExStyle, WindowExStyles.WS_EX_MDICHILD))
 				{
 					caption_height = 19;
 
-					if (StyleSet (Style, WindowStyles.WS_OVERLAPPEDWINDOW) ||
-							ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW))
+					if (StyleSet(Style, WindowStyles.WS_OVERLAPPEDWINDOW) ||
+							ExStyleSet(ExStyle, WindowExStyles.WS_EX_TOOLWINDOW))
 					{
-						border_style = (FormBorderStyle) 0xFFFF;
+						border_style = (FormBorderStyle)0xFFFF;
 					}
 					else
 					{
@@ -990,9 +994,9 @@ namespace System.Windows.Forms
 			{
 				title_style = TitleStyle.None;
 
-				if (StyleSet (Style, WindowStyles.WS_CAPTION))
+				if (StyleSet(Style, WindowStyles.WS_CAPTION))
 				{
-					if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW))
+					if (ExStyleSet(ExStyle, WindowExStyles.WS_EX_TOOLWINDOW))
 					{
 						title_style = TitleStyle.Tool;
 					}
@@ -1004,9 +1008,9 @@ namespace System.Windows.Forms
 
 				border_style = FormBorderStyle.None;
 
-				if (StyleSet (Style, WindowStyles.WS_THICKFRAME))
+				if (StyleSet(Style, WindowStyles.WS_THICKFRAME))
 				{
-					if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW))
+					if (ExStyleSet(ExStyle, WindowExStyles.WS_EX_TOOLWINDOW))
 					{
 						border_style = FormBorderStyle.SizableToolWindow;
 					}
@@ -1017,33 +1021,33 @@ namespace System.Windows.Forms
 				}
 				else
 				{
-					if (StyleSet (Style, WindowStyles.WS_CAPTION))
+					if (StyleSet(Style, WindowStyles.WS_CAPTION))
 					{
-						if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_CLIENTEDGE))
+						if (ExStyleSet(ExStyle, WindowExStyles.WS_EX_CLIENTEDGE))
 						{
 							border_style = FormBorderStyle.Fixed3D;
 						}
-						else if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_STATICEDGE))
+						else if (ExStyleSet(ExStyle, WindowExStyles.WS_EX_STATICEDGE))
 						{
 							border_style = FormBorderStyle.Fixed3D;
 							border_static = true;
 						}
-						else if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_DLGMODALFRAME))
+						else if (ExStyleSet(ExStyle, WindowExStyles.WS_EX_DLGMODALFRAME))
 						{
 							border_style = FormBorderStyle.FixedDialog;
 						}
-						else if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW))
+						else if (ExStyleSet(ExStyle, WindowExStyles.WS_EX_TOOLWINDOW))
 						{
 							border_style = FormBorderStyle.FixedToolWindow;
 						}
-						else if (StyleSet (Style, WindowStyles.WS_BORDER))
+						else if (StyleSet(Style, WindowStyles.WS_BORDER))
 						{
 							border_style = FormBorderStyle.FixedSingle;
 						}
 					}
 					else
 					{
-						if (StyleSet (Style, WindowStyles.WS_BORDER))
+						if (StyleSet(Style, WindowStyles.WS_BORDER))
 						{
 							border_style = FormBorderStyle.FixedSingle;
 						}
@@ -1059,19 +1063,19 @@ namespace System.Windows.Forms
 
 		void SetWMStyles(Hwnd hwnd, CreateParams cp)
 		{
-			MotifWmHints        mwmHints;
-			MotifFunctions      functions;
-			MotifDecorations    decorations;
-			int[]           atoms;
-			int         atom_count;
-			Rectangle       client_rect;
-			Form            form;
-			IntPtr          window_type;
-			bool            hide_from_taskbar;
-			IntPtr          transient_for_parent;
+			MotifWmHints mwmHints;
+			MotifFunctions functions;
+			MotifDecorations decorations;
+			int[] atoms;
+			int atom_count;
+			Rectangle client_rect;
+			Form form;
+			IntPtr window_type;
+			bool hide_from_taskbar;
+			IntPtr transient_for_parent;
 
 			// Windows we manage ourselves don't need WM window styles.
-			if (cp.HasWindowManager && !cp.IsSet (WindowExStyles.WS_EX_TOOLWINDOW))
+			if (cp.HasWindowManager && !cp.IsSet(WindowExStyles.WS_EX_TOOLWINDOW))
 			{
 				return;
 			}
@@ -1087,7 +1091,7 @@ namespace System.Windows.Forms
 			mwmHints.decorations = (IntPtr)0;
 			form = cp.control as Form;
 
-			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW))
+			if (ExStyleSet(cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW))
 			{
 				/*  tool windows get no window manager
 				    decorations.
@@ -1105,52 +1109,52 @@ namespace System.Windows.Forms
 			}
 			else
 			{
-				if (StyleSet (cp.Style, WindowStyles.WS_CAPTION))
+				if (StyleSet(cp.Style, WindowStyles.WS_CAPTION))
 				{
 					functions |= MotifFunctions.Move;
 					decorations |= MotifDecorations.Title | MotifDecorations.Menu;
 				}
 
-				if (StyleSet (cp.Style, WindowStyles.WS_THICKFRAME))
+				if (StyleSet(cp.Style, WindowStyles.WS_THICKFRAME))
 				{
 					functions |= MotifFunctions.Move | MotifFunctions.Resize;
 					decorations |= MotifDecorations.Border | MotifDecorations.ResizeH;
 				}
 
-				if (StyleSet (cp.Style, WindowStyles.WS_MINIMIZEBOX))
+				if (StyleSet(cp.Style, WindowStyles.WS_MINIMIZEBOX))
 				{
 					functions |= MotifFunctions.Minimize;
 					decorations |= MotifDecorations.Minimize;
 				}
 
-				if (StyleSet (cp.Style, WindowStyles.WS_MAXIMIZEBOX))
+				if (StyleSet(cp.Style, WindowStyles.WS_MAXIMIZEBOX))
 				{
 					functions |= MotifFunctions.Maximize;
 					decorations |= MotifDecorations.Maximize;
 				}
 
-				if (StyleSet (cp.Style, WindowStyles.WS_SIZEBOX))
+				if (StyleSet(cp.Style, WindowStyles.WS_SIZEBOX))
 				{
 					functions |= MotifFunctions.Resize;
 					decorations |= MotifDecorations.ResizeH;
 				}
 
-				if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_DLGMODALFRAME))
+				if (ExStyleSet(cp.ExStyle, WindowExStyles.WS_EX_DLGMODALFRAME))
 				{
 					decorations |= MotifDecorations.Border;
 				}
 
-				if (StyleSet (cp.Style, WindowStyles.WS_BORDER))
+				if (StyleSet(cp.Style, WindowStyles.WS_BORDER))
 				{
 					decorations |= MotifDecorations.Border;
 				}
 
-				if (StyleSet (cp.Style, WindowStyles.WS_DLGFRAME))
+				if (StyleSet(cp.Style, WindowStyles.WS_DLGFRAME))
 				{
 					decorations |= MotifDecorations.Border;
 				}
 
-				if (StyleSet (cp.Style, WindowStyles.WS_SYSMENU))
+				if (StyleSet(cp.Style, WindowStyles.WS_SYSMENU))
 				{
 					functions |= MotifFunctions.Close;
 				}
@@ -1170,7 +1174,7 @@ namespace System.Windows.Forms
 			if ((functions & MotifFunctions.Resize) == 0)
 			{
 				hwnd.fixed_size = true;
-				Rectangle fixed_rectangle = new Rectangle (cp.X, cp.Y, cp.Width, cp.Height);
+				Rectangle fixed_rectangle = new Rectangle(cp.X, cp.Y, cp.Width, cp.Height);
 				SetWindowMinMax(hwnd.Handle, fixed_rectangle, fixed_rectangle.Size, fixed_rectangle.Size, cp);
 			}
 			else
@@ -1180,9 +1184,9 @@ namespace System.Windows.Forms
 
 			mwmHints.functions = (IntPtr)functions;
 			mwmHints.decorations = (IntPtr)decorations;
-			DriverDebug ("SetWMStyles ({0}, {1}) functions = {2}, decorations = {3}", hwnd, cp, functions, decorations);
+			DriverDebug("SetWMStyles ({0}, {1}) functions = {2}, decorations = {3}", hwnd, cp, functions, decorations);
 
-			if (cp.IsSet (WindowExStyles.WS_EX_TOOLWINDOW))
+			if (cp.IsSet(WindowExStyles.WS_EX_TOOLWINDOW))
 			{
 				// needed! map toolwindows to _NET_WM_WINDOW_TYPE_UTILITY to make newer metacity versions happy
 				// and get those windows in front of their parents
@@ -1193,11 +1197,11 @@ namespace System.Windows.Forms
 				window_type = _NET_WM_WINDOW_TYPE_NORMAL;
 			}
 
-			if (!cp.IsSet (WindowExStyles.WS_EX_APPWINDOW))
+			if (!cp.IsSet(WindowExStyles.WS_EX_APPWINDOW))
 			{
 				hide_from_taskbar = true;
 			}
-			else if (cp.IsSet (WindowExStyles.WS_EX_TOOLWINDOW) &&  form != null && form.Parent != null && !form.ShowInTaskbar)
+			else if (cp.IsSet(WindowExStyles.WS_EX_TOOLWINDOW) &&  form != null && form.Parent != null && !form.ShowInTaskbar)
 			{
 				hide_from_taskbar = true;
 			}
@@ -1206,13 +1210,13 @@ namespace System.Windows.Forms
 				hide_from_taskbar = false;
 			}
 
-			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW))
+			if (ExStyleSet(cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW))
 			{
 				if (form != null && !hwnd.reparented)
 				{
 					if (form.Owner != null && form.Owner.Handle != IntPtr.Zero)
 					{
-						Hwnd owner_hwnd = Hwnd.ObjectFromHandle (form.Owner.Handle);
+						Hwnd owner_hwnd = Hwnd.ObjectFromHandle(form.Owner.Handle);
 
 						if (owner_hwnd != null)
 							transient_for_parent = owner_hwnd.whole_window;
@@ -1220,28 +1224,28 @@ namespace System.Windows.Forms
 				}
 			}
 
-			if (StyleSet (cp.Style, WindowStyles.WS_POPUP) && (hwnd.parent != null) && (hwnd.parent.whole_window != IntPtr.Zero))
+			if (StyleSet(cp.Style, WindowStyles.WS_POPUP) && (hwnd.parent != null) && (hwnd.parent.whole_window != IntPtr.Zero))
 			{
 				transient_for_parent = hwnd.parent.whole_window;
 			}
 
-			FormWindowState current_state = GetWindowState (hwnd.Handle);
+			FormWindowState current_state = GetWindowState(hwnd.Handle);
 
 			if (current_state == (FormWindowState)(-1))
 				current_state = FormWindowState.Normal;
 
-			client_rect = TranslateClientRectangleToXClientRectangle (hwnd);
+			client_rect = TranslateClientRectangleToXClientRectangle(hwnd);
 
 			lock (XlibLock)
 			{
 				atom_count = 0;
-				atoms [0] = window_type.ToInt32 ();
-				XChangeProperty (DisplayHandle, hwnd.whole_window, _NET_WM_WINDOW_TYPE, (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
+				atoms[0] = window_type.ToInt32();
+				XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_WINDOW_TYPE, (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
 				XChangeProperty(DisplayHandle, hwnd.whole_window, _MOTIF_WM_HINTS, _MOTIF_WM_HINTS, 32, PropertyMode.Replace, ref mwmHints, 5);
 
 				if (transient_for_parent != IntPtr.Zero)
 				{
-					XSetTransientForHint (DisplayHandle, hwnd.whole_window, transient_for_parent);
+					XSetTransientForHint(DisplayHandle, hwnd.whole_window, transient_for_parent);
 				}
 
 				MoveResizeWindow(DisplayHandle, hwnd.client_window, client_rect.X, client_rect.Y, client_rect.Width, client_rect.Height);
@@ -1267,7 +1271,7 @@ namespace System.Windows.Forms
 
 				if (form != null && form.Modal)
 				{
-					atoms[atom_count++] = _NET_WM_STATE_MODAL.ToInt32 ();
+					atoms[atom_count++] = _NET_WM_STATE_MODAL.ToInt32();
 				}
 
 				XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_STATE, (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, atom_count);
@@ -1275,7 +1279,7 @@ namespace System.Windows.Forms
 				IntPtr[] atom_ptrs = new IntPtr[2];
 				atom_ptrs[atom_count++] = WM_DELETE_WINDOW;
 
-				if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_CONTEXTHELP))
+				if (ExStyleSet(cp.ExStyle, WindowExStyles.WS_EX_CONTEXTHELP))
 				{
 					atom_ptrs[atom_count++] = _NET_WM_CONTEXT_HELP;
 				}
@@ -1295,14 +1299,14 @@ namespace System.Windows.Forms
 				// property.  This will cause metacity
 				// to use the "no icon set" icon, and
 				// we'll still have an icon.
-				XDeleteProperty (DisplayHandle, hwnd.whole_window, _NET_WM_ICON);
+				XDeleteProperty(DisplayHandle, hwnd.whole_window, _NET_WM_ICON);
 			}
 			else
 			{
-				Bitmap      bitmap;
-				int     size;
-				IntPtr[]    data;
-				int     index;
+				Bitmap bitmap;
+				int size;
+				IntPtr[] data;
+				int index;
 				bitmap = icon.ToBitmap();
 				index = 0;
 				size = bitmap.Width * bitmap.Height + 2;
@@ -1314,25 +1318,25 @@ namespace System.Windows.Forms
 				{
 					for (int x = 0; x < bitmap.Width; x++)
 					{
-						data[index++] = (IntPtr)bitmap.GetPixel (x, y).ToArgb ();
+						data[index++] = (IntPtr)bitmap.GetPixel(x, y).ToArgb();
 					}
 				}
 
-				XChangeProperty (DisplayHandle, hwnd.whole_window,
-								 _NET_WM_ICON, (IntPtr)Atom.XA_CARDINAL, 32,
-								 PropertyMode.Replace, data, size);
+				XChangeProperty(DisplayHandle, hwnd.whole_window,
+								_NET_WM_ICON, (IntPtr)Atom.XA_CARDINAL, 32,
+								PropertyMode.Replace, data, size);
 			}
 		}
 
-		void WakeupMain ()
+		void WakeupMain()
 		{
 			try
 			{
-				wake.Write (new byte [] { 0xFF }, 0, 1);
+				wake.Write(new byte[] { 0xFF }, 0, 1);
 			}
-			catch (SocketException ex)
+			catch (UnixIOException ex)
 			{
-				if (ex.SocketErrorCode != SocketError.WouldBlock)
+				if (ex.ErrorCode != Errno.EWOULDBLOCK && ex.ErrorCode != Errno.EAGAIN)
 				{
 					throw;
 				}
@@ -1353,146 +1357,7 @@ namespace System.Windows.Forms
 			return queue;
 		}
 
-		void TranslatePropertyToClipboard(IntPtr property)
-		{
-			IntPtr          actual_atom;
-			int         actual_format;
-			IntPtr          nitems;
-			IntPtr          bytes_after;
-			IntPtr          prop = IntPtr.Zero;
-			Clipboard.Item = null;
-			XGetWindowProperty(DisplayHandle, FosterParent, property, IntPtr.Zero, new IntPtr (0x7fffffff), true, (IntPtr)Atom.AnyPropertyType, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
-
-			if ((long)nitems > 0)
-			{
-				if (property == (IntPtr)Atom.XA_STRING)
-				{
-					// Xamarin-5116: PtrToStringAnsi expects to get UTF-8, but we might have
-					// Latin-1 instead, in which case it will return null.
-					var s = Marshal.PtrToStringAnsi (prop);
-
-					if (string.IsNullOrEmpty (s))
-					{
-						var sb = new StringBuilder ();
-
-						for (int i = 0; i < (int)nitems; i++)
-						{
-							var b = Marshal.ReadByte (prop, i);
-							sb.Append ((char)b);
-						}
-
-						s = sb.ToString ();
-					}
-
-					// Some X managers/apps pass unicode chars as escaped strings, so
-					// we may need to unescape them.
-					Clipboard.Item = UnescapeUnicodeFromAnsi (s);
-				}
-				else if (property == (IntPtr)Atom.XA_BITMAP)
-				{
-					// FIXME - convert bitmap to image
-				}
-				else if (property == (IntPtr)Atom.XA_PIXMAP)
-				{
-					// FIXME - convert pixmap to image
-				}
-				else if (property == OEMTEXT)
-				{
-					Clipboard.Item = UnescapeUnicodeFromAnsi (Marshal.PtrToStringAnsi(prop));
-				}
-				else if (property == UTF8_STRING)
-				{
-					byte [] buffer = new byte [(int)nitems];
-
-					for (int i = 0; i < (int)nitems; i++)
-						buffer [i] = Marshal.ReadByte (prop, i);
-
-					Clipboard.Item = Encoding.UTF8.GetString (buffer);
-				}
-				else if (property == UTF16_STRING)
-				{
-					byte [] buffer = new byte [(int)nitems];
-
-					for (int i = 0; i < (int)nitems; i++)
-						buffer [i] = Marshal.ReadByte (prop, i);
-
-					Clipboard.Item = Encoding.Unicode.GetString (buffer);
-				}
-				else if (property == RICHTEXTFORMAT)
-					Clipboard.Item = Marshal.PtrToStringAnsi(prop);
-				else if (DataFormats.ContainsFormat (property.ToInt32 ()))
-				{
-					if (DataFormats.GetFormat (property.ToInt32 ()).is_serializable)
-					{
-						MemoryStream memory_stream = new MemoryStream ((int)nitems);
-
-						for (int i = 0; i < (int)nitems; i++)
-							memory_stream.WriteByte (Marshal.ReadByte (prop, i));
-
-						memory_stream.Position = 0;
-						BinaryFormatter formatter = new BinaryFormatter ();
-						Clipboard.Item = formatter.Deserialize (memory_stream);
-						memory_stream.Close ();
-					}
-				}
-
-				XFree(prop);
-			}
-		}
-
-		string UnescapeUnicodeFromAnsi (string value)
-		{
-			if (value == null || value.IndexOf ("\\u") == -1)
-				return value;
-
-			StringBuilder sb = new StringBuilder (value.Length);
-			int start, pos;
-			start = pos = 0;
-
-			while (start < value.Length)
-			{
-				pos = value.IndexOf ("\\u", start);
-
-				if (pos == -1)
-					break;
-
-				sb.Append (value, start, pos - start);
-				pos += 2;
-				start = pos;
-				int length = 0;
-
-				while (pos < value.Length && length < 4)
-				{
-					if (!ValidHexDigit (value [pos]))
-						break;
-
-					length++;
-					pos++;
-				}
-
-				int res;
-
-				if (!Int32.TryParse (value.Substring (start, length), System.Globalization.NumberStyles.HexNumber,
-									 null, out res))
-					return value; // Error, return the unescaped original value.
-
-				sb.Append ((char)res);
-				start = pos;
-			}
-
-			// Append any remaining data.
-			if (start < value.Length)
-				sb.Append (value, start, value.Length - start);
-
-			return sb.ToString ();
-		}
-
-		private static bool ValidHexDigit (char e)
-		{
-			return Char.IsDigit (e) || (e >= 'A' && e <= 'F') || (e >= 'a' && e <= 'f');
-		}
-
-		void AddExpose (Hwnd hwnd, bool client, int x, int y, int width, int height)
+		void AddExpose(Hwnd hwnd, bool client, int x, int y, int width, int height)
 		{
 			// Don't waste time
 			if ((hwnd == null) || (x > hwnd.Width) || (y > hwnd.Height) || ((x + width) < 0) || ((y + height) < 0))
@@ -1527,7 +1392,7 @@ namespace System.Windows.Forms
 			}
 			else
 			{
-				hwnd.AddNcInvalidArea (x, y, width, height);
+				hwnd.AddNcInvalidArea(x, y, width, height);
 
 				if (!hwnd.nc_expose_pending)
 				{
@@ -1541,35 +1406,35 @@ namespace System.Windows.Forms
 			}
 		}
 
-		static Hwnd.Borders FrameExtents (IntPtr window)
+		static Hwnd.Borders FrameExtents(IntPtr window)
 		{
 			IntPtr actual_atom;
 			int actual_format;
 			IntPtr nitems;
 			IntPtr bytes_after;
 			IntPtr prop = IntPtr.Zero;
-			Hwnd.Borders rect = new Hwnd.Borders ();
-			XGetWindowProperty (DisplayHandle, window, _NET_FRAME_EXTENTS, IntPtr.Zero, new IntPtr (16), false, (IntPtr)Atom.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+			Hwnd.Borders rect = new Hwnd.Borders();
+			XGetWindowProperty(DisplayHandle, window, _NET_FRAME_EXTENTS, IntPtr.Zero, new IntPtr(16), false, (IntPtr)Atom.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
 
 			if (prop != IntPtr.Zero)
 			{
-				if (nitems.ToInt32 () == 4)
+				if (nitems.ToInt32() == 4)
 				{
-					rect.left = Marshal.ReadInt32 (prop, 0);
-					rect.right = Marshal.ReadInt32 (prop, IntPtr.Size);
-					rect.top = Marshal.ReadInt32 (prop, 2 * IntPtr.Size);
-					rect.bottom = Marshal.ReadInt32 (prop, 3 * IntPtr.Size);
+					rect.left = Marshal.ReadInt32(prop, 0);
+					rect.right = Marshal.ReadInt32(prop, IntPtr.Size);
+					rect.top = Marshal.ReadInt32(prop, 2 * IntPtr.Size);
+					rect.bottom = Marshal.ReadInt32(prop, 3 * IntPtr.Size);
 				}
 
-				XFree (prop);
+				XFree(prop);
 			}
 
 			return rect;
 		}
 
-		void AddConfigureNotify (XEvent xevent)
+		void AddConfigureNotify(XEvent xevent)
 		{
-			Hwnd    hwnd;
+			Hwnd hwnd;
 			hwnd = Hwnd.GetObjectFromWindow(xevent.ConfigureEvent.window);
 
 			// Don't waste time
@@ -1584,36 +1449,36 @@ namespace System.Windows.Forms
 				{
 					// The location given by the event is not reliable between different wm's,
 					// so use an alternative way of getting it.
-					Point location = GetTopLevelWindowLocation (hwnd);
+					Point location = GetTopLevelWindowLocation(hwnd);
 					hwnd.x = location.X;
 					hwnd.y = location.Y;
 				}
 
 				// XXX this sucks.  this isn't thread safe
-				Control ctrl = Control.FromHandle (hwnd.Handle);
+				Control ctrl = Control.FromHandle(hwnd.Handle);
 				Size TranslatedSize;
 
 				if (ctrl != null)
 				{
-					TranslatedSize = TranslateXWindowSizeToWindowSize (ctrl.GetCreateParams (), xevent.ConfigureEvent.width, xevent.ConfigureEvent.height);
+					TranslatedSize = TranslateXWindowSizeToWindowSize(ctrl.GetCreateParams(), xevent.ConfigureEvent.width, xevent.ConfigureEvent.height);
 				}
 				else
 				{
-					TranslatedSize = new Size (xevent.ConfigureEvent.width, xevent.ConfigureEvent.height);
+					TranslatedSize = new Size(xevent.ConfigureEvent.width, xevent.ConfigureEvent.height);
 				}
 
 				hwnd.width = TranslatedSize.Width;
 				hwnd.height = TranslatedSize.Height;
 				hwnd.ClientRect = Rectangle.Empty;
-				DriverDebug ("AddConfigureNotify (hwnd.Handle = {1}, final hwnd.rect = {0}, reported rect={2})",
-							 new Rectangle (hwnd.x, hwnd.y, hwnd.width, hwnd.height), hwnd.Handle,
-							 new Rectangle (xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, xevent.ConfigureEvent.width, xevent.ConfigureEvent.width));
+				DriverDebug("AddConfigureNotify (hwnd.Handle = {1}, final hwnd.rect = {0}, reported rect={2})",
+							new Rectangle(hwnd.x, hwnd.y, hwnd.width, hwnd.height), hwnd.Handle,
+							new Rectangle(xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, xevent.ConfigureEvent.width, xevent.ConfigureEvent.width));
 
 				lock (hwnd.configure_lock)
 				{
 					if (!hwnd.configure_pending)
 					{
-						hwnd.Queue.EnqueueLocked (xevent);
+						hwnd.Queue.EnqueueLocked(xevent);
 						hwnd.configure_pending = true;
 					}
 				}
@@ -1652,13 +1517,13 @@ namespace System.Windows.Forms
 			}
 		}
 
-		int NextTimeout (ArrayList timers, long now)
+		int NextTimeout(ArrayList timers, long now)
 		{
 			int timeout = int.MaxValue;
 
 			foreach (Timer timer in timers)
 			{
-				int next = (int) (timer.Expires - now);
+				int next = (int)(timer.Expires - now);
 
 				if (next < 0)
 				{
@@ -1682,7 +1547,7 @@ namespace System.Windows.Forms
 			return timeout;
 		}
 
-		void CheckTimers (ArrayList timers, long now)
+		void CheckTimers(ArrayList timers, long now)
 		{
 			int count;
 			count = timers.Count;
@@ -1693,7 +1558,7 @@ namespace System.Windows.Forms
 			for (int i = 0; i < timers.Count; i++)
 			{
 				Timer timer;
-				timer = (Timer) timers [i];
+				timer = (Timer)timers[i];
 
 				if (timer.Enabled && timer.Expires <= now && !timer.Busy)
 				{
@@ -1707,48 +1572,48 @@ namespace System.Windows.Forms
 							  Application.MWFThread.Current.Context.MainForm.IsLoaded)))
 					{
 						timer.Busy = true;
-						timer.Update (now);
-						timer.FireTick ();
+						timer.Update(now);
+						timer.FireTick();
 						timer.Busy = false;
 					}
 				}
 			}
 		}
 
-		void WaitForHwndMessage (Hwnd hwnd, Msg message)
+		void WaitForHwndMessage(Hwnd hwnd, Msg message)
 		{
-			WaitForHwndMessage (hwnd, message, false);
+			WaitForHwndMessage(hwnd, message, false);
 		}
 
-		void WaitForHwndMessage (Hwnd hwnd, Msg message, bool process)
+		void WaitForHwndMessage(Hwnd hwnd, Msg message, bool process)
 		{
-			MSG msg = new MSG ();
+			MSG msg = new MSG();
 			XEventQueue queue;
 			queue = ThreadQueue(Thread.CurrentThread);
 			queue.DispatchIdle = false;
 			bool done = false;
 			string key = hwnd.Handle + ":" + message;
 
-			if (!messageHold.ContainsKey (key))
-				messageHold.Add (key, 1);
+			if (!messageHold.ContainsKey(key))
+				messageHold.Add(key, 1);
 			else
 				messageHold[key] = ((int)messageHold[key]) + 1;
 
 			do
 			{
-				DebugHelper.WriteLine  ("Waiting for message " + message + " on hwnd " + String.Format("0x{0:x}", hwnd.Handle.ToInt32 ()));
-				DebugHelper.Indent ();
+				DebugHelper.WriteLine("Waiting for message " + message + " on hwnd " + String.Format("0x{0:x}", hwnd.Handle.ToInt32()));
+				DebugHelper.Indent();
 
 				if (PeekMessage(queue, ref msg, IntPtr.Zero, 0, 0, (uint)PeekMessageFlags.PM_REMOVE))
 				{
 					if ((Msg)msg.message == Msg.WM_QUIT)
 					{
-						PostQuitMessage (0);
+						PostQuitMessage((int)(long)(msg.wParam));
 						done = true;
 					}
 					else
 					{
-						DebugHelper.WriteLine  ("PeekMessage got " + msg);
+						DebugHelper.WriteLine("PeekMessage got " + msg);
 
 						if (msg.hwnd == hwnd.Handle)
 						{
@@ -1756,8 +1621,8 @@ namespace System.Windows.Forms
 							{
 								if (process)
 								{
-									TranslateMessage (ref msg);
-									DispatchMessage (ref msg);
+									TranslateMessage(ref msg);
+									DispatchMessage(ref msg);
 								}
 
 								break;
@@ -1766,17 +1631,17 @@ namespace System.Windows.Forms
 								done = true;
 						}
 
-						TranslateMessage (ref msg);
-						DispatchMessage (ref msg);
+						TranslateMessage(ref msg);
+						DispatchMessage(ref msg);
 					}
 				}
 
-				done = !messageHold.ContainsKey (key) || ((int)messageHold[key] < 1) || done;
+				done = !messageHold.ContainsKey(key) || ((int)messageHold[key] < 1) || done;
 			} while (!done);
 
-			messageHold.Remove (key);
-			DebugHelper.Unindent ();
-			DebugHelper.WriteLine  ("Finished waiting for " + key);
+			messageHold.Remove(key);
+			DebugHelper.Unindent();
+			DebugHelper.WriteLine("Finished waiting for " + key);
 			queue.DispatchIdle = true;
 		}
 
@@ -1835,13 +1700,13 @@ namespace System.Windows.Forms
 				{
 					if (f.waiting_showwindow)
 					{
-						WaitForHwndMessage (hwnd, Msg.WM_SHOWWINDOW);
+						WaitForHwndMessage(hwnd, Msg.WM_SHOWWINDOW);
 						CreateParams cp = f.GetCreateParams();
 
-						if (!ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_MDICHILD) &&
-								!StyleSet (cp.Style, WindowStyles.WS_CHILD))
+						if (!ExStyleSet(cp.ExStyle, WindowExStyles.WS_EX_MDICHILD) &&
+								!StyleSet(cp.Style, WindowStyles.WS_CHILD))
 						{
-							WaitForHwndMessage (hwnd, Msg.WM_ACTIVATE, true);
+							WaitForHwndMessage(hwnd, Msg.WM_ACTIVATE, true);
 						}
 					}
 				}
@@ -1888,46 +1753,46 @@ namespace System.Windows.Forms
 				{
 					if (f.waiting_showwindow)
 					{
-						WaitForHwndMessage (hwnd, Msg.WM_SHOWWINDOW);
+						WaitForHwndMessage(hwnd, Msg.WM_SHOWWINDOW);
 						CreateParams cp = f.GetCreateParams();
 
-						if (!ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_MDICHILD) &&
-								!StyleSet (cp.Style, WindowStyles.WS_CHILD))
+						if (!ExStyleSet(cp.ExStyle, WindowExStyles.WS_EX_MDICHILD) &&
+								!StyleSet(cp.Style, WindowStyles.WS_CHILD))
 						{
-							WaitForHwndMessage (hwnd, Msg.WM_ACTIVATE, true);
+							WaitForHwndMessage(hwnd, Msg.WM_ACTIVATE, true);
 						}
 					}
 				}
 			}
 		}
 
-		void UpdateMessageQueue (XEventQueue queue)
+		void UpdateMessageQueue(XEventQueue queue)
 		{
 			UpdateMessageQueue(queue, true);
 		}
 
-		void UpdateMessageQueue (XEventQueue queue, bool allowIdle)
+		void UpdateMessageQueue(XEventQueue queue, bool allowIdle)
 		{
-			long    now;
-			int     pending;
-			Hwnd        hwnd;
+			long now;
+			int pending;
+			Hwnd hwnd;
 			now = Timer.StopWatchNowMilliseconds;
 
 			lock (XlibLock)
 			{
-				pending = XPending (DisplayHandle);
+				pending = XPending(DisplayHandle);
 			}
 
 			if (pending == 0 && allowIdle)
 			{
 				if ((queue == null || queue.DispatchIdle) && Idle != null)
 				{
-					Idle (this, EventArgs.Empty);
+					Idle(this, EventArgs.Empty);
 				}
 
 				lock (XlibLock)
 				{
-					pending = XPending (DisplayHandle);
+					pending = XPending(DisplayHandle);
 				}
 			}
 
@@ -1940,7 +1805,7 @@ namespace System.Windows.Forms
 					if (queue.Paint.Count > 0)
 						return;
 
-					timeout = NextTimeout (queue.timer_list, now);
+					timeout = NextTimeout(queue.timer_list, now);
 				}
 
 				if (timeout > 0)
@@ -1951,12 +1816,12 @@ namespace System.Windows.Forms
 					{
 						if (wake_waiting == false)
 						{
-							length ++;
+							length++;
 							wake_waiting = true;
 						}
 					}
 
-					Syscall.poll (pollfds, (uint)length, timeout);
+					Syscall.poll(pollfds, (uint)length, timeout);
 
 					// Clean out buffer, so we're not busy-looping on the same data
 					if (length == pollfds.Length)
@@ -1972,40 +1837,55 @@ namespace System.Windows.Forms
 
 					lock (XlibLock)
 					{
-						pending = XPending (DisplayHandle);
+						pending = XPending(DisplayHandle);
 					}
 				}
 			}
 
 			if (queue != null)
-				CheckTimers (queue.timer_list, now);
+				CheckTimers(queue.timer_list, now);
 
 			while (true)
 			{
-				XEvent xevent = new XEvent ();
+				XEvent xevent = new XEvent();
 
 				lock (XlibLock)
 				{
-					if (XPending (DisplayHandle) == 0)
+					if (XPending(DisplayHandle) == 0)
 						break;
 
-					XNextEvent (DisplayHandle, ref xevent);
+					XNextEvent(DisplayHandle, ref xevent);
 
 					if (xevent.AnyEvent.type == XEventName.KeyPress ||
 							xevent.AnyEvent.type == XEventName.KeyRelease)
 					{
 						// PreFilter() handles "shift key state updates.
-						Keyboard.PreFilter (xevent);
+						Keyboard.PreFilter(xevent);
 
-						if (XFilterEvent (ref xevent, Keyboard.ClientWindow))
+						if (XFilterEvent(ref xevent, Keyboard.ClientWindow))
 						{
 							// probably here we could raise WM_IME_KEYDOWN and
 							// WM_IME_KEYUP, but I'm not sure it is worthy.
 							continue;
 						}
 					}
-					else if (XFilterEvent (ref xevent, IntPtr.Zero))
+					else if (XFilterEvent(ref xevent, IntPtr.Zero))
 						continue;
+				}
+
+				if (Hwnd.IsBeingDestroyed(xevent.AnyEvent.window))
+				{
+					// XDestroyWindow was called but we didn't get DestroyNotify yet.
+					DriverDebug("UpdateMessageQueue destroyed, got Event: {0}", xevent.ToString());
+
+					if (xevent.type == XEventName.DestroyNotify &&
+							xevent.DestroyWindowEvent.xevent == xevent.DestroyWindowEvent.window)
+					{
+						Hwnd.FinishAsyncDestroy(xevent.DestroyWindowEvent.window);
+					}
+
+					// Ignore this event in case the hwnd was reassigned by the X11 server.
+					continue;
 				}
 
 				hwnd = Hwnd.GetObjectFromWindow(xevent.AnyEvent.window);
@@ -2013,205 +1893,61 @@ namespace System.Windows.Forms
 				if (hwnd == null)
 					continue;
 
-				DebugHelper.WriteLine  ("UpdateMessageQueue got Event: " + xevent.ToString ());
+				DebugHelper.WriteLine("UpdateMessageQueue got Event: " + xevent.ToString());
 
 				switch (xevent.type)
 				{
 					case XEventName.Expose:
-						AddExpose (hwnd, xevent.ExposeEvent.window == hwnd.ClientWindow, xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
+						AddExpose(hwnd, xevent.ExposeEvent.window == hwnd.ClientWindow, xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
 						break;
 
 					case XEventName.SelectionClear:
 					{
-						// Should we do something?
+						foreach (var selection in Selections)
+						{
+							if (selection.Selection == xevent.SelectionClearEvent.selection)
+							{
+								selection.HandleSelectionClearEvent(ref xevent);
+								break;
+							}
+						}
+
 						break;
 					}
 
 					case XEventName.SelectionRequest:
 					{
-						if (Dnd.HandleSelectionRequestEvent (ref xevent))
-							break;
-
-						XEvent sel_event;
-						sel_event = new XEvent();
-						sel_event.SelectionEvent.type = XEventName.SelectionNotify;
-						sel_event.SelectionEvent.send_event = true;
-						sel_event.SelectionEvent.display = DisplayHandle;
-						sel_event.SelectionEvent.selection = xevent.SelectionRequestEvent.selection;
-						sel_event.SelectionEvent.target = xevent.SelectionRequestEvent.target;
-						sel_event.SelectionEvent.requestor = xevent.SelectionRequestEvent.requestor;
-						sel_event.SelectionEvent.time = xevent.SelectionRequestEvent.time;
-						sel_event.SelectionEvent.property = IntPtr.Zero;
-						IntPtr format_atom = xevent.SelectionRequestEvent.target;
-
-						// Seems that some apps support asking for supported types
-						if (format_atom == TARGETS)
+						foreach (var selection in Selections)
 						{
-							IntPtr[]    atoms;
-							int atom_count;
-							atoms = new IntPtr[5];
-							atom_count = 0;
-
-							if (Clipboard.IsSourceText)
+							if (selection.Selection == xevent.SelectionRequestEvent.selection)
 							{
-								atoms[atom_count++] = (IntPtr)Atom.XA_STRING;
-								atoms[atom_count++] = (IntPtr)OEMTEXT;
-								atoms[atom_count++] = (IntPtr)UTF8_STRING;
-								atoms[atom_count++] = (IntPtr)UTF16_STRING;
-								atoms[atom_count++] = (IntPtr)RICHTEXTFORMAT;
-							}
-							else if (Clipboard.IsSourceImage)
-							{
-								atoms[atom_count++] = (IntPtr)Atom.XA_PIXMAP;
-								atoms[atom_count++] = (IntPtr)Atom.XA_BITMAP;
-							}
-							else
-							{
-								// FIXME - handle other types
-							}
-
-							XChangeProperty(DisplayHandle, xevent.SelectionRequestEvent.requestor, (IntPtr)xevent.SelectionRequestEvent.property,
-											(IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, atom_count);
-							sel_event.SelectionEvent.property = xevent.SelectionRequestEvent.property;
-						}
-						else if (format_atom == (IntPtr)RICHTEXTFORMAT)
-						{
-							string rtf_text = Clipboard.GetRtfText ();
-
-							if (rtf_text != null)
-							{
-								// The RTF spec mentions that ascii is enough to contain it
-								Byte [] bytes = Encoding.ASCII.GetBytes (rtf_text);
-								int buflen = bytes.Length;
-								IntPtr buffer = Marshal.AllocHGlobal (buflen);
-
-								for (int i = 0; i < buflen; i++)
-									Marshal.WriteByte (buffer, i, bytes[i]);
-
-								XChangeProperty(DisplayHandle, xevent.SelectionRequestEvent.requestor, (IntPtr)xevent.SelectionRequestEvent.property,
-												(IntPtr)xevent.SelectionRequestEvent.target, 8, PropertyMode.Replace, buffer, buflen);
-								sel_event.SelectionEvent.property = xevent.SelectionRequestEvent.property;
-								Marshal.FreeHGlobal(buffer);
-							}
-						}
-						else if (Clipboard.IsSourceText &&
-								 (format_atom == (IntPtr)Atom.XA_STRING
-								  || format_atom == OEMTEXT
-								  || format_atom == UTF16_STRING
-								  || format_atom == UTF8_STRING))
-						{
-							IntPtr  buffer = IntPtr.Zero;
-							int buflen;
-							Encoding encoding = null;
-							buflen = 0;
-							// Select an encoding depending on the target
-							IntPtr target_atom = xevent.SelectionRequestEvent.target;
-
-							if (target_atom == (IntPtr)Atom.XA_STRING || target_atom == OEMTEXT)
-								// FIXME - EOMTEXT should encode into ISO2022
-								encoding = Encoding.ASCII;
-							else if (target_atom == UTF16_STRING)
-								encoding = Encoding.Unicode;
-							else if (target_atom == UTF8_STRING)
-								encoding = Encoding.UTF8;
-
-							Byte [] bytes;
-							bytes = encoding.GetBytes (Clipboard.GetPlainText ());
-							buffer = Marshal.AllocHGlobal (bytes.Length);
-							buflen = bytes.Length;
-
-							for (int i = 0; i < buflen; i++)
-								Marshal.WriteByte (buffer, i, bytes [i]);
-
-							if (buffer != IntPtr.Zero)
-							{
-								XChangeProperty(DisplayHandle, xevent.SelectionRequestEvent.requestor, (IntPtr)xevent.SelectionRequestEvent.property, (IntPtr)xevent.SelectionRequestEvent.target, 8, PropertyMode.Replace, buffer, buflen);
-								sel_event.SelectionEvent.property = xevent.SelectionRequestEvent.property;
-								Marshal.FreeHGlobal(buffer);
-							}
-						}
-						else if (Clipboard.GetSource (format_atom.ToInt32 ()) != null)     // check if we have an available value of this format
-						{
-							if (DataFormats.GetFormat (format_atom.ToInt32 ()).is_serializable)
-							{
-								object serializable = Clipboard.GetSource (format_atom.ToInt32 ());
-								BinaryFormatter formatter = new BinaryFormatter ();
-								MemoryStream memory_stream = new MemoryStream ();
-								formatter.Serialize (memory_stream, serializable);
-								int buflen = (int)memory_stream.Length;
-								IntPtr buffer = Marshal.AllocHGlobal (buflen);
-								memory_stream.Position = 0;
-
-								for (int i = 0; i < buflen; i++)
-									Marshal.WriteByte (buffer, i, (byte)memory_stream.ReadByte ());
-
-								memory_stream.Close ();
-								XChangeProperty (DisplayHandle, xevent.SelectionRequestEvent.requestor, (IntPtr)xevent.SelectionRequestEvent.property, (IntPtr)xevent.SelectionRequestEvent.target,
-												 8, PropertyMode.Replace, buffer, buflen);
-								sel_event.SelectionEvent.property = xevent.SelectionRequestEvent.property;
-								Marshal.FreeHGlobal (buffer);
-							}
-						}
-						else if (Clipboard.IsSourceImage)
-						{
-							if (xevent.SelectionEvent.target == (IntPtr)Atom.XA_PIXMAP)
-							{
-								// FIXME - convert image and store as property
-							}
-							else if (xevent.SelectionEvent.target == (IntPtr)Atom.XA_PIXMAP)
-							{
-								// FIXME - convert image and store as property
+								selection.HandleSelectionRequestEvent(ref xevent);
+								break;
 							}
 						}
 
-						XSendEvent(DisplayHandle, xevent.SelectionRequestEvent.requestor, false, new IntPtr ((int)EventMask.NoEventMask), ref sel_event);
 						break;
 					}
 
 					case XEventName.SelectionNotify:
 					{
-						if (Clipboard.Enumerating)
+						foreach (var selection in Selections)
 						{
-							Clipboard.Enumerating = false;
-
-							if (xevent.SelectionEvent.property != IntPtr.Zero)
+							if (selection.Selection == xevent.SelectionEvent.selection)
 							{
-								XDeleteProperty(DisplayHandle, FosterParent, (IntPtr)xevent.SelectionEvent.property);
-
-								if (!Clipboard.Formats.Contains(xevent.SelectionEvent.property))
-								{
-									Clipboard.Formats.Add(xevent.SelectionEvent.property);
-									DriverDebug("Got supported clipboard atom format: {0}", xevent.SelectionEvent.property);
-								}
+								selection.HandleSelectionNotifyEvent(ref xevent);
+								break;
 							}
-						}
-						else if (Clipboard.Retrieving)
-						{
-							Clipboard.Retrieving = false;
-
-							if (xevent.SelectionEvent.property != IntPtr.Zero)
-							{
-								TranslatePropertyToClipboard(xevent.SelectionEvent.property);
-							}
-							else
-							{
-								Clipboard.ClearSources ();
-								Clipboard.Item = null;
-							}
-						}
-						else
-						{
-							Dnd.HandleSelectionNotifyEvent (ref xevent);
 						}
 
 						break;
 					}
 
 					case XEventName.KeyRelease:
-						if (!detectable_key_auto_repeat && XPending (DisplayHandle) != 0)
+						if (!detectable_key_auto_repeat && XPending(DisplayHandle) != 0)
 						{
-							XEvent nextevent = new XEvent ();
-							XPeekEvent (DisplayHandle, ref nextevent);
+							XEvent nextevent = new XEvent();
+							XPeekEvent(DisplayHandle, ref nextevent);
 
 							if (nextevent.type == XEventName.KeyPress &&
 									nextevent.KeyEvent.keycode == xevent.KeyEvent.keycode &&
@@ -2242,7 +1978,7 @@ namespace System.Windows.Forms
 						}
 
 					case XEventName.KeyPress:
-						hwnd.Queue.EnqueueLocked (xevent);
+						hwnd.Queue.EnqueueLocked(xevent);
 						/*  Process KeyPresses immediately. Otherwise multiple Compose messages as a result of a
 						    single physical keypress are not processed correctly */
 						return;
@@ -2259,7 +1995,7 @@ namespace System.Windows.Forms
 					case XEventName.ReparentNotify:
 					case XEventName.MapNotify:
 					case XEventName.UnmapNotify:
-						hwnd.Queue.EnqueueLocked (xevent);
+						hwnd.Queue.EnqueueLocked(xevent);
 						break;
 
 					case XEventName.ConfigureNotify:
@@ -2267,24 +2003,24 @@ namespace System.Windows.Forms
 						break;
 
 					case XEventName.PropertyNotify:
-						DriverDebug ("UpdateMessageQueue (), got Event: {0}", xevent.ToString ());
+						DriverDebug("UpdateMessageQueue (), got Event: {0}", xevent.ToString());
 
 						if (xevent.PropertyEvent.atom == _NET_ACTIVE_WINDOW)
 						{
-							IntPtr  actual_atom;
+							IntPtr actual_atom;
 							int actual_format;
-							IntPtr  nitems;
-							IntPtr  bytes_after;
-							IntPtr  prop = IntPtr.Zero;
-							IntPtr  prev_active;
+							IntPtr nitems;
+							IntPtr bytes_after;
+							IntPtr prop = IntPtr.Zero;
+							IntPtr prev_active;
 							prev_active = ActiveWindow;
-							XGetWindowProperty(DisplayHandle, RootWindow, _NET_ACTIVE_WINDOW, IntPtr.Zero, new IntPtr (1), false, (IntPtr)Atom.XA_WINDOW, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+							XGetWindowProperty(DisplayHandle, RootWindow, _NET_ACTIVE_WINDOW, IntPtr.Zero, new IntPtr(1), false, (IntPtr)Atom.XA_WINDOW, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
 
 							if (((long)nitems > 0) && (prop != IntPtr.Zero))
 							{
 								ActiveWindow = Hwnd.GetHandleFromWindow((IntPtr)Marshal.ReadInt32(prop));
 								XFree(prop);
-								DebugHelper.WriteLine ("PropertyNotify: _NET_ACTIVE_WINDOW: previous = 0x{0:x}, new = 0x{1:x}", prev_active.ToInt32 (), ActiveWindow.ToInt32 ());
+								DebugHelper.WriteLine("PropertyNotify: _NET_ACTIVE_WINDOW: previous = 0x{0:x}, new = 0x{1:x}", prev_active.ToInt32(), ActiveWindow.ToInt32());
 
 								if (prev_active != ActiveWindow)
 								{
@@ -2316,11 +2052,11 @@ namespace System.Windows.Forms
 									// This is because each modal form runs the loop with a
 									// new ApplicationContext, which is inherited by the non-modal
 									// forms.
-									Form activeForm = Control.FromHandle (ActiveWindow) as Form;
+									Form activeForm = Control.FromHandle(ActiveWindow) as Form;
 
 									if (activeForm != null)
 									{
-										Form modalForm = Control.FromHandle ((IntPtr)ModalWindows.Peek()) as Form;
+										Form modalForm = Control.FromHandle((IntPtr)ModalWindows.Peek()) as Form;
 
 										if (ActiveWindow != (IntPtr)ModalWindows.Peek() &&
 												(modalForm == null || activeForm.context == modalForm.context))
@@ -2337,7 +2073,7 @@ namespace System.Windows.Forms
 						{
 							// invalidate our cache - we'll query again the next time someone does GetWindowState.
 							hwnd.cached_window_state = (FormWindowState)(-1);
-							PostMessage (hwnd.Handle, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
+							PostMessage(hwnd.Handle, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
 						}
 
 						break;
@@ -2381,9 +2117,9 @@ namespace System.Windows.Forms
 		}
 		IntPtr XGetParent(IntPtr handle)
 		{
-			IntPtr  Root;
-			IntPtr  Parent;
-			IntPtr  Children;
+			IntPtr Root;
+			IntPtr Parent;
+			IntPtr Children;
 			int ChildCount;
 
 			lock (XlibLock)
@@ -2402,7 +2138,7 @@ namespace System.Windows.Forms
 			return Parent;
 		}
 
-		int HandleError (IntPtr display, ref XErrorEvent error_event)
+		int HandleError(IntPtr display, ref XErrorEvent error_event)
 		{
 			// we need to workaround a problem with the
 			// ordering of destruction of Drawables and
@@ -2417,51 +2153,51 @@ namespace System.Windows.Forms
 
 			if (ErrorExceptions)
 			{
-				XUngrabPointer (display, IntPtr.Zero);
-				throw new XException (error_event.display, error_event.resourceid,
-									  error_event.serial, error_event.error_code,
-									  error_event.request_code, error_event.minor_code);
+				XUngrabPointer(display, IntPtr.Zero);
+				throw new XException(error_event.display, error_event.resourceid,
+									 error_event.serial, error_event.error_code,
+									 error_event.request_code, error_event.minor_code);
 			}
 			else
 			{
 				Console.WriteLine("X11 Error encountered: {0}{1}\n",
-								  XException.GetMessage (error_event.display, error_event.resourceid,
-										  error_event.serial, error_event.error_code,
-										  error_event.request_code, error_event.minor_code),
+								  XException.GetMessage(error_event.display, error_event.resourceid,
+														error_event.serial, error_event.error_code,
+														error_event.request_code, error_event.minor_code),
 								  Environment.StackTrace);
 			}
 
 			return 0;
 		}
 
-		void AccumulateDestroyedHandles (Control c, ArrayList list)
+		void AccumulateDestroyedHandles(Control c, ArrayList list)
 		{
-			DebugHelper.Enter ();
+			DebugHelper.Enter();
 
 			if (c != null)
 			{
-				Control[] controls = c.Controls.GetAllControls ();
-				DebugHelper.WriteLine  ("Checking control:0x{0:x}", c.IsHandleCreated ? c.Handle.ToInt32() : 0);
+				Control[] controls = c.Controls.GetAllControls();
+				DebugHelper.WriteLine("Checking control:0x{0:x}", c.IsHandleCreated ? c.Handle.ToInt32() : 0);
 
 				if (c.IsHandleCreated && !c.IsDisposed)
 				{
 					Hwnd hwnd = Hwnd.ObjectFromHandle(c.Handle);
-					DriverDebug (" + adding {0} to the list of zombie windows", XplatUI.Window (hwnd.Handle));
-					DriverDebug (" + parent X window is {0:X}", XGetParent (hwnd.whole_window).ToInt32());
-					list.Add (hwnd);
-					CleanupCachedWindows (hwnd);
+					DriverDebug(" + adding {0} to the list of zombie windows", XplatUI.Window(hwnd.Handle));
+					DriverDebug(" + parent X window is {0:X}", XGetParent(hwnd.whole_window).ToInt32());
+					list.Add(hwnd);
+					CleanupCachedWindows(hwnd);
 				}
 
-				for (int  i = 0; i < controls.Length; i ++)
+				for (int i = 0; i < controls.Length; i++)
 				{
-					AccumulateDestroyedHandles (controls[i], list);
+					AccumulateDestroyedHandles(controls[i], list);
 				}
 			}
 
-			DebugHelper.Leave ();
+			DebugHelper.Leave();
 		}
 
-		void CleanupCachedWindows (Hwnd hwnd)
+		void CleanupCachedWindows(Hwnd hwnd)
 		{
 			if (ActiveWindow == hwnd.Handle)
 			{
@@ -2481,15 +2217,15 @@ namespace System.Windows.Forms
 				Grab.Confined = false;
 			}
 
-			DestroyCaret (hwnd.Handle);
+			DestroyCaret(hwnd.Handle);
 		}
 
 		void PerformNCCalc(Hwnd hwnd)
 		{
-			XplatUIWin32.NCCALCSIZE_PARAMS  ncp;
-			IntPtr              ptr;
-			Rectangle           rect;
-			rect = new Rectangle (0, 0, hwnd.Width, hwnd.Height);
+			XplatUIWin32.NCCALCSIZE_PARAMS ncp;
+			IntPtr ptr;
+			Rectangle rect;
+			rect = new Rectangle(0, 0, hwnd.Width, hwnd.Height);
 			ncp = new XplatUIWin32.NCCALCSIZE_PARAMS();
 			ptr = Marshal.AllocHGlobal(Marshal.SizeOf(ncp));
 			ncp.rgrc1.left = rect.Left;
@@ -2502,22 +2238,22 @@ namespace System.Windows.Forms
 			Marshal.FreeHGlobal(ptr);
 			rect = new Rectangle(ncp.rgrc1.left, ncp.rgrc1.top, ncp.rgrc1.right - ncp.rgrc1.left, ncp.rgrc1.bottom - ncp.rgrc1.top);
 			hwnd.ClientRect = rect;
-			rect = TranslateClientRectangleToXClientRectangle (hwnd);
+			rect = TranslateClientRectangleToXClientRectangle(hwnd);
 
 			if (hwnd.visible)
 			{
-				MoveResizeWindow (DisplayHandle, hwnd.client_window, rect.X, rect.Y, rect.Width, rect.Height);
+				MoveResizeWindow(DisplayHandle, hwnd.client_window, rect.X, rect.Y, rect.Width, rect.Height);
 			}
 
-			AddExpose (hwnd, hwnd.WholeWindow == hwnd.ClientWindow, 0, 0, hwnd.Width, hwnd.Height);
+			AddExpose(hwnd, hwnd.WholeWindow == hwnd.ClientWindow, 0, 0, hwnd.Width, hwnd.Height);
 		}
-		#endregion  // Methods
+		#endregion // Methods
 
 		#region Callbacks
 		void MouseHover(object sender, EventArgs e)
 		{
-			XEvent  xevent;
-			Hwnd    hwnd;
+			XEvent xevent;
+			Hwnd hwnd;
 			HoverState.Timer.Enabled = false;
 
 			if (HoverState.Window != IntPtr.Zero)
@@ -2526,15 +2262,15 @@ namespace System.Windows.Forms
 
 				if (hwnd != null)
 				{
-					xevent = new XEvent ();
+					xevent = new XEvent();
 					xevent.type = XEventName.ClientMessage;
 					xevent.ClientMessageEvent.display = DisplayHandle;
 					xevent.ClientMessageEvent.window = HoverState.Window;
 					xevent.ClientMessageEvent.message_type = HoverState.Atom;
 					xevent.ClientMessageEvent.format = 32;
-					xevent.ClientMessageEvent.ptr1 = (IntPtr) (HoverState.Y << 16 | HoverState.X);
-					hwnd.Queue.EnqueueLocked (xevent);
-					WakeupMain ();
+					xevent.ClientMessageEvent.ptr1 = (IntPtr)(HoverState.Y << 16 | HoverState.X);
+					hwnd.Queue.EnqueueLocked(xevent);
+					WakeupMain();
 				}
 			}
 		}
@@ -2549,7 +2285,7 @@ namespace System.Windows.Forms
 			Caret.On = !Caret.On;
 			XDrawLine(DisplayHandle, Caret.Hwnd, Caret.gc, Caret.X, Caret.Y, Caret.X, Caret.Y + Caret.Height);
 		}
-		#endregion  // Callbacks
+		#endregion // Callbacks
 
 		#region Public Properties
 
@@ -2561,7 +2297,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal override  Size CursorSize
+		internal override Size CursorSize
 		{
 			get
 			{
@@ -2579,7 +2315,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal override  bool DragFullWindows
+		internal override bool DragFullWindows
 		{
 			get
 			{
@@ -2587,7 +2323,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal override  Size DragSize
+		internal override Size DragSize
 		{
 			get
 			{
@@ -2595,26 +2331,26 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal override  Size FrameBorderSize
+		internal override Size FrameBorderSize
 		{
 			get
 			{
-				return new Size (4, 4);
+				return new Size(4, 4);
 			}
 		}
 
-		internal override  Size IconSize
+		internal override Size IconSize
 		{
 			get
 			{
-				IntPtr      list;
-				XIconSize   size;
-				int     count;
+				IntPtr list;
+				XIconSize size;
+				int count;
 
 				if (XGetIconSizes(DisplayHandle, RootWindow, out list, out count) != 0)
 				{
-					long        current;
-					int     largest;
+					long current;
+					int largest;
 					current = (long)list;
 					largest = 0;
 					size = new XIconSize();
@@ -2702,11 +2438,11 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal override  Size MaxWindowTrackSize
+		internal override Size MaxWindowTrackSize
 		{
 			get
 			{
-				return new Size (WorkingArea.Width, WorkingArea.Height);
+				return new Size(WorkingArea.Width, WorkingArea.Height);
 			}
 		}
 
@@ -2718,7 +2454,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal override  Size MinimizedWindowSpacingSize
+		internal override Size MinimizedWindowSpacingSize
 		{
 			get
 			{
@@ -2726,7 +2462,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal override  Size MinimumWindowSize
+		internal override Size MinimumWindowSize
 		{
 			get
 			{
@@ -2736,17 +2472,17 @@ namespace System.Windows.Forms
 
 		internal override Size MinimumFixedToolWindowSize
 		{
-			get { return new Size (27, 22); }
+			get { return new Size(27, 22); }
 		}
 
 		internal override Size MinimumSizeableToolWindowSize
 		{
-			get { return new Size (37, 22); }
+			get { return new Size(37, 22); }
 		}
 
 		internal override Size MinimumNoBorderWindowSize
 		{
-			get { return new Size (2, 2); }
+			get { return new Size(2, 2); }
 		}
 
 		internal override Keys ModifierKeys
@@ -2757,18 +2493,18 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal override  Size SmallIconSize
+		internal override Size SmallIconSize
 		{
 			get
 			{
-				IntPtr      list;
-				XIconSize   size;
-				int     count;
+				IntPtr list;
+				XIconSize size;
+				int count;
 
 				if (XGetIconSizes(DisplayHandle, RootWindow, out list, out count) != 0)
 				{
-					long        current;
-					int     smallest;
+					long current;
+					int smallest;
 					current = (long)list;
 					smallest = 0;
 					size = new XIconSize();
@@ -2825,7 +2561,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal override  int MouseButtonCount
+		internal override int MouseButtonCount
 		{
 			get
 			{
@@ -2833,7 +2569,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal override  bool MouseButtonsSwapped
+		internal override bool MouseButtonsSwapped
 		{
 			get
 			{
@@ -2853,7 +2589,7 @@ namespace System.Windows.Forms
 		{
 			get
 			{
-				return new Size (1, 1);
+				return new Size(1, 1);
 			}
 		}
 
@@ -2867,7 +2603,7 @@ namespace System.Windows.Forms
 
 
 
-		internal override  bool MouseWheelPresent
+		internal override bool MouseWheelPresent
 		{
 			get
 			{
@@ -2883,18 +2619,18 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal override  Rectangle VirtualScreen
+		internal override Rectangle VirtualScreen
 		{
 			get
 			{
-				IntPtr          actual_atom;
-				int         actual_format;
-				IntPtr          nitems;
-				IntPtr          bytes_after;
-				IntPtr          prop = IntPtr.Zero;
-				int         width;
-				int         height;
-				XGetWindowProperty(DisplayHandle, RootWindow, _NET_DESKTOP_GEOMETRY, IntPtr.Zero, new IntPtr (256), false, (IntPtr)Atom.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+				IntPtr actual_atom;
+				int actual_format;
+				IntPtr nitems;
+				IntPtr bytes_after;
+				IntPtr prop = IntPtr.Zero;
+				int width;
+				int height;
+				XGetWindowProperty(DisplayHandle, RootWindow, _NET_DESKTOP_GEOMETRY, IntPtr.Zero, new IntPtr(256), false, (IntPtr)Atom.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
 
 				if ((long)nitems < 2)
 					goto failsafe;
@@ -2904,7 +2640,7 @@ namespace System.Windows.Forms
 				XFree(prop);
 				return new Rectangle(0, 0, width, height);
 				failsafe:
-				XWindowAttributes   attributes = new XWindowAttributes();
+				XWindowAttributes attributes = new XWindowAttributes();
 
 				lock (XlibLock)
 				{
@@ -2915,20 +2651,20 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal override  Rectangle WorkingArea
+		internal override Rectangle WorkingArea
 		{
 			get
 			{
-				IntPtr          actual_atom;
-				int         actual_format;
-				IntPtr          nitems;
-				IntPtr          bytes_after;
-				IntPtr          prop = IntPtr.Zero;
-				int         width;
-				int         height;
-				int         current_desktop;
-				int         x;
-				int         y;
+				IntPtr actual_atom;
+				int actual_format;
+				IntPtr nitems;
+				IntPtr bytes_after;
+				IntPtr prop = IntPtr.Zero;
+				int width;
+				int height;
+				int current_desktop;
+				int x;
+				int y;
 				XGetWindowProperty(DisplayHandle, RootWindow, _NET_CURRENT_DESKTOP, IntPtr.Zero, new IntPtr(1), false, (IntPtr)Atom.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
 
 				if ((long)nitems < 1)
@@ -2938,7 +2674,7 @@ namespace System.Windows.Forms
 
 				current_desktop = Marshal.ReadIntPtr(prop, 0).ToInt32();
 				XFree(prop);
-				XGetWindowProperty(DisplayHandle, RootWindow, _NET_WORKAREA, IntPtr.Zero, new IntPtr (256), false, (IntPtr)Atom.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+				XGetWindowProperty(DisplayHandle, RootWindow, _NET_WORKAREA, IntPtr.Zero, new IntPtr(256), false, (IntPtr)Atom.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
 
 				if ((long)nitems < 4 * (current_desktop + 1))
 				{
@@ -2952,7 +2688,7 @@ namespace System.Windows.Forms
 				XFree(prop);
 				return new Rectangle(x, y, width, height);
 				failsafe:
-				XWindowAttributes   attributes = new XWindowAttributes();
+				XWindowAttributes attributes = new XWindowAttributes();
 
 				lock (XlibLock)
 				{
@@ -2967,26 +2703,26 @@ namespace System.Windows.Forms
 		{
 			get
 			{
-				if (!XineramaIsActive (DisplayHandle))
+				if (!XineramaIsActive(DisplayHandle))
 					return null;
 
 				int nScreens;
-				IntPtr xineramaScreens = XineramaQueryScreens (DisplayHandle, out nScreens);
-				var screens = new Screen [nScreens];
+				IntPtr xineramaScreens = XineramaQueryScreens(DisplayHandle, out nScreens);
+				var screens = new Screen[nScreens];
 				IntPtr current = xineramaScreens;
 
 				for (int i = 0; i < nScreens; i++)
 				{
-					var screen = (XineramaScreenInfo)Marshal.PtrToStructure (current,
-								 typeof (XineramaScreenInfo));
-					var screenRect = new Rectangle (screen.x_org, screen.y_org, screen.width,
-													screen.height);
-					var name = string.Format ("Display {0}", screen.screen_number);
-					screens [i] = new Screen (i == 0, name, screenRect, screenRect);
-					current = (IntPtr)( (ulong)current + (ulong)Marshal.SizeOf(typeof (XineramaScreenInfo)));
+					var screen = (XineramaScreenInfo)Marshal.PtrToStructure(current,
+								 typeof(XineramaScreenInfo));
+					var screenRect = new Rectangle(screen.x_org, screen.y_org, screen.width,
+												   screen.height);
+					var name = string.Format("Display {0}", screen.screen_number);
+					screens[i] = new Screen(i == 0, name, screenRect, screenRect);
+					current = (IntPtr)((ulong)current + (ulong)Marshal.SizeOf(typeof(XineramaScreenInfo)));
 				}
 
-				XFree (xineramaScreens);
+				XFree(xineramaScreens);
 				return screens;
 			}
 		}
@@ -3000,13 +2736,13 @@ namespace System.Windows.Forms
 		}
 
 
-		#endregion  // Public properties
+		#endregion // Public properties
 
 		#region Public Static Methods
-		internal override void RaiseIdle (EventArgs e)
+		internal override void RaiseIdle(EventArgs e)
 		{
 			if (Idle != null)
-				Idle (this, e);
+				Idle(this, e);
 		}
 
 		internal override IntPtr InitializeDriver()
@@ -3059,13 +2795,13 @@ namespace System.Windows.Forms
 							foreach (Timer t in unattached_timer_list)
 							{
 								if (q == null)
-									q = (XEventQueue) MessageQueues [Thread.CurrentThread];
+									q = (XEventQueue)MessageQueues[Thread.CurrentThread];
 
 								t.thread = q.Thread;
-								q.timer_list.Add (t);
+								q.timer_list.Add(t);
 							}
 
-							unattached_timer_list.Clear ();
+							unattached_timer_list.Clear();
 						}
 					}
 
@@ -3107,7 +2843,7 @@ namespace System.Windows.Forms
 
 		internal override bool CalculateWindowRect(ref Rectangle ClientRect, CreateParams cp, Menu menu, out Rectangle WindowRect)
 		{
-			WindowRect = Hwnd.GetWindowRectangle (cp, menu, ClientRect);
+			WindowRect = Hwnd.GetWindowRectangle(cp, menu, ClientRect);
 			return true;
 		}
 
@@ -3115,8 +2851,8 @@ namespace System.Windows.Forms
 		{
 			int dest_x_return;
 			int dest_y_return;
-			IntPtr  child;
-			Hwnd    hwnd;
+			IntPtr child;
+			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			lock (XlibLock)
@@ -3128,158 +2864,67 @@ namespace System.Windows.Forms
 			y = dest_y_return;
 		}
 
+
+		[Obsolete("ClipboardAvailableFormats is obsolete for X11, use System.Windows.Forms.Clipboard instead", true)]
 		internal override int[] ClipboardAvailableFormats(IntPtr handle)
 		{
-			DataFormats.Format  f;
-			int[]           result;
-			f = DataFormats.Format.List;
-
-			if (XGetSelectionOwner(DisplayHandle, CLIPBOARD) == IntPtr.Zero)
-			{
-				return null;
-			}
-
-			Clipboard.Formats = new ArrayList();
-
-			while (f != null)
-			{
-				XConvertSelection(DisplayHandle, CLIPBOARD, (IntPtr)f.Id, (IntPtr)f.Id, FosterParent, IntPtr.Zero);
-				var timeToWaitForSelectionFormats = TimeSpan.FromSeconds(4);
-				var startTime = DateTime.Now;
-				Clipboard.Enumerating = true;
-
-				while (Clipboard.Enumerating)
-				{
-					UpdateMessageQueue(null, false);
-
-					if (DateTime.Now - startTime > timeToWaitForSelectionFormats)
-						break;
-				}
-
-				f = f.Next;
-			}
-
-			result = new int[Clipboard.Formats.Count];
-
-			for (int i = 0; i < Clipboard.Formats.Count; i++)
-			{
-				result[i] = ((IntPtr)Clipboard.Formats[i]).ToInt32 ();
-			}
-
-			Clipboard.Formats = null;
-			return result;
+			throw new NotImplementedException("ClipboardAvailableFormats is deprecated for X11, use System.Windows.Forms.Clipboard instead");
 		}
 
+		[Obsolete("ClipboardClose is obsolete for X11, use System.Windows.Forms.Clipboard instead", true)]
 		internal override void ClipboardClose(IntPtr handle)
 		{
-			if (handle != ClipMagic)
-			{
-				throw new ArgumentException("handle is not a valid clipboard handle");
-			}
-
-			return;
+			// NOP
 		}
 
+		[Obsolete("ClipboardGetID is obsolete for X11, use System.Windows.Forms.Clipboard instead", true)]
 		internal override int ClipboardGetID(IntPtr handle, string format)
 		{
-			if (handle != ClipMagic)
-			{
-				throw new ArgumentException("handle is not a valid clipboard handle");
-			}
-
-			if (format == "Text" ) return (int)Atom.XA_STRING;
-			else if (format == "Bitmap" ) return (int)Atom.XA_BITMAP;
-			//else if (format == "MetaFilePict" ) return 3;
-			//else if (format == "SymbolicLink" ) return 4;
-			//else if (format == "DataInterchangeFormat" ) return 5;
-			//else if (format == "Tiff" ) return 6;
-			else if (format == "OEMText" ) return OEMTEXT.ToInt32();
-			else if (format == "DeviceIndependentBitmap" ) return (int)Atom.XA_PIXMAP;
-			else if (format == "Palette" ) return (int)Atom.XA_COLORMAP;    // Useless
-			//else if (format == "PenData" ) return 10;
-			//else if (format == "RiffAudio" ) return 11;
-			//else if (format == "WaveAudio" ) return 12;
-			else if (format == "UnicodeText" ) return UTF8_STRING.ToInt32();
-			//else if (format == "EnhancedMetafile" ) return 14;
-			//else if (format == "FileDrop" ) return 15;
-			//else if (format == "Locale" ) return 16;
-			else if (format == "Rich Text Format") return RICHTEXTFORMAT.ToInt32 ();
-
-			return XInternAtom(DisplayHandle, format, false).ToInt32();
+			return XplatUIX11.XInternAtom(DisplayHandle, format, false).ToInt32();
 		}
 
+		[Obsolete("ClipboardOpen is obsolete for X11, use System.Windows.Forms.Clipboard instead", true)]
 		internal override IntPtr ClipboardOpen(bool primary_selection)
 		{
-			if (!primary_selection)
-				ClipMagic = CLIPBOARD;
-			else
-				ClipMagic = PRIMARY;
-
-			return ClipMagic;
+			return Clipboards[primary_selection ? 1 : 0].Selection;
 		}
 
+		[Obsolete("ClipboardRetrieve is obsolete for X11, use System.Windows.Forms.Clipboard instead", true)]
 		internal override object ClipboardRetrieve(IntPtr handle, int type, XplatUI.ClipboardToObject converter)
 		{
-			XConvertSelection(DisplayHandle, handle, (IntPtr)type, (IntPtr)type, FosterParent, IntPtr.Zero);
-			Clipboard.Retrieving = true;
-
-			while (Clipboard.Retrieving)
-			{
-				UpdateMessageQueue(null, false);
-			}
-
-			return Clipboard.Item;
+			throw new NotImplementedException("ClipboardRetrieveis obsolete for X11, use System.Windows.Forms.Clipboard instead");
 		}
 
-		internal override void ClipboardStore (IntPtr handle, object obj, int type, XplatUI.ObjectToClipboard converter, bool copy)
+		[Obsolete("ClipboardStore is obsolete for X11, use System.Windows.Forms.Clipboard instead", true)]
+		internal override void ClipboardStore(IntPtr handle, object obj, int type, XplatUI.ObjectToClipboard converter, bool copy)
 		{
-			Clipboard.Converter = converter;
-
-			if (obj != null)
-			{
-				Clipboard.AddSource (type, obj);
-				XSetSelectionOwner (DisplayHandle, CLIPBOARD, FosterParent, IntPtr.Zero);
-
-				if (copy)
-				{
-					try
-					{
-						var clipboardAtom = gdk_atom_intern ("CLIPBOARD", true);
-						var clipboard = gtk_clipboard_get (clipboardAtom);
-
-						if (clipboard != IntPtr.Zero)
-						{
-							// for now we only store text
-							var text = Clipboard.GetRtfText ();
-
-							if (string.IsNullOrEmpty (text))
-								text = Clipboard.GetPlainText ();
-
-							if (!string.IsNullOrEmpty (text))
-							{
-								gtk_clipboard_set_text (clipboard, text, text.Length);
-								gtk_clipboard_store (clipboard);
-							}
-						}
-					}
-					catch
-					{
-						// ignore any errors - most likely because gtk isn't installed?
-					}
-				}
-			}
-			else
-			{
-				// Clearing the selection
-				Clipboard.ClearSources ();
-				XSetSelectionOwner (DisplayHandle, CLIPBOARD, IntPtr.Zero, IntPtr.Zero);
-			}
+			throw new NotImplementedException("ClipboardStore obsolete for X11, use System.Windows.Forms.Clipboard instead");
 		}
 
-		internal override void CreateCaret (IntPtr handle, int width, int height)
+		string[] ClipboardGetFormatsImp(bool primary_selection)
 		{
-			XGCValues   gc_values;
-			Hwnd        hwnd;
+			return Clipboards[primary_selection ? 1 : 0].GetFormats();
+		}
+
+		IDataObject ClipboardGetContentImp(bool primary_selection)
+		{
+			return Clipboards[primary_selection ? 1 : 0].GetContent();
+		}
+
+		void ClipboardSetContentImp(bool primary_selection, object data, bool copy)
+		{
+			Clipboards[primary_selection ? 1 : 0].SetContent(data, copy);
+		}
+
+		void ClipboardClearImp(bool primary_selection)
+		{
+			Clipboards[primary_selection ? 1 : 0].Clear();
+		}
+
+		internal override void CreateCaret(IntPtr handle, int width, int height)
+		{
+			XGCValues gc_values;
+			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			if (Caret.Hwnd != IntPtr.Zero)
@@ -3295,7 +2940,7 @@ namespace System.Windows.Forms
 			Caret.On = false;
 			gc_values = new XGCValues();
 			gc_values.line_width = width;
-			Caret.gc = XCreateGC(DisplayHandle, Caret.Window, new IntPtr ((int)GCFunction.GCLineWidth), ref gc_values);
+			Caret.gc = XCreateGC(DisplayHandle, Caret.Window, new IntPtr((int)GCFunction.GCLineWidth), ref gc_values);
 
 			if (Caret.gc == IntPtr.Zero)
 			{
@@ -3306,20 +2951,20 @@ namespace System.Windows.Forms
 			XSetFunction(DisplayHandle, Caret.gc, GXFunction.GXinvert);
 		}
 
-		internal override IntPtr CreateWindow (CreateParams cp)
+		internal override IntPtr CreateWindow(CreateParams cp)
 		{
-			XSetWindowAttributes    Attributes;
-			Hwnd            hwnd;
-			Hwnd            parent_hwnd = null;
-			int         X;
-			int         Y;
-			int         Width;
-			int         Height;
-			IntPtr          ParentHandle;
-			IntPtr          WholeWindow;
-			IntPtr          ClientWindow;
-			SetWindowValuemask  ValueMask;
-			int[]           atoms;
+			XSetWindowAttributes Attributes;
+			Hwnd hwnd;
+			Hwnd parent_hwnd = null;
+			int X;
+			int Y;
+			int Width;
+			int Height;
+			IntPtr ParentHandle;
+			IntPtr WholeWindow;
+			IntPtr ClientWindow;
+			SetWindowValuemask ValueMask;
+			int[] atoms;
 			hwnd = new Hwnd();
 			Attributes = new XSetWindowAttributes();
 			X = cp.X;
@@ -3338,7 +2983,7 @@ namespace System.Windows.Forms
 			}
 			else
 			{
-				if (StyleSet (cp.Style, WindowStyles.WS_CHILD))
+				if (StyleSet(cp.Style, WindowStyles.WS_CHILD))
 				{
 					// We need to use our foster parent window until this poor child gets it's parent assigned
 					ParentHandle = FosterParent;
@@ -3352,7 +2997,7 @@ namespace System.Windows.Forms
 			// Set the default location location for forms.
 			if (cp.control is Form && cp.X == int.MinValue && cp.Y == int.MinValue)
 			{
-				Point next = Hwnd.GetNextStackedFormLocation (cp);
+				Point next = Hwnd.GetNextStackedFormLocation(cp);
 				X = next.X;
 				Y = next.Y;
 			}
@@ -3362,14 +3007,14 @@ namespace System.Windows.Forms
 			Attributes.win_gravity = Gravity.NorthWestGravity;
 
 			// Save what's under the toolwindow
-			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW))
+			if (ExStyleSet(cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW))
 			{
 				Attributes.save_under = true;
 				ValueMask |= SetWindowValuemask.SaveUnder;
 			}
 
 			// If we're a popup without caption we override the WM
-			if (StyleSet (cp.Style, WindowStyles.WS_POPUP) && !StyleSet (cp.Style, WindowStyles.WS_CAPTION))
+			if (StyleSet(cp.Style, WindowStyles.WS_POPUP) && !StyleSet(cp.Style, WindowStyles.WS_CAPTION))
 			{
 				Attributes.override_redirect = true;
 				ValueMask |= SetWindowValuemask.OverrideRedirect;
@@ -3383,18 +3028,18 @@ namespace System.Windows.Forms
 			hwnd.initial_style = cp.WindowStyle;
 			hwnd.initial_ex_style = cp.WindowExStyle;
 
-			if (StyleSet (cp.Style, WindowStyles.WS_DISABLED))
+			if (StyleSet(cp.Style, WindowStyles.WS_DISABLED))
 			{
 				hwnd.enabled = false;
 			}
 
 			ClientWindow = IntPtr.Zero;
-			Size XWindowSize = TranslateWindowSizeToXWindowSize (cp);
-			Rectangle XClientRect = TranslateClientRectangleToXClientRectangle (hwnd, cp.control);
+			Size XWindowSize = TranslateWindowSizeToXWindowSize(cp);
+			Rectangle XClientRect = TranslateClientRectangleToXClientRectangle(hwnd, cp.control);
 
 			lock (XlibLock)
 			{
-				WholeWindow = XCreateWindow(DisplayHandle, ParentHandle, X, Y, XWindowSize.Width, XWindowSize.Height, 0, (int)CreateWindowArgs.CopyFromParent, (int)CreateWindowArgs.InputOutput, IntPtr.Zero, new UIntPtr ((uint)ValueMask), ref Attributes);
+				WholeWindow = XCreateWindow(DisplayHandle, ParentHandle, X, Y, XWindowSize.Width, XWindowSize.Height, 0, (int)CreateWindowArgs.CopyFromParent, (int)CreateWindowArgs.InputOutput, IntPtr.Zero, new UIntPtr((uint)ValueMask), ref Attributes);
 
 				if (WholeWindow != IntPtr.Zero)
 				{
@@ -3406,7 +3051,7 @@ namespace System.Windows.Forms
 						Attributes.colormap = CustomColormap;
 					}
 
-					ClientWindow = XCreateWindow(DisplayHandle, WholeWindow, XClientRect.X, XClientRect.Y, XClientRect.Width, XClientRect.Height, 0, (int)CreateWindowArgs.CopyFromParent, (int)CreateWindowArgs.InputOutput, CustomVisual, new UIntPtr ((uint)ValueMask), ref Attributes);
+					ClientWindow = XCreateWindow(DisplayHandle, WholeWindow, XClientRect.X, XClientRect.Y, XClientRect.Width, XClientRect.Height, 0, (int)CreateWindowArgs.CopyFromParent, (int)CreateWindowArgs.InputOutput, CustomVisual, new UIntPtr((uint)ValueMask), ref Attributes);
 				}
 			}
 
@@ -3420,11 +3065,11 @@ namespace System.Windows.Forms
 			hwnd.ClientWindow = ClientWindow;
 			DriverDebug("Created window {0:X} / {1:X} parent {2:X}, Style {3}, ExStyle {4}", ClientWindow.ToInt32(), WholeWindow.ToInt32(), hwnd.parent != null ? hwnd.parent.Handle.ToInt32() : 0, (WindowStyles)cp.Style, (WindowExStyles)cp.ExStyle);
 
-			if (!StyleSet (cp.Style, WindowStyles.WS_CHILD))
+			if (!StyleSet(cp.Style, WindowStyles.WS_CHILD))
 			{
 				if ((X != unchecked((int)0x80000000)) && (Y != unchecked((int)0x80000000)))
 				{
-					XSizeHints  hints;
+					XSizeHints hints;
 					hints = new XSizeHints();
 					hints.x = X;
 					hints.y = Y;
@@ -3435,21 +3080,21 @@ namespace System.Windows.Forms
 
 			lock (XlibLock)
 			{
-				XSelectInput(DisplayHandle, hwnd.whole_window, new IntPtr ((int)(SelectInputMask | EventMask.StructureNotifyMask | EventMask.PropertyChangeMask | Keyboard.KeyEventMask)));
+				XSelectInput(DisplayHandle, hwnd.whole_window, new IntPtr((int)(SelectInputMask | EventMask.StructureNotifyMask | EventMask.PropertyChangeMask | Keyboard.KeyEventMask)));
 
 				if (hwnd.whole_window != hwnd.client_window)
-					XSelectInput(DisplayHandle, hwnd.client_window, new IntPtr ((int)(SelectInputMask | EventMask.StructureNotifyMask | Keyboard.KeyEventMask)));
+					XSelectInput(DisplayHandle, hwnd.client_window, new IntPtr((int)(SelectInputMask | EventMask.StructureNotifyMask | Keyboard.KeyEventMask)));
 			}
 
-			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOPMOST))
+			if (ExStyleSet(cp.ExStyle, WindowExStyles.WS_EX_TOPMOST))
 				SetTopmost(hwnd.whole_window, true);
 
 			SetWMStyles(hwnd, cp);
 			// set the group leader
-			XWMHints wm_hints = new XWMHints ();
+			XWMHints wm_hints = new XWMHints();
 			wm_hints.flags = (IntPtr)(XWMHintsFlags.InputHint | XWMHintsFlags.StateHint | XWMHintsFlags.WindowGroupHint);
-			wm_hints.input = !StyleSet (cp.Style, WindowStyles.WS_DISABLED);
-			wm_hints.initial_state = StyleSet (cp.Style, WindowStyles.WS_MINIMIZE) ? XInitialState.IconicState : XInitialState.NormalState;
+			wm_hints.input = !StyleSet(cp.Style, WindowStyles.WS_DISABLED);
+			wm_hints.initial_state = StyleSet(cp.Style, WindowStyles.WS_MINIMIZE) ? XInitialState.IconicState : XInitialState.NormalState;
 
 			if (ParentHandle != RootWindow)
 			{
@@ -3462,26 +3107,26 @@ namespace System.Windows.Forms
 
 			lock (XlibLock)
 			{
-				XSetWMHints(DisplayHandle, hwnd.whole_window, ref wm_hints );
+				XSetWMHints(DisplayHandle, hwnd.whole_window, ref wm_hints);
 			}
 
-			if (StyleSet (cp.Style, WindowStyles.WS_MINIMIZE))
+			if (StyleSet(cp.Style, WindowStyles.WS_MINIMIZE))
 			{
 				SetWindowState(hwnd.Handle, FormWindowState.Minimized);
 			}
-			else if (StyleSet (cp.Style, WindowStyles.WS_MAXIMIZE))
+			else if (StyleSet(cp.Style, WindowStyles.WS_MAXIMIZE))
 			{
 				SetWindowState(hwnd.Handle, FormWindowState.Maximized);
 			}
 
 			// for now make all windows dnd enabled
-			Dnd.SetAllowDrop (hwnd, true);
+			Dnd.SetAllowDrop(hwnd);
 			// Set caption/window title
 			Text(hwnd.Handle, cp.Caption);
-			SendMessage (hwnd.Handle, Msg.WM_CREATE, (IntPtr)1, IntPtr.Zero /* XXX unused */);
-			SendParentNotify (hwnd.Handle, Msg.WM_CREATE, int.MaxValue, int.MaxValue);
+			SendMessage(hwnd.Handle, Msg.WM_CREATE, (IntPtr)1, IntPtr.Zero /* XXX unused */);
+			SendParentNotify(hwnd.Handle, Msg.WM_CREATE, int.MaxValue, int.MaxValue);
 
-			if (StyleSet (cp.Style, WindowStyles.WS_VISIBLE))
+			if (StyleSet(cp.Style, WindowStyles.WS_VISIBLE))
 			{
 				hwnd.visible = true;
 				MapWindow(hwnd, WindowType.Both);
@@ -3501,7 +3146,7 @@ namespace System.Windows.Forms
 			create_params.Y = Y;
 			create_params.Width = Width;
 			create_params.Height = Height;
-			create_params.ClassName = XplatUI.GetDefaultClassName (GetType ());
+			create_params.ClassName = XplatUI.GetDefaultClassName(GetType());
 			create_params.ClassStyle = 0;
 			create_params.ExStyle = 0;
 			create_params.Parent = IntPtr.Zero;
@@ -3511,21 +3156,21 @@ namespace System.Windows.Forms
 
 		internal override IntPtr DefineCursor(Bitmap bitmap, Bitmap mask, Color cursor_pixel, Color mask_pixel, int xHotSpot, int yHotSpot)
 		{
-			IntPtr  cursor;
-			Bitmap  cursor_bitmap;
-			Bitmap  cursor_mask;
-			Byte[]  cursor_bits;
-			Byte[]  mask_bits;
-			Color   c_pixel;
-			Color   m_pixel;
+			IntPtr cursor;
+			Bitmap cursor_bitmap;
+			Bitmap cursor_mask;
+			Byte[] cursor_bits;
+			Byte[] mask_bits;
+			Color c_pixel;
+			Color m_pixel;
 			int width;
 			int height;
-			IntPtr  cursor_pixmap;
-			IntPtr  mask_pixmap;
-			XColor  fg;
-			XColor  bg;
-			bool    and;
-			bool    xor;
+			IntPtr cursor_pixmap;
+			IntPtr mask_pixmap;
+			XColor fg;
+			XColor bg;
+			bool and;
+			bool xor;
 
 			if (XQueryBestCursor(DisplayHandle, RootWindow, bitmap.Width, bitmap.Height, out width, out height) == 0)
 			{
@@ -3602,7 +3247,7 @@ namespace System.Windows.Forms
 			return cursor;
 		}
 
-		internal override Bitmap DefineStdCursorBitmap (StdCursor id)
+		internal override Bitmap DefineStdCursorBitmap(StdCursor id)
 		{
 			CursorFontShape shape;
 			string name;
@@ -3612,49 +3257,49 @@ namespace System.Windows.Forms
 
 			try
 			{
-				shape = StdCursorToFontShape (id);
-				name = shape.ToString ().Replace ("XC_", string.Empty);
-				size = XcursorGetDefaultSize (DisplayHandle);
-				theme = XcursorGetTheme (DisplayHandle);
-				IntPtr images_ptr = XcursorLibraryLoadImages (name, theme, size);
-				DriverDebug ("DefineStdCursorBitmap, id={0}, #id={1}, name{2}, size={3}, theme: {4}, images_ptr={5}", id, (int) id, name, size, Marshal.PtrToStringAnsi (theme), images_ptr);
+				shape = StdCursorToFontShape(id);
+				name = shape.ToString().Replace("XC_", string.Empty);
+				size = XcursorGetDefaultSize(DisplayHandle);
+				theme = XcursorGetTheme(DisplayHandle);
+				IntPtr images_ptr = XcursorLibraryLoadImages(name, theme, size);
+				DriverDebug("DefineStdCursorBitmap, id={0}, #id={1}, name{2}, size={3}, theme: {4}, images_ptr={5}", id, (int)id, name, size, Marshal.PtrToStringAnsi(theme), images_ptr);
 
 				if (images_ptr == IntPtr.Zero)
 				{
 					return null;
 				}
 
-				XcursorImages images = (XcursorImages) Marshal.PtrToStructure (images_ptr, typeof (XcursorImages));
-				DriverDebug ("DefineStdCursorBitmap, cursor has {0} images", images.nimage);
+				XcursorImages images = (XcursorImages)Marshal.PtrToStructure(images_ptr, typeof(XcursorImages));
+				DriverDebug("DefineStdCursorBitmap, cursor has {0} images", images.nimage);
 
 				if (images.nimage > 0)
 				{
 					// We only care about the first image.
-					XcursorImage image = (XcursorImage)Marshal.PtrToStructure (Marshal.ReadIntPtr (images.images), typeof (XcursorImage));
-					DriverDebug ("DefineStdCursorBitmap, loaded image <size={0}, height={1}, width={2}, xhot={3}, yhot={4}, pixels={5}", image.size, image.height, image.width, image.xhot, image.yhot, image.pixels);
+					XcursorImage image = (XcursorImage)Marshal.PtrToStructure(Marshal.ReadIntPtr(images.images), typeof(XcursorImage));
+					DriverDebug("DefineStdCursorBitmap, loaded image <size={0}, height={1}, width={2}, xhot={3}, yhot={4}, pixels={5}", image.size, image.height, image.width, image.xhot, image.yhot, image.pixels);
 
 					// A sanity check
 					if (image.width <= short.MaxValue && image.height <= short.MaxValue)
 					{
-						int [] pixels = new int [image.width * image.height];
-						Marshal.Copy (image.pixels, pixels, 0, pixels.Length);
-						bmp = new Bitmap (image.width, image.height);
+						int[] pixels = new int[image.width * image.height];
+						Marshal.Copy(image.pixels, pixels, 0, pixels.Length);
+						bmp = new Bitmap(image.width, image.height);
 
 						for (int w = 0; w < image.width; w++)
 						{
 							for (int h = 0; h < image.height; h++)
 							{
-								bmp.SetPixel (w, h, Color.FromArgb (pixels [h * image.width + w]));
+								bmp.SetPixel(w, h, Color.FromArgb(pixels[h * image.width + w]));
 							}
 						}
 					}
 				}
 
-				XcursorImagesDestroy (images_ptr);
+				XcursorImagesDestroy(images_ptr);
 			}
 			catch (DllNotFoundException ex)
 			{
-				Console.WriteLine ("Could not load libXcursor: " + ex.Message + " (" + ex.GetType ().Name + ")");
+				Console.WriteLine("Could not load libXcursor: " + ex.Message + " (" + ex.GetType().Name + ")");
 				return null;
 			}
 
@@ -3665,8 +3310,8 @@ namespace System.Windows.Forms
 		internal override IntPtr DefineStdCursor(StdCursor id)
 		{
 			CursorFontShape shape;
-			IntPtr      cursor;
-			shape = StdCursorToFontShape (id);
+			IntPtr cursor;
+			shape = StdCursorToFontShape(id);
 
 			lock (XlibLock)
 			{
@@ -3676,7 +3321,7 @@ namespace System.Windows.Forms
 			return cursor;
 		}
 
-		internal static CursorFontShape StdCursorToFontShape (StdCursor id)
+		internal static CursorFontShape StdCursorToFontShape(StdCursor id)
 		{
 			CursorFontShape shape;
 			// FIXME - define missing shapes
@@ -3853,7 +3498,7 @@ namespace System.Windows.Forms
 
 				default:
 				{
-					shape = (CursorFontShape) 0;
+					shape = (CursorFontShape)0;
 					break;
 				}
 			}
@@ -3866,10 +3511,10 @@ namespace System.Windows.Forms
 			switch ((Msg)msg.Msg)
 			{
 				case Msg.WM_IME_COMPOSITION:
-					string s = Keyboard.GetCompositionString ();
+					string s = Keyboard.GetCompositionString();
 
 					foreach (char c in s)
-						SendMessage (msg.HWnd, Msg.WM_IME_CHAR, (IntPtr) c, msg.LParam);
+						SendMessage(msg.HWnd, Msg.WM_IME_CHAR, (IntPtr)c, msg.LParam);
 
 					return IntPtr.Zero;
 
@@ -3877,7 +3522,7 @@ namespace System.Windows.Forms
 					// On Windows API it sends two WM_CHAR messages for each byte, but
 					// I wonder if it is worthy to emulate it (also no idea how to
 					// reconstruct those bytes into chars).
-					SendMessage (msg.HWnd, Msg.WM_CHAR, msg.WParam, msg.LParam);
+					SendMessage(msg.HWnd, Msg.WM_CHAR, msg.WParam, msg.LParam);
 					return IntPtr.Zero;
 
 				case Msg.WM_PAINT:
@@ -3912,20 +3557,20 @@ namespace System.Windows.Forms
 
 					if (msg.WParam == (IntPtr)1)
 					{
-						hwnd = Hwnd.GetObjectFromWindow (msg.HWnd);
+						hwnd = Hwnd.GetObjectFromWindow(msg.HWnd);
 						XplatUIWin32.NCCALCSIZE_PARAMS ncp;
-						ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure (msg.LParam, typeof (XplatUIWin32.NCCALCSIZE_PARAMS));
+						ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure(msg.LParam, typeof(XplatUIWin32.NCCALCSIZE_PARAMS));
 						// Add all the stuff X is supposed to draw.
-						Control ctrl = Control.FromHandle (hwnd.Handle);
+						Control ctrl = Control.FromHandle(hwnd.Handle);
 
 						if (ctrl != null)
 						{
-							Hwnd.Borders rect = Hwnd.GetBorders (ctrl.GetCreateParams (), null);
+							Hwnd.Borders rect = Hwnd.GetBorders(ctrl.GetCreateParams(), null);
 							ncp.rgrc1.top += rect.top;
 							ncp.rgrc1.bottom -= rect.bottom;
 							ncp.rgrc1.left += rect.left;
 							ncp.rgrc1.right -= rect.right;
-							Marshal.StructureToPtr (ncp, msg.LParam, true);
+							Marshal.StructureToPtr(ncp, msg.LParam, true);
 						}
 					}
 
@@ -3965,7 +3610,7 @@ namespace System.Windows.Forms
 
 				case Msg.WM_SETCURSOR:
 				{
-					Hwnd    hwnd;
+					Hwnd hwnd;
 					hwnd = Hwnd.GetObjectFromWindow(msg.HWnd);
 
 					if (hwnd == null)
@@ -3984,15 +3629,16 @@ namespace System.Windows.Forms
 
 						switch ((HitTest)(msg.LParam.ToInt32() & 0xffff))
 						{
-							case HitTest.HTBOTTOM:      handle = Cursors.SizeNS.handle; break;
+							case HitTest.HTBOTTOM: handle = Cursors.SizeNS.handle; break;
 
-							case HitTest.HTBORDER:      handle = Cursors.SizeNS.handle; break;
+							case HitTest.HTBORDER: handle = Cursors.SizeNS.handle; break;
 
-							case HitTest.HTBOTTOMLEFT:  handle = Cursors.SizeNESW.handle; break;
+							case HitTest.HTBOTTOMLEFT: handle = Cursors.SizeNESW.handle; break;
 
 							case HitTest.HTBOTTOMRIGHT: handle = Cursors.SizeNWSE.handle; break;
 
-							case HitTest.HTERROR:       if ((msg.LParam.ToInt32() >> 16) == (int)Msg.WM_LBUTTONDOWN)
+							case HitTest.HTERROR:
+								if ((msg.LParam.ToInt32() >> 16) == (int)Msg.WM_LBUTTONDOWN)
 								{
 									AudibleAlert(AlertType.Default);
 								}
@@ -4000,17 +3646,17 @@ namespace System.Windows.Forms
 								handle = Cursors.Default.handle;
 								break;
 
-							case HitTest.HTHELP:        handle = Cursors.Help.handle; break;
+							case HitTest.HTHELP: handle = Cursors.Help.handle; break;
 
-							case HitTest.HTLEFT:        handle = Cursors.SizeWE.handle; break;
+							case HitTest.HTLEFT: handle = Cursors.SizeWE.handle; break;
 
-							case HitTest.HTRIGHT:       handle = Cursors.SizeWE.handle; break;
+							case HitTest.HTRIGHT: handle = Cursors.SizeWE.handle; break;
 
-							case HitTest.HTTOP:     handle = Cursors.SizeNS.handle; break;
+							case HitTest.HTTOP: handle = Cursors.SizeNS.handle; break;
 
-							case HitTest.HTTOPLEFT:     handle = Cursors.SizeNWSE.handle; break;
+							case HitTest.HTTOPLEFT: handle = Cursors.SizeNWSE.handle; break;
 
-							case HitTest.HTTOPRIGHT:    handle = Cursors.SizeNESW.handle; break;
+							case HitTest.HTTOPRIGHT: handle = Cursors.SizeNESW.handle; break;
 #if SameAsDefault
 
 							case HitTest.HTGROWBOX:
@@ -4048,7 +3694,7 @@ namespace System.Windows.Forms
 			{
 				if (Caret.Visible)
 				{
-					HideCaret ();
+					HideCaret();
 					Caret.Timer.Stop();
 				}
 
@@ -4074,7 +3720,7 @@ namespace System.Windows.Forms
 
 		internal override void DestroyWindow(IntPtr handle)
 		{
-			Hwnd    hwnd;
+			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			// The window should never ever be a zombie here, since we should
@@ -4082,36 +3728,42 @@ namespace System.Windows.Forms
 			// "destroying" calls, but just in case....
 			if (hwnd == null || hwnd.zombie)
 			{
-				DriverDebug ("window {0:X} already destroyed", handle.ToInt32());
+				DriverDebug("window {0:X} already destroyed", handle.ToInt32());
 				return;
 			}
 
-			DriverDebug ("Destroying window {0}", XplatUI.Window(hwnd.client_window));
-			SendParentNotify (hwnd.Handle, Msg.WM_DESTROY, int.MaxValue, int.MaxValue);
-			CleanupCachedWindows (hwnd);
-			ArrayList windows = new ArrayList ();
-			AccumulateDestroyedHandles (Control.ControlNativeWindow.ControlFromHandle(hwnd.Handle), windows);
+			DriverDebug("Destroying window {0}", XplatUI.Window(hwnd.client_window));
+			SendParentNotify(hwnd.Handle, Msg.WM_DESTROY, int.MaxValue, int.MaxValue);
+			CleanupCachedWindows(hwnd);
+			ArrayList windows = new ArrayList();
+			AccumulateDestroyedHandles(Control.ControlNativeWindow.ControlFromHandle(hwnd.Handle), windows);
 
 			foreach (Hwnd h in windows)
 			{
-				SendMessage (h.Handle, Msg.WM_DESTROY, IntPtr.Zero, IntPtr.Zero);
-				h.zombie = true;
+				SendMessage(h.Handle, Msg.WM_DESTROY, IntPtr.Zero, IntPtr.Zero);
 			}
 
 			lock (XlibLock)
 			{
 				if (hwnd.whole_window != IntPtr.Zero)
 				{
-					DriverDebug ("XDestroyWindow (whole_window = {0:X})", hwnd.whole_window.ToInt32());
-					Keyboard.DestroyICForWindow (hwnd.whole_window);
+					DriverDebug("XDestroyWindow (whole_window = {0:X})", hwnd.whole_window.ToInt32());
+					Keyboard.DestroyICForWindow(hwnd.client_window);
 					XDestroyWindow(DisplayHandle, hwnd.whole_window);
 				}
 				else if (hwnd.client_window != IntPtr.Zero)
 				{
-					DriverDebug ("XDestroyWindow (client_window = {0:X})", hwnd.client_window.ToInt32());
-					Keyboard.DestroyICForWindow (hwnd.client_window);
+					DriverDebug("XDestroyWindow (client_window = {0:X})", hwnd.client_window.ToInt32());
+					Keyboard.DestroyICForWindow(hwnd.client_window);
 					XDestroyWindow(DisplayHandle, hwnd.client_window);
 				}
+			}
+
+			foreach (Hwnd h in windows)
+			{
+				h.BeginAsyncDestroy();
+				h.expose_pending = h.nc_expose_pending = false;
+				h.Queue.Paint.Remove(h);
 			}
 		}
 
@@ -4120,10 +3772,10 @@ namespace System.Windows.Forms
 			return NativeWindow.WndProc(msg.hwnd, msg.message, msg.wParam, msg.lParam);
 		}
 
-		IntPtr GetReversibleScreenGC (Color backColor)
+		IntPtr GetReversibleScreenGC(Color backColor)
 		{
-			XGCValues   gc_values;
-			IntPtr      gc;
+			XGCValues gc_values;
+			IntPtr gc;
 			uint pixel;
 			XColor xcolor = new XColor();
 			xcolor.red = (ushort)(backColor.R * 257);
@@ -4134,16 +3786,16 @@ namespace System.Windows.Forms
 			gc_values = new XGCValues();
 			gc_values.subwindow_mode = GCSubwindowMode.IncludeInferiors;
 			gc_values.foreground = (IntPtr)pixel;
-			gc = XCreateGC(DisplayHandle, RootWindow, new IntPtr ((int) (GCFunction.GCSubwindowMode | GCFunction.GCForeground)), ref gc_values);
+			gc = XCreateGC(DisplayHandle, RootWindow, new IntPtr((int)(GCFunction.GCSubwindowMode | GCFunction.GCForeground)), ref gc_values);
 			XSetForeground(DisplayHandle, gc, (UIntPtr)pixel);
-			XSetFunction(DisplayHandle,   gc, GXFunction.GXxor);
+			XSetFunction(DisplayHandle, gc, GXFunction.GXxor);
 			return gc;
 		}
 
-		IntPtr GetReversibleControlGC (Control control, int line_width)
+		IntPtr GetReversibleControlGC(Control control, int line_width)
 		{
-			XGCValues   gc_values;
-			IntPtr      gc;
+			XGCValues gc_values;
+			IntPtr gc;
 			gc_values = new XGCValues();
 			gc_values.subwindow_mode = GCSubwindowMode.IncludeInferiors;
 			gc_values.line_width = line_width;
@@ -4154,7 +3806,7 @@ namespace System.Windows.Forms
 			//XSetBackground(DisplayHandle, gc, background);
 			//XSetFunction(DisplayHandle,   gc, GXxor);
 			//XSetPlaneMask(DisplayHandle,  gc, mask);
-			gc = XCreateGC(DisplayHandle, control.Handle, new IntPtr ((int) (GCFunction.GCSubwindowMode | GCFunction.GCLineWidth | GCFunction.GCForeground)), ref gc_values);
+			gc = XCreateGC(DisplayHandle, control.Handle, new IntPtr((int)(GCFunction.GCSubwindowMode | GCFunction.GCLineWidth | GCFunction.GCForeground)), ref gc_values);
 			uint foreground;
 			uint background;
 			XColor xcolor = new XColor();
@@ -4171,8 +3823,8 @@ namespace System.Windows.Forms
 			uint mask = foreground ^ background;
 			XSetForeground(DisplayHandle, gc, (UIntPtr)0xffffffff);
 			XSetBackground(DisplayHandle, gc, (UIntPtr)background);
-			XSetFunction(DisplayHandle,   gc, GXFunction.GXxor);
-			XSetPlaneMask(DisplayHandle,  gc, (IntPtr)mask);
+			XSetFunction(DisplayHandle, gc, GXFunction.GXxor);
+			XSetPlaneMask(DisplayHandle, gc, (IntPtr)mask);
 			return gc;
 		}
 
@@ -4181,17 +3833,17 @@ namespace System.Windows.Forms
 			if (backColor.GetBrightness() < 0.5)
 				backColor = Color.FromArgb(255 - backColor.R, 255 - backColor.G, 255 - backColor.B);
 
-			IntPtr gc = GetReversibleScreenGC (backColor);
-			XDrawLine (DisplayHandle, RootWindow, gc, start.X, start.Y, end.X, end.Y);
+			IntPtr gc = GetReversibleScreenGC(backColor);
+			XDrawLine(DisplayHandle, RootWindow, gc, start.X, start.Y, end.X, end.Y);
 			XFreeGC(DisplayHandle, gc);
 		}
 
-		internal override void DrawReversibleFrame (Rectangle rectangle, Color backColor, FrameStyle style)
+		internal override void DrawReversibleFrame(Rectangle rectangle, Color backColor, FrameStyle style)
 		{
 			if (backColor.GetBrightness() < 0.5)
 				backColor = Color.FromArgb(255 - backColor.R, 255 - backColor.G, 255 - backColor.B);
 
-			IntPtr gc = GetReversibleScreenGC (backColor);
+			IntPtr gc = GetReversibleScreenGC(backColor);
 
 			if (rectangle.Width < 0)
 			{
@@ -4221,17 +3873,17 @@ namespace System.Windows.Forms
 					break;
 			}
 
-			XSetLineAttributes (DisplayHandle, gc, line_width, line_style, cap_style, join_style);
+			XSetLineAttributes(DisplayHandle, gc, line_width, line_style, cap_style, join_style);
 			XDrawRectangle(DisplayHandle, RootWindow, gc, rectangle.Left, rectangle.Top, rectangle.Width, rectangle.Height);
 			XFreeGC(DisplayHandle, gc);
 		}
 
-		internal override void FillReversibleRectangle (Rectangle rectangle, Color backColor)
+		internal override void FillReversibleRectangle(Rectangle rectangle, Color backColor)
 		{
 			if (backColor.GetBrightness() < 0.5)
 				backColor = Color.FromArgb(255 - backColor.R, 255 - backColor.G, 255 - backColor.B);
 
-			IntPtr gc = GetReversibleScreenGC (backColor);
+			IntPtr gc = GetReversibleScreenGC(backColor);
 
 			if (rectangle.Width < 0)
 			{
@@ -4251,9 +3903,9 @@ namespace System.Windows.Forms
 
 		internal override void DrawReversibleRectangle(IntPtr handle, Rectangle rect, int line_width)
 		{
-			IntPtr      gc;
+			IntPtr gc;
 			Control control = Control.FromHandle(handle);
-			gc = GetReversibleControlGC (control, line_width);
+			gc = GetReversibleControlGC(control, line_width);
 
 			if ((rect.Width > 0) && (rect.Height > 0))
 			{
@@ -4276,8 +3928,8 @@ namespace System.Windows.Forms
 
 		internal override void DoEvents()
 		{
-			DebugHelper.Enter ();
-			MSG msg = new MSG ();
+			DebugHelper.Enter();
+			MSG msg = new MSG();
 			XEventQueue queue;
 
 			if (OverrideCursorHandle != IntPtr.Zero)
@@ -4291,30 +3943,30 @@ namespace System.Windows.Forms
 
 			while (PeekMessage(queue, ref msg, IntPtr.Zero, 0, 0, (uint)PeekMessageFlags.PM_REMOVE))
 			{
-				Message m = Message.Create (msg.hwnd, (int)msg.message, msg.wParam, msg.lParam);
+				Message m = Message.Create(msg.hwnd, (int)msg.message, msg.wParam, msg.lParam);
 
-				if (Application.FilterMessage (ref m))
+				if (Application.FilterMessage(ref m))
 					continue;
 
-				TranslateMessage (ref msg);
-				DispatchMessage (ref msg);
+				TranslateMessage(ref msg);
+				DispatchMessage(ref msg);
 				string key = msg.hwnd + ":" + msg.message;
 
 				if (messageHold[key] != null)
 				{
 					messageHold[key] = ((int)messageHold[key]) - 1;
-					DebugHelper.WriteLine  ("Got " + msg + " for " + key);
+					DebugHelper.WriteLine("Got " + msg + " for " + key);
 				}
 			}
 
 			in_doevents = false;
 			queue.DispatchIdle = true;
-			DebugHelper.Leave ();
+			DebugHelper.Leave();
 		}
 
 		internal override void EnableWindow(IntPtr handle, bool Enable)
 		{
-			Hwnd    hwnd;
+			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			if (hwnd != null)
@@ -4330,13 +3982,13 @@ namespace System.Windows.Forms
 
 		internal override IntPtr GetActive()
 		{
-			IntPtr  actual_atom;
+			IntPtr actual_atom;
 			int actual_format;
-			IntPtr  nitems;
-			IntPtr  bytes_after;
-			IntPtr  prop = IntPtr.Zero;
-			IntPtr  active = IntPtr.Zero;
-			XGetWindowProperty(DisplayHandle, RootWindow, _NET_ACTIVE_WINDOW, IntPtr.Zero, new IntPtr (1), false, (IntPtr)Atom.XA_WINDOW, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+			IntPtr nitems;
+			IntPtr bytes_after;
+			IntPtr prop = IntPtr.Zero;
+			IntPtr active = IntPtr.Zero;
+			XGetWindowProperty(DisplayHandle, RootWindow, _NET_ACTIVE_WINDOW, IntPtr.Zero, new IntPtr(1), false, (IntPtr)Atom.XA_WINDOW, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
 
 			if (((long)nitems > 0) && (prop != IntPtr.Zero))
 			{
@@ -4346,13 +3998,13 @@ namespace System.Windows.Forms
 			else
 			{
 				// The window manager does not support _NET_ACTIVE_WINDOW.  Fall back to XGetInputFocus.
-				IntPtr  revert_to = IntPtr.Zero;
+				IntPtr revert_to = IntPtr.Zero;
 				XGetInputFocus(DisplayHandle, out active, out revert_to);
 			}
 
 			if (active != IntPtr.Zero)
 			{
-				Hwnd    hwnd;
+				Hwnd hwnd;
 				hwnd = Hwnd.GetObjectFromWindow(active);
 
 				if (hwnd != null)
@@ -4370,7 +4022,7 @@ namespace System.Windows.Forms
 
 		internal override Region GetClipRegion(IntPtr handle)
 		{
-			Hwnd    hwnd;
+			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			if (hwnd != null)
@@ -4391,7 +4043,7 @@ namespace System.Windows.Forms
 
 		internal override void GetDisplaySize(out Size size)
 		{
-			XWindowAttributes   attributes = new XWindowAttributes();
+			XWindowAttributes attributes = new XWindowAttributes();
 
 			lock (XlibLock)
 			{
@@ -4404,18 +4056,18 @@ namespace System.Windows.Forms
 
 		internal override SizeF GetAutoScaleSize(Font font)
 		{
-			Graphics    g;
-			float       width;
-			string      magic_string = "The quick brown fox jumped over the lazy dog.";
-			double      magic_number = 44.549996948242189;
+			Graphics g;
+			float width;
+			string magic_string = "The quick brown fox jumped over the lazy dog.";
+			double magic_number = 44.549996948242189;
 			g = Graphics.FromHwnd(FosterParent);
-			width = (float) (g.MeasureString (magic_string, font).Width / magic_number);
+			width = (float)(g.MeasureString(magic_string, font).Width / magic_number);
 			return new SizeF(width, font.Height);
 		}
 
 		internal override IntPtr GetParent(IntPtr handle, bool with_owner)
 		{
-			Hwnd    hwnd;
+			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			if (hwnd != null)
@@ -4442,9 +4094,9 @@ namespace System.Windows.Forms
 
 		internal override void GetCursorPos(IntPtr handle, out int x, out int y)
 		{
-			IntPtr  use_handle;
-			IntPtr  root;
-			IntPtr  child;
+			IntPtr use_handle;
+			IntPtr root;
+			IntPtr child;
 			int root_x;
 			int root_y;
 			int win_x;
@@ -4462,7 +4114,7 @@ namespace System.Windows.Forms
 
 			lock (XlibLock)
 			{
-				QueryPointer (DisplayHandle, use_handle, out root, out child, out root_x, out root_y, out win_x, out win_y, out keys_buttons);
+				QueryPointer(DisplayHandle, use_handle, out root, out child, out root_x, out root_y, out win_x, out win_y, out keys_buttons);
 			}
 
 			if (handle != IntPtr.Zero)
@@ -4486,14 +4138,14 @@ namespace System.Windows.Forms
 		internal override bool GetFontMetrics(Graphics g, Font font, out int ascent, out int descent)
 		{
 			FontFamily ff = font.FontFamily;
-			ascent = ff.GetCellAscent (font.Style);
-			descent = ff.GetCellDescent (font.Style);
+			ascent = ff.GetCellAscent(font.Style);
+			descent = ff.GetCellDescent(font.Style);
 			return true;
 		}
 
 		internal override Point GetMenuOrigin(IntPtr handle)
 		{
-			Hwnd    hwnd;
+			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			if (hwnd != null)
@@ -4507,22 +4159,30 @@ namespace System.Windows.Forms
 		[MonoTODO("Implement filtering")]
 		internal override bool GetMessage(Object queue_id, ref MSG msg, IntPtr handle, int wFilterMin, int wFilterMax)
 		{
-			XEvent  xevent;
-			bool    client;
-			Hwnd    hwnd;
+			XEvent xevent;
+			bool client;
+			Hwnd hwnd;
 			ProcessNextMessage:
 
 			if (((XEventQueue)queue_id).Count > 0)
 			{
-				xevent = (XEvent) ((XEventQueue)queue_id).Dequeue ();
+				xevent = (XEvent)((XEventQueue)queue_id).Dequeue();
 			}
 			else
 			{
-				UpdateMessageQueue ((XEventQueue)queue_id);
+				UpdateMessageQueue((XEventQueue)queue_id);
 
 				if (((XEventQueue)queue_id).Count > 0)
 				{
-					xevent = (XEvent) ((XEventQueue)queue_id).Dequeue ();
+					xevent = (XEvent)((XEventQueue)queue_id).Dequeue();
+				}
+				else if (((XEventQueue)queue_id).GetQuitMessage(true, out int exit_code))
+				{
+					msg.message = Msg.WM_QUIT;
+					msg.hwnd = IntPtr.Zero;
+					msg.wParam = (IntPtr)exit_code;
+					msg.lParam = IntPtr.Zero;
+					return false;
 				}
 				else if (((XEventQueue)queue_id).Paint.Count > 0)
 				{
@@ -4536,6 +4196,20 @@ namespace System.Windows.Forms
 				}
 			}
 
+			if (xevent.type == XEventName.ClientMessage &&
+					xevent.ClientMessageEvent.message_type == (IntPtr)PostAtom &&
+					(Msg)xevent.ClientMessageEvent.ptr2.ToInt32() == Msg.WM_QUIT)
+			{
+				DebugHelper.Indent();
+				DebugHelper.WriteLine(String.Format("Got WM_QUIT"));
+				DebugHelper.Unindent();
+				msg.hwnd = IntPtr.Zero;
+				msg.message = Msg.WM_QUIT;
+				msg.wParam = xevent.ClientMessageEvent.ptr3;
+				msg.lParam = xevent.ClientMessageEvent.ptr2;
+				return false;
+			}
+
 			hwnd = Hwnd.GetObjectFromWindow(xevent.AnyEvent.window);
 #if DriverDebugDestroy
 
@@ -4546,35 +4220,11 @@ namespace System.Windows.Forms
 					Console.WriteLine ( "GetMessage, got Event: " + xevent.ToString () + " for 0x{0:x}", hwnd.Handle.ToInt32());
 
 #endif
-			// Handle messages for windows that are already or are about to be destroyed.
 
-			// we need a special block for this because unless we remove the hwnd from the paint
-			// queue it will always stay there (since we don't handle the expose), and we'll
-			// effectively loop infinitely trying to repaint a non-existant window.
-			if (hwnd != null && hwnd.zombie && xevent.type == XEventName.Expose)
-			{
-				hwnd.expose_pending = hwnd.nc_expose_pending = false;
-				hwnd.Queue.Paint.Remove (hwnd);
-				goto ProcessNextMessage;
-			}
-
-			// We need to make sure we only allow DestroyNotify events through for zombie
-			// hwnds, since much of the event handling code makes requests using the hwnd's
-			// client_window, and that'll result in BadWindow errors if there's some lag
-			// between the XDestroyWindow call and the DestroyNotify event.
-			if (hwnd == null || hwnd.zombie && xevent.AnyEvent.type != XEventName.ClientMessage)
+			if (hwnd == null)
 			{
 				DriverDebug("GetMessage(): Got message {0} for non-existent or already destroyed window {1:X}", xevent.type, xevent.AnyEvent.window.ToInt32());
 				goto ProcessNextMessage;
-			}
-
-			// If we get here, that means the window is no more but there are Client Messages
-			// to be processed, probably a Posted message (for instance, an WM_ACTIVATE message)
-			// We don't want anything else to run but the ClientMessage block, so reset all hwnd
-			// properties that might cause other processing to occur.
-			if (hwnd.zombie)
-			{
-				hwnd.resizing_or_moving = false;
 			}
 
 			if (hwnd.client_window == xevent.AnyEvent.window)
@@ -4607,16 +4257,16 @@ namespace System.Windows.Forms
 			if (hwnd.resizing_or_moving)
 			{
 				int root_x, root_y, win_x, win_y, keys_buttons;
-				IntPtr  root, child;
-				XQueryPointer (DisplayHandle, hwnd.Handle, out root, out child, out root_x, out root_y,
-							   out win_x, out win_y, out keys_buttons);
+				IntPtr root, child;
+				XQueryPointer(DisplayHandle, hwnd.Handle, out root, out child, out root_x, out root_y,
+							  out win_x, out win_y, out keys_buttons);
 
 				if ((keys_buttons & (int)MouseKeyMasks.Button1Mask) == 0 &&
 						(keys_buttons & (int)MouseKeyMasks.Button2Mask) == 0 &&
 						(keys_buttons & (int)MouseKeyMasks.Button3Mask) == 0)
 				{
 					hwnd.resizing_or_moving = false;
-					SendMessage (hwnd.Handle, Msg.WM_EXITSIZEMOVE, IntPtr.Zero, IntPtr.Zero);
+					SendMessage(hwnd.Handle, Msg.WM_EXITSIZEMOVE, IntPtr.Zero, IntPtr.Zero);
 				}
 			}
 
@@ -4628,19 +4278,19 @@ namespace System.Windows.Forms
 			{
 				case XEventName.KeyPress:
 				{
-					Keyboard.KeyEvent (FocusWindow, xevent, ref msg);
+					Keyboard.KeyEvent(FocusWindow, xevent, ref msg);
 
 					// F1 key special case - WM_HELP sending
 					if (msg.wParam == (IntPtr)VirtualKeys.VK_F1 || msg.wParam == (IntPtr)VirtualKeys.VK_HELP)
 					{
 						// Send wM_HELP and then return it as a keypress message in
 						// case it needs to be preproccessed.
-						HELPINFO helpInfo = new HELPINFO ();
-						GetCursorPos (IntPtr.Zero, out helpInfo.MousePos.x, out helpInfo.MousePos.y);
-						IntPtr helpInfoPtr = Marshal.AllocHGlobal (Marshal.SizeOf (helpInfo));
-						Marshal.StructureToPtr (helpInfo, helpInfoPtr, true);
-						NativeWindow.WndProc (FocusWindow, Msg.WM_HELP, IntPtr.Zero, helpInfoPtr);
-						Marshal.FreeHGlobal (helpInfoPtr);
+						HELPINFO helpInfo = new HELPINFO();
+						GetCursorPos(IntPtr.Zero, out helpInfo.MousePos.x, out helpInfo.MousePos.y);
+						IntPtr helpInfoPtr = Marshal.AllocHGlobal(Marshal.SizeOf(helpInfo));
+						Marshal.StructureToPtr(helpInfo, helpInfoPtr, true);
+						NativeWindow.WndProc(FocusWindow, Msg.WM_HELP, IntPtr.Zero, helpInfoPtr);
+						Marshal.FreeHGlobal(helpInfoPtr);
 					}
 
 					break;
@@ -4648,7 +4298,7 @@ namespace System.Windows.Forms
 
 				case XEventName.KeyRelease:
 				{
-					Keyboard.KeyEvent (FocusWindow, xevent, ref msg);
+					Keyboard.KeyEvent(FocusWindow, xevent, ref msg);
 					break;
 				}
 
@@ -4663,13 +4313,13 @@ namespace System.Windows.Forms
 							if (client)
 							{
 								msg.message = Msg.WM_LBUTTONDOWN;
-								msg.wParam = GetMousewParam (0);
+								msg.wParam = GetMousewParam(0);
 							}
 							else
 							{
 								msg.message = Msg.WM_NCLBUTTONDOWN;
-								msg.wParam = (IntPtr) NCHitTest (hwnd, xevent.MotionEvent.x, xevent.MotionEvent.y);
-								MenuToScreen (xevent.AnyEvent.window, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+								msg.wParam = (IntPtr)NCHitTest(hwnd, xevent.MotionEvent.x, xevent.MotionEvent.y);
+								MenuToScreen(xevent.AnyEvent.window, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
 
 							break;
@@ -4682,13 +4332,13 @@ namespace System.Windows.Forms
 							if (client)
 							{
 								msg.message = Msg.WM_MBUTTONDOWN;
-								msg.wParam = GetMousewParam (0);
+								msg.wParam = GetMousewParam(0);
 							}
 							else
 							{
 								msg.message = Msg.WM_NCMBUTTONDOWN;
-								msg.wParam = (IntPtr) NCHitTest (hwnd, xevent.MotionEvent.x, xevent.MotionEvent.y);
-								MenuToScreen (xevent.AnyEvent.window, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+								msg.wParam = (IntPtr)NCHitTest(hwnd, xevent.MotionEvent.x, xevent.MotionEvent.y);
+								MenuToScreen(xevent.AnyEvent.window, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
 
 							break;
@@ -4701,13 +4351,13 @@ namespace System.Windows.Forms
 							if (client)
 							{
 								msg.message = Msg.WM_RBUTTONDOWN;
-								msg.wParam = GetMousewParam (0);
+								msg.wParam = GetMousewParam(0);
 							}
 							else
 							{
 								msg.message = Msg.WM_NCRBUTTONDOWN;
-								msg.wParam = (IntPtr) NCHitTest (hwnd, xevent.MotionEvent.x, xevent.MotionEvent.y);
-								MenuToScreen (xevent.AnyEvent.window, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+								msg.wParam = (IntPtr)NCHitTest(hwnd, xevent.MotionEvent.x, xevent.MotionEvent.y);
+								MenuToScreen(xevent.AnyEvent.window, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
 
 							break;
@@ -4730,7 +4380,7 @@ namespace System.Windows.Forms
 						}
 					}
 
-					msg.lParam = (IntPtr) (xevent.ButtonEvent.y << 16 | xevent.ButtonEvent.x);
+					msg.lParam = (IntPtr)(xevent.ButtonEvent.y << 16 | xevent.ButtonEvent.x);
 					mouse_position.X = xevent.ButtonEvent.x;
 					mouse_position.Y = xevent.ButtonEvent.y;
 
@@ -4747,7 +4397,7 @@ namespace System.Windows.Forms
 						msg.hwnd = Grab.Hwnd;
 					}
 
-					if (ClickPending.Pending && (( unchecked((uint)xevent.ButtonEvent.time - ClickPending.Time) < DoubleClickInterval) && (msg.wParam == ClickPending.wParam) && (msg.lParam == ClickPending.lParam) && (msg.message == ClickPending.Message)))
+					if (ClickPending.Pending && ((unchecked((uint)xevent.ButtonEvent.time - ClickPending.Time) < DoubleClickInterval) && (msg.wParam == ClickPending.wParam) && (msg.lParam == ClickPending.lParam) && (msg.message == ClickPending.Message)))
 					{
 						// Looks like a genuine double click, clicked twice on the same spot with the same keys
 						switch (xevent.ButtonEvent.button)
@@ -4804,12 +4454,12 @@ namespace System.Windows.Forms
 							else
 							{
 								msg.message = Msg.WM_NCLBUTTONUP;
-								msg.wParam = (IntPtr) NCHitTest (hwnd, xevent.MotionEvent.x, xevent.MotionEvent.y);
-								MenuToScreen (xevent.AnyEvent.window, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+								msg.wParam = (IntPtr)NCHitTest(hwnd, xevent.MotionEvent.x, xevent.MotionEvent.y);
+								MenuToScreen(xevent.AnyEvent.window, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
 
 							MouseState &= ~MouseButtons.Left;
-							msg.wParam = GetMousewParam (0);
+							msg.wParam = GetMousewParam(0);
 							break;
 						}
 
@@ -4822,12 +4472,12 @@ namespace System.Windows.Forms
 							else
 							{
 								msg.message = Msg.WM_NCMBUTTONUP;
-								msg.wParam = (IntPtr) NCHitTest (hwnd, xevent.MotionEvent.x, xevent.MotionEvent.y);
-								MenuToScreen (xevent.AnyEvent.window, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+								msg.wParam = (IntPtr)NCHitTest(hwnd, xevent.MotionEvent.x, xevent.MotionEvent.y);
+								MenuToScreen(xevent.AnyEvent.window, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
 
 							MouseState &= ~MouseButtons.Middle;
-							msg.wParam = GetMousewParam (0);
+							msg.wParam = GetMousewParam(0);
 							break;
 						}
 
@@ -4840,12 +4490,12 @@ namespace System.Windows.Forms
 							else
 							{
 								msg.message = Msg.WM_NCRBUTTONUP;
-								msg.wParam = (IntPtr) NCHitTest (hwnd, xevent.MotionEvent.x, xevent.MotionEvent.y);
-								MenuToScreen (xevent.AnyEvent.window, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+								msg.wParam = (IntPtr)NCHitTest(hwnd, xevent.MotionEvent.x, xevent.MotionEvent.y);
+								MenuToScreen(xevent.AnyEvent.window, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
 
 							MouseState &= ~MouseButtons.Right;
-							msg.wParam = GetMousewParam (0);
+							msg.wParam = GetMousewParam(0);
 							break;
 						}
 
@@ -4873,7 +4523,7 @@ namespace System.Windows.Forms
 						msg.hwnd = Grab.Hwnd;
 					}
 
-					msg.lParam = (IntPtr) (xevent.ButtonEvent.y << 16 | xevent.ButtonEvent.x);
+					msg.lParam = (IntPtr)(xevent.ButtonEvent.y << 16 | xevent.ButtonEvent.x);
 					mouse_position.X = xevent.ButtonEvent.x;
 					mouse_position.Y = xevent.ButtonEvent.y;
 
@@ -4882,13 +4532,13 @@ namespace System.Windows.Forms
 					// mouse clicks to repaint or whatever, we generate a mousemove event here. *sigh*
 					if (msg.message == Msg.WM_LBUTTONUP || msg.message == Msg.WM_MBUTTONUP || msg.message == Msg.WM_RBUTTONUP)
 					{
-						XEvent motionEvent = new XEvent ();
+						XEvent motionEvent = new XEvent();
 						motionEvent.type = XEventName.MotionNotify;
 						motionEvent.MotionEvent.display = DisplayHandle;
 						motionEvent.MotionEvent.window = xevent.ButtonEvent.window;
 						motionEvent.MotionEvent.x = xevent.ButtonEvent.x;
 						motionEvent.MotionEvent.y = xevent.ButtonEvent.y;
-						hwnd.Queue.EnqueueLocked (motionEvent);
+						hwnd.Queue.EnqueueLocked(motionEvent);
 					}
 
 					break;
@@ -4918,17 +4568,17 @@ namespace System.Windows.Forms
 						{
 							IntPtr root, child;
 							int mask;
-							XQueryPointer (DisplayHandle, xevent.AnyEvent.window,
-										   out root, out child,
-										   out xevent.MotionEvent.x_root,
-										   out xevent.MotionEvent.y_root,
-										   out xevent.MotionEvent.x,
-										   out xevent.MotionEvent.y, out mask);
+							XQueryPointer(DisplayHandle, xevent.AnyEvent.window,
+										  out root, out child,
+										  out xevent.MotionEvent.x_root,
+										  out xevent.MotionEvent.y_root,
+										  out xevent.MotionEvent.x,
+										  out xevent.MotionEvent.y, out mask);
 						}
 
 						msg.message = Msg.WM_MOUSEMOVE;
 						msg.wParam = GetMousewParam(0);
-						msg.lParam = (IntPtr) (xevent.MotionEvent.y << 16 | xevent.MotionEvent.x & 0xFFFF);
+						msg.lParam = (IntPtr)(xevent.MotionEvent.y << 16 | xevent.MotionEvent.x & 0xFFFF);
 
 						if (!hwnd.Enabled)
 						{
@@ -4971,7 +4621,7 @@ namespace System.Windows.Forms
 							msg.lParam = (IntPtr)(mouse_position.Y << 16 | mouse_position.X);
 						}
 
-						ht = NCHitTest (hwnd, xevent.MotionEvent.x, xevent.MotionEvent.y);
+						ht = NCHitTest(hwnd, xevent.MotionEvent.x, xevent.MotionEvent.y);
 						NativeWindow.WndProc(hwnd.client_window, Msg.WM_SETCURSOR, msg.hwnd, (IntPtr)ht);
 						mouse_position.X = xevent.MotionEvent.x;
 						mouse_position.Y = xevent.MotionEvent.y;
@@ -4992,37 +4642,38 @@ namespace System.Windows.Forms
 						goto ProcessNextMessage;
 					}
 
-					if (xevent.CrossingEvent.mode == NotifyMode.NotifyUngrab)   // Pseudo motion caused by grabbing
+					if (xevent.CrossingEvent.mode == NotifyMode.NotifyUngrab)
 					{
+						// Pseudo motion caused by grabbing
 						if (LastPointerWindow == xevent.AnyEvent.window)
 							goto ProcessNextMessage;
 
 						if (LastPointerWindow != IntPtr.Zero)
 						{
-							Point enter_loc = new Point (xevent.ButtonEvent.x, xevent.ButtonEvent.y);
+							Point enter_loc = new Point(xevent.ButtonEvent.x, xevent.ButtonEvent.y);
 							// We need this due to EnterNotify being fired on all the parent controls
 							// of the Control being grabbed, and obviously in that scenario we are not
 							// actuallty entering them
-							Control ctrl = Control.FromHandle (hwnd.client_window);
+							Control ctrl = Control.FromHandle(hwnd.client_window);
 
-							foreach (Control child_control in ctrl.Controls.GetAllControls ())
-								if (child_control.Bounds.Contains (enter_loc))
+							foreach (Control child_control in ctrl.Controls.GetAllControls())
+								if (child_control.Bounds.Contains(enter_loc))
 									goto ProcessNextMessage;
 
 							// A MouseLeave/LeaveNotify event is sent to the previous window
 							// until the mouse is ungrabbed, not when actually leaving its bounds
 							int x = xevent.CrossingEvent.x_root;
 							int y = xevent.CrossingEvent.y_root;
-							ScreenToClient (LastPointerWindow, ref x, ref y);
-							XEvent leaveEvent = new XEvent ();
+							ScreenToClient(LastPointerWindow, ref x, ref y);
+							XEvent leaveEvent = new XEvent();
 							leaveEvent.type = XEventName.LeaveNotify;
 							leaveEvent.CrossingEvent.display = DisplayHandle;
 							leaveEvent.CrossingEvent.window = LastPointerWindow;
 							leaveEvent.CrossingEvent.x = x;
 							leaveEvent.CrossingEvent.y = y;
 							leaveEvent.CrossingEvent.mode = NotifyMode.NotifyNormal;
-							Hwnd last_pointer_hwnd = Hwnd.ObjectFromHandle (LastPointerWindow);
-							last_pointer_hwnd.Queue.EnqueueLocked (leaveEvent);
+							Hwnd last_pointer_hwnd = Hwnd.ObjectFromHandle(LastPointerWindow);
+							last_pointer_hwnd.Queue.EnqueueLocked(leaveEvent);
 						}
 					}
 
@@ -5033,13 +4684,13 @@ namespace System.Windows.Forms
 					HoverState.Timer.Enabled = true;
 					HoverState.Window = xevent.CrossingEvent.window;
 					// Win32 sends a WM_MOUSEMOVE after mouse enter
-					XEvent motionEvent = new XEvent ();
+					XEvent motionEvent = new XEvent();
 					motionEvent.type = XEventName.MotionNotify;
 					motionEvent.MotionEvent.display = DisplayHandle;
 					motionEvent.MotionEvent.window = xevent.ButtonEvent.window;
 					motionEvent.MotionEvent.x = xevent.ButtonEvent.x;
 					motionEvent.MotionEvent.y = xevent.ButtonEvent.y;
-					hwnd.Queue.EnqueueLocked (motionEvent);
+					hwnd.Queue.EnqueueLocked(motionEvent);
 					break;
 				}
 
@@ -5047,7 +4698,7 @@ namespace System.Windows.Forms
 				{
 					if (xevent.CrossingEvent.mode == NotifyMode.NotifyUngrab)
 					{
-						WindowUngrabbed (hwnd.Handle);
+						WindowUngrabbed(hwnd.Handle);
 						goto ProcessNextMessage;
 					}
 
@@ -5070,7 +4721,7 @@ namespace System.Windows.Forms
 					// the control won't get a WM_SETCURSOR X11 will restore the last
 					// known cursor, which we don't want.
 					//
-					SetCursor (hwnd.client_window, IntPtr.Zero);
+					SetCursor(hwnd.client_window, IntPtr.Zero);
 					msg.message = Msg.WM_MOUSELEAVE;
 					HoverState.Timer.Enabled = false;
 					HoverState.Window = IntPtr.Zero;
@@ -5098,14 +4749,15 @@ namespace System.Windows.Forms
 
 				case XEventName.ReparentNotify:
 				{
-					if (hwnd.parent == null)    // Toplevel
+					if (hwnd.parent == null)
 					{
+						// Toplevel
 						if ((xevent.ReparentEvent.parent != IntPtr.Zero) && (xevent.ReparentEvent.window == hwnd.whole_window))
 						{
 							hwnd.Reparented = true;
 							// The location given by the event is not reliable between different wm's,
 							// so use an alternative way of getting it.
-							Point location = GetTopLevelWindowLocation (hwnd);
+							Point location = GetTopLevelWindowLocation(hwnd);
 							hwnd.X = location.X;
 							hwnd.Y = location.Y;
 
@@ -5131,31 +4783,32 @@ namespace System.Windows.Forms
 
 				case XEventName.ConfigureNotify:
 				{
-					if (!client && (xevent.ConfigureEvent.xevent == xevent.ConfigureEvent.window))      // Ignore events for children (SubstructureNotify) and client areas
+					if (!client && (xevent.ConfigureEvent.xevent == xevent.ConfigureEvent.window))
 					{
+						// Ignore events for children (SubstructureNotify) and client areas
 						DriverDebug("GetMessage(): Window {0:X} ConfigureNotify x={1} y={2} width={3} height={4}",
 									hwnd.client_window.ToInt32(), xevent.ConfigureEvent.x,
 									xevent.ConfigureEvent.y, xevent.ConfigureEvent.width, xevent.ConfigureEvent.height);
 
 						lock (hwnd.configure_lock)
 						{
-							Form form = Control.FromHandle (hwnd.client_window) as Form;
+							Form form = Control.FromHandle(hwnd.client_window) as Form;
 
 							if (form != null && !hwnd.resizing_or_moving)
 							{
 								if (hwnd.x != form.Bounds.X || hwnd.y != form.Bounds.Y)
 								{
-									SendMessage (form.Handle, Msg.WM_SYSCOMMAND, (IntPtr)SystemCommands.SC_MOVE, IntPtr.Zero);
+									SendMessage(form.Handle, Msg.WM_SYSCOMMAND, (IntPtr)SystemCommands.SC_MOVE, IntPtr.Zero);
 									hwnd.resizing_or_moving = true;
 								}
 								else if (hwnd.width != form.Bounds.Width || hwnd.height != form.Bounds.Height)
 								{
-									SendMessage (form.Handle, Msg.WM_SYSCOMMAND, (IntPtr)SystemCommands.SC_SIZE, IntPtr.Zero);
+									SendMessage(form.Handle, Msg.WM_SYSCOMMAND, (IntPtr)SystemCommands.SC_SIZE, IntPtr.Zero);
 									hwnd.resizing_or_moving = true;
 								}
 
 								if (hwnd.resizing_or_moving)
-									SendMessage (form.Handle, Msg.WM_ENTERSIZEMOVE, IntPtr.Zero, IntPtr.Zero);
+									SendMessage(form.Handle, Msg.WM_ENTERSIZEMOVE, IntPtr.Zero, IntPtr.Zero);
 							}
 
 							SendMessage(msg.hwnd, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
@@ -5183,12 +4836,12 @@ namespace System.Windows.Forms
 
 					if (FocusWindow == IntPtr.Zero)
 					{
-						Control c = Control.FromHandle (hwnd.client_window);
+						Control c = Control.FromHandle(hwnd.client_window);
 
 						if (c == null)
 							goto ProcessNextMessage;
 
-						Form form = c.FindForm ();
+						Form form = c.FindForm();
 
 						if (form == null)
 							goto ProcessNextMessage;
@@ -5196,13 +4849,13 @@ namespace System.Windows.Forms
 						if (ActiveWindow != form.Handle)
 						{
 							ActiveWindow = form.Handle;
-							SendMessage (ActiveWindow, Msg.WM_ACTIVATE, (IntPtr) WindowActiveFlags.WA_ACTIVE, IntPtr.Zero);
+							SendMessage(ActiveWindow, Msg.WM_ACTIVATE, (IntPtr)WindowActiveFlags.WA_ACTIVE, IntPtr.Zero);
 						}
 
 						goto ProcessNextMessage;
 					}
 
-					Keyboard.FocusIn (FocusWindow);
+					Keyboard.FocusIn(FocusWindow);
 					SendMessage(FocusWindow, Msg.WM_SETFOCUS, IntPtr.Zero, IntPtr.Zero);
 					goto ProcessNextMessage;
 				}
@@ -5310,12 +4963,8 @@ namespace System.Windows.Forms
 						DriverDebug("GetMessage(): Window {0:X} Exposed non-client area {1},{2} {3}x{4}",
 									hwnd.client_window.ToInt32(), xevent.ExposeEvent.x, xevent.ExposeEvent.y,
 									xevent.ExposeEvent.width, xevent.ExposeEvent.height);
-						Rectangle rect = new Rectangle (xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
-						Region region = new Region (rect);
-						IntPtr hrgn = region.GetHrgn (Graphics.FromHwnd(hwnd.whole_window)); // Graphics object isn't needed
 						msg.message = Msg.WM_NCPAINT;
-						msg.wParam = hrgn == IntPtr.Zero ? (IntPtr)1 : hrgn;
-						msg.refobject = region;
+						msg.wParam = (IntPtr)1;
 						break;
 					}
 
@@ -5344,10 +4993,11 @@ namespace System.Windows.Forms
 					// This is a bit tricky, we don't receive our own DestroyNotify, we only get those for our children
 					hwnd = Hwnd.ObjectFromHandle(xevent.DestroyWindowEvent.window);
 
-					// We may get multiple for the same window, act only one the first (when Hwnd still knows about it)
-					if ((hwnd != null) && (hwnd.client_window == xevent.DestroyWindowEvent.window))
+					// We may get multiple for the same window, act only on client_window's notification from StructureNotifyMask
+					if ((hwnd != null) && (hwnd.client_window == xevent.DestroyWindowEvent.window) &&
+							(hwnd.client_window == xevent.DestroyWindowEvent.xevent))
 					{
-						CleanupCachedWindows (hwnd);
+						CleanupCachedWindows(hwnd);
 						DriverDebug("Received X11 Destroy Notification for {0}", XplatUI.Window(hwnd.client_window));
 						msg.hwnd = hwnd.client_window;
 						msg.message = Msg.WM_DESTROY;
@@ -5363,7 +5013,7 @@ namespace System.Windows.Forms
 
 				case XEventName.ClientMessage:
 				{
-					if (Dnd.HandleClientMessage (ref xevent))
+					if (Dnd.HandleClientMessage(ref xevent))
 					{
 						goto ProcessNextMessage;
 					}
@@ -5378,27 +5028,23 @@ namespace System.Windows.Forms
 					{
 						msg.message = Msg.WM_MOUSEHOVER;
 						msg.wParam = GetMousewParam(0);
-						msg.lParam = (IntPtr) (xevent.ClientMessageEvent.ptr1);
+						msg.lParam = (IntPtr)(xevent.ClientMessageEvent.ptr1);
 						return true;
 					}
 
 					if (xevent.ClientMessageEvent.message_type == (IntPtr)PostAtom)
 					{
-						DebugHelper.Indent ();
-						DebugHelper.WriteLine (String.Format ("Posted message:" + (Msg) xevent.ClientMessageEvent.ptr2.ToInt32 () + " for 0x{0:x}", xevent.ClientMessageEvent.ptr1.ToInt32 ()));
-						DebugHelper.Unindent ();
+						DebugHelper.Indent();
+						DebugHelper.WriteLine(String.Format("Posted message:" + (Msg)xevent.ClientMessageEvent.ptr2.ToInt32() + " for 0x{0:x}", xevent.ClientMessageEvent.ptr1.ToInt32()));
+						DebugHelper.Unindent();
 						msg.hwnd = xevent.ClientMessageEvent.ptr1;
-						msg.message = (Msg) xevent.ClientMessageEvent.ptr2.ToInt32 ();
+						msg.message = (Msg)xevent.ClientMessageEvent.ptr2.ToInt32();
 						msg.wParam = xevent.ClientMessageEvent.ptr3;
 						msg.lParam = xevent.ClientMessageEvent.ptr4;
-
-						if (msg.message == (Msg)Msg.WM_QUIT)
-							return false;
-						else
-							return true;
+						return true;
 					}
 
-					if  (xevent.ClientMessageEvent.message_type == _XEMBED)
+					if (xevent.ClientMessageEvent.message_type == _XEMBED)
 					{
 #if DriverDebugXEmbed
 						Console.WriteLine("GOT EMBED MESSAGE {0:X}, detail {1:X}", xevent.ClientMessageEvent.ptr2.ToInt32(), xevent.ClientMessageEvent.ptr3.ToInt32());
@@ -5416,11 +5062,11 @@ namespace System.Windows.Forms
 						}
 					}
 
-					if  (xevent.ClientMessageEvent.message_type == WM_PROTOCOLS)
+					if (xevent.ClientMessageEvent.message_type == WM_PROTOCOLS)
 					{
 						if (xevent.ClientMessageEvent.ptr1 == WM_DELETE_WINDOW)
 						{
-							SendMessage (msg.hwnd, Msg.WM_SYSCOMMAND, (IntPtr)SystemCommands.SC_CLOSE, IntPtr.Zero);
+							SendMessage(msg.hwnd, Msg.WM_SYSCOMMAND, (IntPtr)SystemCommands.SC_CLOSE, IntPtr.Zero);
 							msg.message = Msg.WM_CLOSE;
 							return true;
 						}
@@ -5444,28 +5090,28 @@ namespace System.Windows.Forms
 			return true;
 		}
 
-		HitTest NCHitTest (Hwnd hwnd, int x, int y)
+		HitTest NCHitTest(Hwnd hwnd, int x, int y)
 		{
 			// The hit test is sent in screen coordinates
 			IntPtr dummy;
 			int screen_x, screen_y;
-			XTranslateCoordinates (DisplayHandle, hwnd.WholeWindow, RootWindow, x, y, out screen_x, out screen_y, out dummy);
-			return (HitTest) NativeWindow.WndProc (hwnd.client_window, Msg.WM_NCHITTEST, IntPtr.Zero,
-												   (IntPtr) (screen_y << 16 | screen_x & 0xFFFF));
+			XTranslateCoordinates(DisplayHandle, hwnd.WholeWindow, RootWindow, x, y, out screen_x, out screen_y, out dummy);
+			return (HitTest)NativeWindow.WndProc(hwnd.client_window, Msg.WM_NCHITTEST, IntPtr.Zero,
+												 (IntPtr)(screen_y << 16 | screen_x & 0xFFFF));
 		}
 
 		// Our very basic implementation of MoveResize - we can extend it later
 		// *if* needed
-		internal override void BeginMoveResize (IntPtr handle)
+		internal override void BeginMoveResize(IntPtr handle)
 		{
 			// We *need* to ungrab the pointer in the current display
-			XplatUI.UngrabWindow (Grab.Hwnd);
+			XplatUI.UngrabWindow(Grab.Hwnd);
 			int x_root, y_root;
-			GetCursorPos (IntPtr.Zero, out x_root, out y_root);
-			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
-			SendNetWMMessage (hwnd.whole_window, _NET_WM_MOVERESIZE, (IntPtr) x_root, (IntPtr) y_root,
-							  (IntPtr) NetWmMoveResize._NET_WM_MOVERESIZE_SIZE_BOTTOMRIGHT,
-							  (IntPtr) 1); // left button
+			GetCursorPos(IntPtr.Zero, out x_root, out y_root);
+			Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
+			SendNetWMMessage(hwnd.whole_window, _NET_WM_MOVERESIZE, (IntPtr)x_root, (IntPtr)y_root,
+							 (IntPtr)NetWmMoveResize._NET_WM_MOVERESIZE_SIZE_BOTTOMRIGHT,
+							 (IntPtr)1); // left button
 		}
 
 		internal override bool GetText(IntPtr handle, out string text)
@@ -5478,19 +5124,19 @@ namespace System.Windows.Forms
 				IntPtr bytes_after;
 				IntPtr prop = IntPtr.Zero;
 				XGetWindowProperty(DisplayHandle, handle,
-								   _NET_WM_NAME, IntPtr.Zero, new IntPtr (1), false,
+								   _NET_WM_NAME, IntPtr.Zero, new IntPtr(1), false,
 								   UTF8_STRING, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
 
 				if ((long)nitems > 0 && prop != IntPtr.Zero)
 				{
-					text = Marshal.PtrToStringUni (prop, (int)nitems);
-					XFree (prop);
+					text = Marshal.PtrToStringUni(prop, (int)nitems);
+					XFree(prop);
 					return true;
 				}
 				else
 				{
 					// fallback on the non-_NET property
-					IntPtr  textptr;
+					IntPtr textptr;
 					textptr = IntPtr.Zero;
 					XFetchName(DisplayHandle, Hwnd.ObjectFromHandle(handle).whole_window, ref textptr);
 
@@ -5511,7 +5157,7 @@ namespace System.Windows.Forms
 
 		internal override void GetWindowPos(IntPtr handle, bool is_toplevel, out int x, out int y, out int width, out int height, out int client_width, out int client_height)
 		{
-			Hwnd        hwnd;
+			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			if (hwnd != null)
@@ -5538,31 +5184,31 @@ namespace System.Windows.Forms
 
 		internal override FormWindowState GetWindowState(IntPtr handle)
 		{
-			Hwnd            hwnd;
+			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			if (hwnd.cached_window_state == (FormWindowState)(-1))
-				hwnd.cached_window_state = UpdateWindowState (handle);
+				hwnd.cached_window_state = UpdateWindowState(handle);
 
 			return hwnd.cached_window_state;
 		}
 
-		FormWindowState UpdateWindowState (IntPtr handle)
+		FormWindowState UpdateWindowState(IntPtr handle)
 		{
-			IntPtr          actual_atom;
-			int         actual_format;
-			IntPtr          nitems;
-			IntPtr          bytes_after;
-			IntPtr          prop = IntPtr.Zero;
-			IntPtr          atom;
-			int         maximized;
-			bool            minimized;
-			XWindowAttributes   attributes;
-			Hwnd            hwnd;
+			IntPtr actual_atom;
+			int actual_format;
+			IntPtr nitems;
+			IntPtr bytes_after;
+			IntPtr prop = IntPtr.Zero;
+			IntPtr atom;
+			int maximized;
+			bool minimized;
+			XWindowAttributes attributes;
+			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 			maximized = 0;
 			minimized = false;
-			XGetWindowProperty(DisplayHandle, hwnd.whole_window, _NET_WM_STATE, IntPtr.Zero, new IntPtr (256), false, (IntPtr)Atom.XA_ATOM, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+			XGetWindowProperty(DisplayHandle, hwnd.whole_window, _NET_WM_STATE, IntPtr.Zero, new IntPtr(256), false, (IntPtr)Atom.XA_ATOM, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
 
 			if (((long)nitems > 0) && (prop != IntPtr.Zero))
 			{
@@ -5612,13 +5258,13 @@ namespace System.Windows.Forms
 
 		internal override void GrabWindow(IntPtr handle, IntPtr confine_to_handle)
 		{
-			Hwnd    hwnd;
-			IntPtr  confine_to_window;
+			Hwnd hwnd;
+			IntPtr confine_to_window;
 			confine_to_window = IntPtr.Zero;
 
 			if (confine_to_handle != IntPtr.Zero)
 			{
-				XWindowAttributes   attributes = new XWindowAttributes();
+				XWindowAttributes attributes = new XWindowAttributes();
 				hwnd = Hwnd.ObjectFromHandle(confine_to_handle);
 
 				lock (XlibLock)
@@ -5655,10 +5301,10 @@ namespace System.Windows.Forms
 				XFlush(DisplayHandle);
 			}
 
-			WindowUngrabbed (hwnd);
+			WindowUngrabbed(hwnd);
 		}
 
-		void WindowUngrabbed (IntPtr hwnd)
+		void WindowUngrabbed(IntPtr hwnd)
 		{
 			bool was_grabbed = Grab.Hwnd != IntPtr.Zero;
 			Grab.Hwnd = IntPtr.Zero;
@@ -5672,7 +5318,7 @@ namespace System.Windows.Forms
 				// X will send a NotifyUngrab, but since it comes late sometimes we're
 				// calling WindowUngrabbed directly from UngrabWindow in order to send
 				// this WM right away.
-				SendMessage (hwnd, Msg.WM_CAPTURECHANGED, IntPtr.Zero, IntPtr.Zero);
+				SendMessage(hwnd, Msg.WM_CAPTURECHANGED, IntPtr.Zero, IntPtr.Zero);
 			}
 		}
 
@@ -5685,41 +5331,41 @@ namespace System.Windows.Forms
 
 		internal override void Invalidate(IntPtr handle, Rectangle rc, bool clear)
 		{
-			Hwnd    hwnd;
+			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			if (clear)
 			{
-				AddExpose (hwnd, true, hwnd.X, hwnd.Y, hwnd.Width, hwnd.Height);
+				AddExpose(hwnd, true, hwnd.X, hwnd.Y, hwnd.Width, hwnd.Height);
 			}
 			else
 			{
-				AddExpose (hwnd, true, rc.X, rc.Y, rc.Width, rc.Height);
+				AddExpose(hwnd, true, rc.X, rc.Y, rc.Width, rc.Height);
 			}
 		}
 
-		internal override void InvalidateNC (IntPtr handle)
+		internal override void InvalidateNC(IntPtr handle)
 		{
-			Hwnd    hwnd;
+			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
-			AddExpose (hwnd, hwnd.WholeWindow == hwnd.ClientWindow, 0, 0, hwnd.Width, hwnd.Height);
+			AddExpose(hwnd, hwnd.WholeWindow == hwnd.ClientWindow, 0, 0, hwnd.Width, hwnd.Height);
 		}
 
 		internal override bool IsEnabled(IntPtr handle)
 		{
-			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
+			Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
 			return (hwnd != null && hwnd.Enabled);
 		}
 
 		internal override bool IsVisible(IntPtr handle)
 		{
-			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
+			Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
 			return (hwnd != null && hwnd.visible);
 		}
 
 		internal override void KillTimer(Timer timer)
 		{
-			XEventQueue queue = (XEventQueue) MessageQueues [timer.thread];
+			XEventQueue queue = (XEventQueue)MessageQueues[timer.thread];
 
 			if (queue == null)
 			{
@@ -5728,22 +5374,22 @@ namespace System.Windows.Forms
 				// from the list of unattached timers (if it was enabled).
 				lock (unattached_timer_list)
 				{
-					if (unattached_timer_list.Contains (timer))
-						unattached_timer_list.Remove (timer);
+					if (unattached_timer_list.Contains(timer))
+						unattached_timer_list.Remove(timer);
 				}
 
 				return;
 			}
 
-			queue.timer_list.Remove (timer);
+			queue.timer_list.Remove(timer);
 		}
 
 		internal override void MenuToScreen(IntPtr handle, ref int x, ref int y)
 		{
 			int dest_x_return;
 			int dest_y_return;
-			IntPtr  child;
-			Hwnd    hwnd;
+			IntPtr child;
+			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			lock (XlibLock)
@@ -5759,13 +5405,13 @@ namespace System.Windows.Forms
 		{
 			if (Grab.Hwnd != IntPtr.Zero)
 			{
-				XChangeActivePointerGrab (DisplayHandle,
-										  EventMask.ButtonMotionMask |
-										  EventMask.PointerMotionMask |
-										  EventMask.PointerMotionHintMask |
-										  EventMask.ButtonPressMask |
-										  EventMask.ButtonReleaseMask,
-										  cursor, IntPtr.Zero);
+				XChangeActivePointerGrab(DisplayHandle,
+										 EventMask.ButtonMotionMask |
+										 EventMask.PointerMotionMask |
+										 EventMask.PointerMotionHintMask |
+										 EventMask.ButtonPressMask |
+										 EventMask.ButtonReleaseMask,
+										 cursor, IntPtr.Zero);
 				return;
 			}
 
@@ -5774,9 +5420,9 @@ namespace System.Windows.Forms
 
 		internal override PaintEventArgs PaintEventStart(ref Message msg, IntPtr handle, bool client)
 		{
-			PaintEventArgs  paint_event;
-			Hwnd        hwnd;
-			Hwnd        paint_hwnd;
+			PaintEventArgs paint_event;
+			Hwnd hwnd;
+			Hwnd paint_hwnd;
 			//
 			// handle  (and paint_hwnd) refers to the window that is should be painted.
 			// msg.HWnd (and hwnd) refers to the window that got the paint message.
@@ -5789,7 +5435,7 @@ namespace System.Windows.Forms
 			}
 			else
 			{
-				paint_hwnd = Hwnd.ObjectFromHandle (handle);
+				paint_hwnd = Hwnd.ObjectFromHandle(handle);
 			}
 
 			if (Caret.Visible == true)
@@ -5802,8 +5448,8 @@ namespace System.Windows.Forms
 
 			if (client)
 			{
-				dc = Graphics.FromHwnd (paint_hwnd.client_window);
-				Region clip_region = new Region ();
+				dc = Graphics.FromHwnd(paint_hwnd.client_window);
+				Region clip_region = new Region();
 				clip_region.MakeEmpty();
 
 				foreach (Rectangle r in hwnd.ClipRectangles)
@@ -5811,8 +5457,8 @@ namespace System.Windows.Forms
 					/*  Expand the region slightly.
 					    See bug 464464.
 					*/
-					Rectangle r2 = Rectangle.FromLTRB (r.Left, r.Top, r.Right, r.Bottom + 1);
-					clip_region.Union (r2);
+					Rectangle r2 = Rectangle.FromLTRB(r.Left, r.Top, r.Right, r.Bottom + 1);
+					clip_region.Union(r2);
 				}
 
 				if (hwnd.UserClip != null)
@@ -5828,11 +5474,11 @@ namespace System.Windows.Forms
 			}
 			else
 			{
-				dc = Graphics.FromHwnd (paint_hwnd.whole_window);
+				dc = Graphics.FromHwnd(paint_hwnd.whole_window);
 
 				if (!hwnd.nc_invalid.IsEmpty)
 				{
-					dc.SetClip (hwnd.nc_invalid);
+					dc.SetClip(hwnd.nc_invalid);
 					paint_event = new PaintEventArgs(dc, hwnd.nc_invalid);
 				}
 				else
@@ -5841,7 +5487,7 @@ namespace System.Windows.Forms
 				}
 
 				hwnd.nc_expose_pending = false;
-				hwnd.ClearNcInvalidArea ();
+				hwnd.ClearNcInvalidArea();
 				return paint_event;
 			}
 		}
@@ -5864,8 +5510,8 @@ namespace System.Windows.Forms
 		[MonoTODO("Implement filtering and PM_NOREMOVE")]
 		internal override bool PeekMessage(Object queue_id, ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags)
 		{
-			XEventQueue queue = (XEventQueue) queue_id;
-			bool    pending;
+			XEventQueue queue = (XEventQueue)queue_id;
+			bool pending;
 
 			if ((flags & (uint)PeekMessageFlags.PM_REMOVE) == 0)
 			{
@@ -5874,7 +5520,7 @@ namespace System.Windows.Forms
 
 			pending = false;
 
-			if (queue.Count > 0)
+			if (queue.Count > 0 || queue.GetQuitMessage(false, out int _exitcode))
 			{
 				pending = true;
 			}
@@ -5903,9 +5549,9 @@ namespace System.Windows.Forms
 			return GetMessage(queue_id, ref msg, hWnd, wFilterMin, wFilterMax);
 		}
 
-		internal override bool PostMessage (IntPtr handle, Msg message, IntPtr wparam, IntPtr lparam)
+		internal override bool PostMessage(IntPtr handle, Msg message, IntPtr wparam, IntPtr lparam)
 		{
-			XEvent xevent = new XEvent ();
+			XEvent xevent = new XEvent();
 			Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
 			xevent.type = XEventName.ClientMessage;
 			xevent.ClientMessageEvent.display = DisplayHandle;
@@ -5919,32 +5565,25 @@ namespace System.Windows.Forms
 				xevent.ClientMessageEvent.window = IntPtr.Zero;
 			}
 
-			xevent.ClientMessageEvent.message_type = (IntPtr) PostAtom;
+			xevent.ClientMessageEvent.message_type = (IntPtr)PostAtom;
 			xevent.ClientMessageEvent.format = 32;
 			xevent.ClientMessageEvent.ptr1 = handle;
-			xevent.ClientMessageEvent.ptr2 = (IntPtr) message;
+			xevent.ClientMessageEvent.ptr2 = (IntPtr)message;
 			xevent.ClientMessageEvent.ptr3 = wparam;
 			xevent.ClientMessageEvent.ptr4 = lparam;
 
 			if (hwnd != null)
-				hwnd.Queue.EnqueueLocked (xevent);
+				hwnd.Queue.EnqueueLocked(xevent);
 			else
-				ThreadQueue(Thread.CurrentThread).EnqueueLocked (xevent);
+				ThreadQueue(Thread.CurrentThread).EnqueueLocked(xevent);
 
 			return true;
 		}
 
 		internal override void PostQuitMessage(int exitCode)
 		{
-			ApplicationContext ctx = Application.MWFThread.Current.Context;
-			Form f = ctx != null ? ctx.MainForm : null;
-
-			if (f != null)
-				PostMessage (Application.MWFThread.Current.Context.MainForm.window.Handle, Msg.WM_QUIT, IntPtr.Zero, IntPtr.Zero);
-			else
-				PostMessage (FosterParent, Msg.WM_QUIT, IntPtr.Zero, IntPtr.Zero);
-
-			XFlush(DisplayHandle);
+			var queue = ThreadQueue(Thread.CurrentThread);
+			queue.PostQuitMessage(exitCode);
 		}
 
 		internal override void RequestAdditionalWM_NCMessages(IntPtr hwnd, bool hover, bool leave)
@@ -5954,7 +5593,7 @@ namespace System.Windows.Forms
 
 		internal override void RequestNCRecalc(IntPtr handle)
 		{
-			Hwnd                hwnd;
+			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			if (hwnd == null)
@@ -5969,7 +5608,7 @@ namespace System.Windows.Forms
 
 		internal override void ResetMouseHover(IntPtr handle)
 		{
-			Hwnd    hwnd;
+			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			if (hwnd == null)
@@ -5988,13 +5627,13 @@ namespace System.Windows.Forms
 		{
 			int dest_x_return;
 			int dest_y_return;
-			IntPtr  child;
-			Hwnd    hwnd;
+			IntPtr child;
+			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			lock (XlibLock)
 			{
-				XTranslateCoordinates (DisplayHandle, RootWindow, hwnd.client_window, x, y, out dest_x_return, out dest_y_return, out child);
+				XTranslateCoordinates(DisplayHandle, RootWindow, hwnd.client_window, x, y, out dest_x_return, out dest_y_return, out child);
 			}
 
 			x = dest_x_return;
@@ -6005,16 +5644,16 @@ namespace System.Windows.Forms
 		{
 			int dest_x_return;
 			int dest_y_return;
-			IntPtr  child;
-			Hwnd    hwnd;
+			IntPtr child;
+			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			lock (XlibLock)
 			{
-				XTranslateCoordinates (DisplayHandle, RootWindow, hwnd.whole_window, x, y, out dest_x_return, out dest_y_return, out child);
+				XTranslateCoordinates(DisplayHandle, RootWindow, hwnd.whole_window, x, y, out dest_x_return, out dest_y_return, out child);
 			}
 
-			Form form = Control.FromHandle (handle) as Form;
+			Form form = Control.FromHandle(handle) as Form;
 
 			if (form != null && form.window_manager != null)
 			{
@@ -6025,29 +5664,29 @@ namespace System.Windows.Forms
 			y = dest_y_return;
 		}
 
-		bool GraphicsExposePredicate (IntPtr display, ref XEvent xevent, IntPtr arg)
+		bool GraphicsExposePredicate(IntPtr display, ref XEvent xevent, IntPtr arg)
 		{
 			return (xevent.type == XEventName.GraphicsExpose || xevent.type == XEventName.NoExpose) &&
 				   arg == xevent.GraphicsExposeEvent.drawable;
 		}
 
-		delegate bool EventPredicate (IntPtr display, ref XEvent xevent, IntPtr arg);
+		delegate bool EventPredicate(IntPtr display, ref XEvent xevent, IntPtr arg);
 
-		void ProcessGraphicsExpose (Hwnd hwnd)
+		void ProcessGraphicsExpose(Hwnd hwnd)
 		{
-			XEvent xevent = new XEvent ();
-			IntPtr handle = Hwnd.HandleFromObject (hwnd);
+			XEvent xevent = new XEvent();
+			IntPtr handle = Hwnd.HandleFromObject(hwnd);
 			EventPredicate predicate = GraphicsExposePredicate;
 
-			for (;;)
+			for (; ; )
 			{
-				XIfEvent (Display, ref xevent, predicate, handle);
+				XIfEvent(Display, ref xevent, predicate, handle);
 
 				if (xevent.type != XEventName.GraphicsExpose)
 					break;
 
-				AddExpose (hwnd, xevent.ExposeEvent.window == hwnd.ClientWindow, xevent.GraphicsExposeEvent.x, xevent.GraphicsExposeEvent.y,
-						   xevent.GraphicsExposeEvent.width, xevent.GraphicsExposeEvent.height);
+				AddExpose(hwnd, xevent.ExposeEvent.window == hwnd.ClientWindow, xevent.GraphicsExposeEvent.x, xevent.GraphicsExposeEvent.y,
+						  xevent.GraphicsExposeEvent.width, xevent.GraphicsExposeEvent.height);
 
 				if (xevent.GraphicsExposeEvent.count == 0)
 					break;
@@ -6056,11 +5695,11 @@ namespace System.Windows.Forms
 
 		internal override void ScrollWindow(IntPtr handle, Rectangle area, int XAmount, int YAmount, bool with_children)
 		{
-			Hwnd        hwnd;
-			IntPtr      gc;
-			XGCValues   gc_values;
+			Hwnd hwnd;
+			IntPtr gc;
+			XGCValues gc_values;
 			hwnd = Hwnd.ObjectFromHandle(handle);
-			Rectangle r = Rectangle.Intersect (hwnd.Invalid, area);
+			Rectangle r = Rectangle.Intersect(hwnd.Invalid, area);
 
 			if (!r.IsEmpty)
 			{
@@ -6081,8 +5720,8 @@ namespace System.Windows.Forms
 					r.Y = 0;
 				}
 
-				if (area.Contains (hwnd.Invalid))
-					hwnd.ClearInvalidArea ();
+				if (area.Contains(hwnd.Invalid))
+					hwnd.ClearInvalidArea();
 
 				hwnd.AddInvalidArea(r);
 			}
@@ -6095,25 +5734,25 @@ namespace System.Windows.Forms
 			}
 
 			gc = XCreateGC(DisplayHandle, hwnd.client_window, IntPtr.Zero, ref gc_values);
-			Rectangle visible_rect = GetTotalVisibleArea (hwnd.client_window);
-			visible_rect.Intersect (area);
+			Rectangle visible_rect = GetTotalVisibleArea(hwnd.client_window);
+			visible_rect.Intersect(area);
 			Rectangle dest_rect = visible_rect;
 			dest_rect.Y += YAmount;
 			dest_rect.X += XAmount;
-			dest_rect.Intersect (area);
-			Point src = new Point (dest_rect.X - XAmount, dest_rect.Y - YAmount);
-			XCopyArea (DisplayHandle, hwnd.client_window, hwnd.client_window, gc, src.X, src.Y,
-					   dest_rect.Width, dest_rect.Height, dest_rect.X, dest_rect.Y);
-			Rectangle dirty_area = GetDirtyArea (area, dest_rect, XAmount, YAmount);
-			AddExpose (hwnd, true, dirty_area.X, dirty_area.Y, dirty_area.Width, dirty_area.Height);
-			ProcessGraphicsExpose (hwnd);
+			dest_rect.Intersect(area);
+			Point src = new Point(dest_rect.X - XAmount, dest_rect.Y - YAmount);
+			XCopyArea(DisplayHandle, hwnd.client_window, hwnd.client_window, gc, src.X, src.Y,
+					  dest_rect.Width, dest_rect.Height, dest_rect.X, dest_rect.Y);
+			Rectangle dirty_area = GetDirtyArea(area, dest_rect, XAmount, YAmount);
+			AddExpose(hwnd, true, dirty_area.X, dirty_area.Y, dirty_area.Width, dirty_area.Height);
+			ProcessGraphicsExpose(hwnd);
 			XFreeGC(DisplayHandle, gc);
 		}
 
 		internal override void ScrollWindow(IntPtr handle, int XAmount, int YAmount, bool with_children)
 		{
-			Hwnd        hwnd;
-			Rectangle   rect;
+			Hwnd hwnd;
+			Rectangle rect;
 			hwnd = Hwnd.GetObjectFromWindow(handle);
 			rect = hwnd.ClientRect;
 			rect.X = 0;
@@ -6121,7 +5760,7 @@ namespace System.Windows.Forms
 			ScrollWindow(handle, rect, XAmount, YAmount, with_children);
 		}
 
-		Rectangle GetDirtyArea (Rectangle total_area, Rectangle valid_area, int XAmount, int YAmount)
+		Rectangle GetDirtyArea(Rectangle total_area, Rectangle valid_area, int XAmount, int YAmount)
 		{
 			Rectangle dirty_area = total_area;
 
@@ -6144,11 +5783,11 @@ namespace System.Windows.Forms
 			return dirty_area;
 		}
 
-		Rectangle GetTotalVisibleArea (IntPtr handle)
+		Rectangle GetTotalVisibleArea(IntPtr handle)
 		{
-			Control c = Control.FromHandle (handle);
+			Control c = Control.FromHandle(handle);
 			Rectangle visible_area = c.ClientRectangle;
-			visible_area.Location = c.PointToScreen (Point.Empty);
+			visible_area.Location = c.PointToScreen(Point.Empty);
 
 			for (Control parent = c.Parent; parent != null; parent = parent.Parent)
 			{
@@ -6156,47 +5795,47 @@ namespace System.Windows.Forms
 					return visible_area; // Non visible, not need to finish computations
 
 				Rectangle r = parent.ClientRectangle;
-				r.Location = parent.PointToScreen (Point.Empty);
-				visible_area.Intersect (r);
+				r.Location = parent.PointToScreen(Point.Empty);
+				visible_area.Intersect(r);
 			}
 
-			visible_area.Location = c.PointToClient (visible_area.Location);
+			visible_area.Location = c.PointToClient(visible_area.Location);
 			return visible_area;
 		}
 
-		internal override void SendAsyncMethod (AsyncMethodData method)
+		internal override void SendAsyncMethod(AsyncMethodData method)
 		{
-			Hwnd    hwnd;
-			XEvent  xevent = new XEvent ();
+			Hwnd hwnd;
+			XEvent xevent = new XEvent();
 			hwnd = Hwnd.ObjectFromHandle(method.Handle);
 			xevent.type = XEventName.ClientMessage;
 			xevent.ClientMessageEvent.display = DisplayHandle;
 			xevent.ClientMessageEvent.window = method.Handle;
 			xevent.ClientMessageEvent.message_type = (IntPtr)AsyncAtom;
 			xevent.ClientMessageEvent.format = 32;
-			xevent.ClientMessageEvent.ptr1 = (IntPtr) GCHandle.Alloc (method);
-			hwnd.Queue.EnqueueLocked (xevent);
-			WakeupMain ();
+			xevent.ClientMessageEvent.ptr1 = (IntPtr)GCHandle.Alloc(method);
+			hwnd.Queue.EnqueueLocked(xevent);
+			WakeupMain();
 		}
 
-		delegate IntPtr WndProcDelegate (IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam);
+		delegate IntPtr WndProcDelegate(IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam);
 
-		internal override IntPtr SendMessage (IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam)
+		internal override IntPtr SendMessage(IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam)
 		{
-			Hwnd    h;
+			Hwnd h;
 			h = Hwnd.ObjectFromHandle(hwnd);
 
-			if (h != null && h.queue != ThreadQueue (Thread.CurrentThread))
+			if (h != null && h.queue != ThreadQueue(Thread.CurrentThread))
 			{
-				AsyncMethodResult   result;
-				AsyncMethodData     data;
-				result = new AsyncMethodResult ();
-				data = new AsyncMethodData ();
+				AsyncMethodResult result;
+				AsyncMethodData data;
+				result = new AsyncMethodResult();
+				data = new AsyncMethodData();
 				data.Handle = hwnd;
-				data.Method = new WndProcDelegate (NativeWindow.WndProc);
+				data.Method = new WndProcDelegate(NativeWindow.WndProc);
 				data.Args = new object[] { hwnd, message, wParam, lParam };
 				data.Result = result;
-				SendAsyncMethod (data);
+				SendAsyncMethod(data);
 				DriverDebug("Sending {0} message across.", message);
 				return IntPtr.Zero;
 			}
@@ -6220,7 +5859,7 @@ namespace System.Windows.Forms
 			while (keys.Count > 0)
 			{
 				MSG msg = (MSG)keys.Dequeue();
-				XEvent xevent = new XEvent ();
+				XEvent xevent = new XEvent();
 				xevent.type = (msg.message == Msg.WM_KEYUP ? XEventName.KeyRelease : XEventName.KeyPress);
 				xevent.KeyEvent.display = DisplayHandle;
 
@@ -6234,41 +5873,41 @@ namespace System.Windows.Forms
 				}
 
 				xevent.KeyEvent.keycode = Keyboard.ToKeycode((int)msg.wParam);
-				hwnd.Queue.EnqueueLocked (xevent);
+				hwnd.Queue.EnqueueLocked(xevent);
 			}
 
 			return count;
 		}
 
-		internal override void SetAllowDrop (IntPtr handle, bool value)
+		internal override void SetAllowDrop(IntPtr handle, bool value)
 		{
 			// We allow drop on all windows
 		}
 
-		internal override DragDropEffects StartDrag (IntPtr handle, object data,
+		internal override DragDropEffects StartDrag(IntPtr handle, object data,
 				DragDropEffects allowed_effects)
 		{
-			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
+			Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
 
 			if (hwnd == null)
-				throw new ArgumentException ("Attempt to begin drag from invalid window handle (" + handle.ToInt32 () + ").");
+				throw new ArgumentException("Attempt to begin drag from invalid window handle (" + handle.ToInt32() + ").");
 
-			return Dnd.StartDrag (hwnd.client_window, data, allowed_effects);
+			return Dnd.StartDrag(hwnd.client_window, data, allowed_effects);
 		}
 
 		internal override void SetBorderStyle(IntPtr handle, FormBorderStyle border_style)
 		{
-			Form form = Control.FromHandle (handle) as Form;
+			Form form = Control.FromHandle(handle) as Form;
 
 			if (form != null && form.window_manager == null)
 			{
-				CreateParams cp = form.GetCreateParams ();
+				CreateParams cp = form.GetCreateParams();
 
 				if (border_style == FormBorderStyle.FixedToolWindow ||
 						border_style == FormBorderStyle.SizableToolWindow ||
-						cp.IsSet (WindowExStyles.WS_EX_TOOLWINDOW))
+						cp.IsSet(WindowExStyles.WS_EX_TOOLWINDOW))
 				{
-					form.window_manager = new ToolWindowManager (form);
+					form.window_manager = new ToolWindowManager(form);
 				}
 			}
 
@@ -6283,7 +5922,7 @@ namespace System.Windows.Forms
 				HideCaret();
 				Caret.X = x;
 				Caret.Y = y;
-				Keyboard.SetCaretPos (Caret, handle, x, y);
+				Keyboard.SetCaretPos(Caret, handle, x, y);
 
 				if (Caret.Visible == true)
 				{
@@ -6323,7 +5962,7 @@ namespace System.Windows.Forms
 
 		internal override void SetClipRegion(IntPtr handle, Region region)
 		{
-			Hwnd    hwnd;
+			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			if (hwnd == null)
@@ -6338,7 +5977,7 @@ namespace System.Windows.Forms
 				if (!HasShapeExtension)
 					return;
 
-				XRectangle[] rects = null;;
+				XRectangle[] rects = null; ;
 
 				if (region == null)
 				{
@@ -6359,10 +5998,10 @@ namespace System.Windows.Forms
 
 					for (int i = 0; i < scans.Length; i++)
 					{
-						rects[i].X = (short) Math.Clamp(scans[i].X, short.MinValue, short.MaxValue);
-						rects[i].Y = (short) Math.Clamp(scans[i].Y, short.MinValue, short.MaxValue);
-						rects[i].Width = (ushort) Math.Clamp(scans[i].Width, ushort.MinValue, ushort.MaxValue);
-						rects[i].Height = (ushort) Math.Clamp(scans[i].Height, ushort.MinValue, ushort.MaxValue);
+						rects[i].X = (short)Clamp(scans[i].X, short.MinValue, short.MaxValue);
+						rects[i].Y = (short)Clamp(scans[i].Y, short.MinValue, short.MaxValue);
+						rects[i].Width = (ushort)Clamp(scans[i].Width, ushort.MinValue, ushort.MaxValue);
+						rects[i].Height = (ushort)Clamp(scans[i].Height, ushort.MinValue, ushort.MaxValue);
 					}
 				}
 
@@ -6370,9 +6009,16 @@ namespace System.Windows.Forms
 			}
 		}
 
+		public static T Clamp<T>(T val, T min, T max) where T : IComparable<T>
+		{
+			if (val.CompareTo(min) < 0) return min;
+			else if (val.CompareTo(max) > 0) return max;
+			else return val;
+		}
+
 		internal override void SetCursor(IntPtr handle, IntPtr cursor)
 		{
-			Hwnd    hwnd;
+			Hwnd hwnd;
 
 			if (OverrideCursorHandle == IntPtr.Zero)
 			{
@@ -6410,9 +6056,9 @@ namespace System.Windows.Forms
 			}
 		}
 
-		void QueryPointer (IntPtr display, IntPtr w, out IntPtr root, out IntPtr child,
-						   out int root_x, out int root_y, out int child_x, out int child_y,
-						   out int mask)
+		void QueryPointer(IntPtr display, IntPtr w, out IntPtr root, out IntPtr child,
+						  out int root_x, out int root_y, out int child_x, out int child_y,
+						  out int mask)
 		{
 			/*  this code was written with the help of
 			    glance at gdk.  I never would have realized we
@@ -6422,7 +6068,7 @@ namespace System.Windows.Forms
 			    XQueryTree to move back up the hierarchy..
 			    stupid me, of course. */
 			IntPtr c;
-			XGrabServer (display);
+			XGrabServer(display);
 			XQueryPointer(display, w, out root, out c,
 						  out root_x, out root_y, out child_x, out child_y,
 						  out mask);
@@ -6440,8 +6086,8 @@ namespace System.Windows.Forms
 							  out mask);
 			}
 
-			XUngrabServer (display);
-			XFlush (display);
+			XUngrabServer(display);
+			XFlush(display);
 			child = child_last;
 		}
 
@@ -6460,26 +6106,26 @@ namespace System.Windows.Forms
 					    relative to the current
 					    mouse position
 					*/
-					QueryPointer (DisplayHandle, RootWindow,
-								  out root,
-								  out child,
-								  out root_x, out root_y,
-								  out child_x, out child_y,
-								  out mask);
+					QueryPointer(DisplayHandle, RootWindow,
+								 out root,
+								 out child,
+								 out root_x, out root_y,
+								 out child_x, out child_y,
+								 out mask);
 					XWarpPointer(DisplayHandle, IntPtr.Zero, IntPtr.Zero, 0, 0, 0, 0, x - root_x, y - root_y);
-					XFlush (DisplayHandle);
+					XFlush(DisplayHandle);
 					/*  then we need to a
 					    QueryPointer after warping
 					    to manually generate a
 					    motion event for the window
 					    we move into.
 					*/
-					QueryPointer (DisplayHandle, RootWindow,
-								  out root,
-								  out child,
-								  out root_x, out root_y,
-								  out child_x, out child_y,
-								  out mask);
+					QueryPointer(DisplayHandle, RootWindow,
+								 out root,
+								 out child,
+								 out root_x, out root_y,
+								 out child_x, out child_y,
+								 out mask);
 					Hwnd child_hwnd = Hwnd.ObjectFromHandle(child);
 
 					if (child_hwnd == null)
@@ -6487,7 +6133,7 @@ namespace System.Windows.Forms
 						return;
 					}
 
-					XEvent xevent = new XEvent ();
+					XEvent xevent = new XEvent();
 					xevent.type = XEventName.MotionNotify;
 					xevent.MotionEvent.display = DisplayHandle;
 					xevent.MotionEvent.window = child_hwnd.client_window;
@@ -6497,12 +6143,12 @@ namespace System.Windows.Forms
 					xevent.MotionEvent.x_root = root_x;
 					xevent.MotionEvent.y_root = root_y;
 					xevent.MotionEvent.state = mask;
-					child_hwnd.Queue.EnqueueLocked (xevent);
+					child_hwnd.Queue.EnqueueLocked(xevent);
 				}
 			}
 			else
 			{
-				Hwnd    hwnd;
+				Hwnd hwnd;
 				hwnd = Hwnd.ObjectFromHandle(handle);
 
 				lock (XlibLock)
@@ -6514,8 +6160,8 @@ namespace System.Windows.Forms
 
 		internal override void SetFocus(IntPtr handle)
 		{
-			Hwnd    hwnd;
-			IntPtr  prev_focus_window;
+			Hwnd hwnd;
+			IntPtr prev_focus_window;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			if (hwnd.client_window == FocusWindow)
@@ -6535,14 +6181,14 @@ namespace System.Windows.Forms
 				SendMessage(prev_focus_window, Msg.WM_KILLFOCUS, FocusWindow, IntPtr.Zero);
 			}
 
-			Keyboard.FocusIn (FocusWindow);
+			Keyboard.FocusIn(FocusWindow);
 			SendMessage(FocusWindow, Msg.WM_SETFOCUS, prev_focus_window, IntPtr.Zero);
 			//XSetInputFocus(DisplayHandle, Hwnd.ObjectFromHandle(handle).client_window, RevertTo.None, IntPtr.Zero);
 		}
 
 		internal override void SetIcon(IntPtr handle, Icon icon)
 		{
-			Hwnd    hwnd;
+			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			if (hwnd != null)
@@ -6553,7 +6199,7 @@ namespace System.Windows.Forms
 
 		internal override void SetMenu(IntPtr handle, Menu menu)
 		{
-			Hwnd    hwnd;
+			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 			hwnd.menu = menu;
 			RequestNCRecalc(handle);
@@ -6578,14 +6224,14 @@ namespace System.Windows.Forms
 				}
 			}
 
-			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
-			Control ctrl = Control.FromHandle (handle);
-			SetWMStyles (hwnd, ctrl.GetCreateParams ());
+			Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
+			Control ctrl = Control.FromHandle(handle);
+			SetWMStyles(hwnd, ctrl.GetCreateParams());
 		}
 
 		internal override IntPtr SetParent(IntPtr handle, IntPtr parent)
 		{
-			Hwnd    hwnd;
+			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 			hwnd.parent = Hwnd.ObjectFromHandle(parent);
 
@@ -6598,21 +6244,21 @@ namespace System.Windows.Forms
 			return IntPtr.Zero;
 		}
 
-		internal override void SetTimer (Timer timer)
+		internal override void SetTimer(Timer timer)
 		{
-			XEventQueue queue = (XEventQueue) MessageQueues [timer.thread];
+			XEventQueue queue = (XEventQueue)MessageQueues[timer.thread];
 
 			if (queue == null)
 			{
 				// This isn't really an error, MS doesn't start the timer if
 				// it has no assosciated queue at this stage (it will be
 				// enabled when a window is activated).
-				unattached_timer_list.Add (timer);
+				unattached_timer_list.Add(timer);
 				return;
 			}
 
-			queue.timer_list.Add (timer);
-			WakeupMain ();
+			queue.timer_list.Add(timer);
+			WakeupMain();
 		}
 
 		internal override bool SetTopmost(IntPtr handle, bool enabled)
@@ -6626,7 +6272,7 @@ namespace System.Windows.Forms
 				{
 					if (hwnd.Mapped)
 					{
-						SendNetWMMessage(hwnd.WholeWindow, _NET_WM_STATE, (IntPtr) NetWmStateRequest._NET_WM_STATE_ADD, _NET_WM_STATE_ABOVE, IntPtr.Zero);
+						SendNetWMMessage(hwnd.WholeWindow, _NET_WM_STATE, (IntPtr)NetWmStateRequest._NET_WM_STATE_ADD, _NET_WM_STATE_ABOVE, IntPtr.Zero);
 					}
 					else
 					{
@@ -6641,7 +6287,7 @@ namespace System.Windows.Forms
 				lock (XlibLock)
 				{
 					if (hwnd.Mapped)
-						SendNetWMMessage(hwnd.WholeWindow, _NET_WM_STATE, (IntPtr) NetWmStateRequest._NET_WM_STATE_REMOVE, _NET_WM_STATE_ABOVE, IntPtr.Zero);
+						SendNetWMMessage(hwnd.WholeWindow, _NET_WM_STATE, (IntPtr)NetWmStateRequest._NET_WM_STATE_REMOVE, _NET_WM_STATE_ABOVE, IntPtr.Zero);
 					else
 						XDeleteProperty(DisplayHandle, hwnd.whole_window, _NET_WM_STATE);
 				}
@@ -6661,7 +6307,7 @@ namespace System.Windows.Forms
 
 				lock (XlibLock)
 				{
-					int[]   atoms;
+					int[] atoms;
 					atoms = new int[8];
 					atoms[0] = _NET_WM_WINDOW_TYPE_NORMAL.ToInt32();
 					XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_WINDOW_TYPE, (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
@@ -6689,9 +6335,9 @@ namespace System.Windows.Forms
 			return true;
 		}
 
-		internal override bool SetVisible (IntPtr handle, bool visible, bool activate)
+		internal override bool SetVisible(IntPtr handle, bool visible, bool activate)
 		{
-			Hwnd    hwnd;
+			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 			hwnd.visible = visible;
 
@@ -6727,15 +6373,15 @@ namespace System.Windows.Forms
 
 		internal override void SetWindowMinMax(IntPtr handle, Rectangle maximized, Size min, Size max)
 		{
-			Control ctrl = Control.FromHandle (handle);
-			SetWindowMinMax (handle, maximized, min, max, ctrl != null ? ctrl.GetCreateParams () : null);
+			Control ctrl = Control.FromHandle(handle);
+			SetWindowMinMax(handle, maximized, min, max, ctrl != null ? ctrl.GetCreateParams() : null);
 		}
 
-		internal void SetWindowMinMax (IntPtr handle, Rectangle maximized, Size min, Size max, CreateParams cp)
+		internal void SetWindowMinMax(IntPtr handle, Rectangle maximized, Size min, Size max, CreateParams cp)
 		{
-			Hwnd        hwnd;
-			XSizeHints  hints;
-			IntPtr      dummy;
+			Hwnd hwnd;
+			XSizeHints hints;
+			IntPtr dummy;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			if (hwnd == null)
@@ -6743,15 +6389,15 @@ namespace System.Windows.Forms
 				return;
 			}
 
-			min.Width = Math.Max (min.Width, SystemInformation.MinimumWindowSize.Width);
-			min.Height = Math.Max (min.Height, SystemInformation.MinimumWindowSize.Height);
+			min.Width = Math.Max(min.Width, SystemInformation.MinimumWindowSize.Width);
+			min.Height = Math.Max(min.Height, SystemInformation.MinimumWindowSize.Height);
 			hints = new XSizeHints();
 			XGetWMNormalHints(DisplayHandle, hwnd.whole_window, ref hints, out dummy);
 
 			if ((min != Size.Empty) && (min.Width > 0) && (min.Height > 0))
 			{
 				if (cp != null)
-					min = TranslateWindowSizeToXWindowSize (cp, min);
+					min = TranslateWindowSizeToXWindowSize(cp, min);
 
 				hints.flags = (IntPtr)((int)hints.flags | (int)XSizeHintsFlags.PMinSize);
 				hints.min_width = min.Width;
@@ -6761,7 +6407,7 @@ namespace System.Windows.Forms
 			if ((max != Size.Empty) && (max.Width > 0) && (max.Height > 0))
 			{
 				if (cp != null)
-					max = TranslateWindowSizeToXWindowSize (cp, max);
+					max = TranslateWindowSizeToXWindowSize(cp, max);
 
 				hints.flags = (IntPtr)((int)hints.flags | (int)XSizeHintsFlags.PMaxSize);
 				hints.max_width = max.Width;
@@ -6779,7 +6425,7 @@ namespace System.Windows.Forms
 			if ((maximized != Rectangle.Empty) && (maximized.Width > 0) && (maximized.Height > 0))
 			{
 				if (cp != null)
-					maximized.Size = TranslateWindowSizeToXWindowSize (cp);
+					maximized.Size = TranslateWindowSizeToXWindowSize(cp);
 
 				hints.flags = (IntPtr)XSizeHintsFlags.PPosition;
 				hints.x = maximized.X;
@@ -6794,7 +6440,7 @@ namespace System.Windows.Forms
 
 		internal override void SetWindowPos(IntPtr handle, int x, int y, int width, int height)
 		{
-			Hwnd        hwnd;
+			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			if (hwnd == null)
@@ -6847,9 +6493,9 @@ namespace System.Windows.Forms
 
 				lock (XlibLock)
 				{
-					Control ctrl = Control.FromHandle (handle);
-					Size TranslatedSize = TranslateWindowSizeToXWindowSize (ctrl.GetCreateParams (), new Size (width, height));
-					MoveResizeWindow (DisplayHandle, hwnd.whole_window, x, y, TranslatedSize.Width, TranslatedSize.Height);
+					Control ctrl = Control.FromHandle(handle);
+					Size TranslatedSize = TranslateWindowSizeToXWindowSize(ctrl.GetCreateParams(), new Size(width, height));
+					MoveResizeWindow(DisplayHandle, hwnd.whole_window, x, y, TranslatedSize.Width, TranslatedSize.Height);
 					PerformNCCalc(hwnd);
 				}
 			}
@@ -6860,7 +6506,7 @@ namespace System.Windows.Forms
 		internal override void SetWindowState(IntPtr handle, FormWindowState state)
 		{
 			FormWindowState current_state;
-			Hwnd        hwnd;
+			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 			current_state = GetWindowState(handle);
 
@@ -6924,7 +6570,7 @@ namespace System.Windows.Forms
 
 		internal override void SetWindowStyle(IntPtr handle, CreateParams cp)
 		{
-			Hwnd    hwnd;
+			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 			SetHwndStyles(hwnd, cp);
 			SetWMStyles(hwnd, cp);
@@ -6937,8 +6583,8 @@ namespace System.Windows.Forms
 
 		internal override void SetWindowTransparency(IntPtr handle, double transparency, Color key)
 		{
-			Hwnd    hwnd;
-			IntPtr  opacity;
+			Hwnd hwnd;
+			IntPtr opacity;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			if (hwnd == null)
@@ -6951,17 +6597,17 @@ namespace System.Windows.Forms
 
 			if (transparency >= 1.0)
 			{
-				XDeleteProperty (DisplayHandle, hwnd.whole_window, _NET_WM_WINDOW_OPACITY);
+				XDeleteProperty(DisplayHandle, hwnd.whole_window, _NET_WM_WINDOW_OPACITY);
 			}
 			else
 			{
-				XChangeProperty (DisplayHandle, hwnd.whole_window, _NET_WM_WINDOW_OPACITY, (IntPtr)Atom.XA_CARDINAL, 32, PropertyMode.Replace, ref opacity, 1);
+				XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_WINDOW_OPACITY, (IntPtr)Atom.XA_CARDINAL, 32, PropertyMode.Replace, ref opacity, 1);
 			}
 		}
 
 		internal override bool SetZOrder(IntPtr handle, IntPtr after_handle, bool top, bool bottom)
 		{
-			Hwnd    hwnd = Hwnd.ObjectFromHandle(handle);
+			Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
 
 			if (!hwnd.mapped)
 			{
@@ -6979,19 +6625,19 @@ namespace System.Windows.Forms
 			}
 			else if (!bottom)
 			{
-				Hwnd    after_hwnd = null;
+				Hwnd after_hwnd = null;
 
 				if (after_handle != IntPtr.Zero)
 				{
 					after_hwnd = Hwnd.ObjectFromHandle(after_handle);
 				}
 
-				XWindowChanges  values = new XWindowChanges();
+				XWindowChanges values = new XWindowChanges();
 
 				if (after_hwnd == null)
 				{
 					// Work around metacity 'issues'
-					int[]   atoms;
+					int[] atoms;
 					atoms = new int[2];
 					atoms[0] = unixtime();
 					XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_USER_TIME, (IntPtr)Atom.XA_CARDINAL, 32, PropertyMode.Replace, atoms, 1);
@@ -7046,15 +6692,15 @@ namespace System.Windows.Forms
 
 			if (SystrayMgrWindow != IntPtr.Zero)
 			{
-				XSizeHints  size_hints;
-				Hwnd        hwnd;
+				XSizeHints size_hints;
+				Hwnd hwnd;
 				hwnd = Hwnd.ObjectFromHandle(handle);
 				DriverDebug("Adding Systray Whole:{0:X}, Client:{1:X}", hwnd.whole_window.ToInt32(), hwnd.client_window.ToInt32());
 
 				// Oh boy.
 				if (hwnd.client_window != hwnd.whole_window)
 				{
-					Keyboard.DestroyICForWindow (hwnd.client_window);
+					Keyboard.DestroyICForWindow(hwnd.client_window);
 					XDestroyWindow(DisplayHandle, hwnd.client_window);
 					hwnd.client_window = hwnd.whole_window;
 				}
@@ -7068,7 +6714,7 @@ namespace System.Windows.Forms
 					hwnd.nc_expose_pending = false;
 
 					if (!hwnd.expose_pending)
-						hwnd.Queue.Paint.Remove (hwnd);
+						hwnd.Queue.Paint.Remove(hwnd);
 				}
 
 				// We are going to be directly mapped by the system tray, so mark as mapped
@@ -7084,8 +6730,8 @@ namespace System.Windows.Forms
 				size_hints.base_height = 24;
 				XSetWMNormalHints(DisplayHandle, hwnd.whole_window, ref size_hints);
 				IntPtr[] atoms = new IntPtr[2];
-				atoms [0] = (IntPtr)1;          // Version 1
-				atoms [1] = (IntPtr)1;          // we want to be mapped
+				atoms[0] = (IntPtr)1;           // Version 1
+				atoms[1] = (IntPtr)1;           // we want to be mapped
 				// This line cost me 3 days...
 				XChangeProperty(DisplayHandle, hwnd.whole_window, _XEMBED_INFO, _XEMBED_INFO, 32, PropertyMode.Replace, atoms, 2);
 				// Need to pick some reasonable defaults
@@ -7133,7 +6779,7 @@ namespace System.Windows.Forms
 
 		internal override void SystrayRemove(IntPtr handle, ref ToolTip tt)
 		{
-			SetVisible (handle, false, false);
+			SetVisible(handle, false, false);
 
 			// The caller can now re-dock it later...
 			if (tt != null)
@@ -7143,30 +6789,35 @@ namespace System.Windows.Forms
 			}
 
 			// Close any balloon window *we* fired.
-			ThemeEngine.Current.HideBalloonWindow (handle);
+			ThemeEngine.Current.HideBalloonWindow(handle);
 		}
 
 		internal override void SystrayBalloon(IntPtr handle, int timeout, string title, string text, ToolTipIcon icon)
 		{
-			ThemeEngine.Current.ShowBalloonWindow (handle, timeout, title, text, icon);
-			SendMessage(handle, Msg.WM_USER, IntPtr.Zero, (IntPtr) Msg.NIN_BALLOONSHOW);
+			ThemeEngine.Current.ShowBalloonWindow(handle, timeout, title, text, icon);
+			SendMessage(handle, Msg.WM_USER, IntPtr.Zero, (IntPtr)Msg.NIN_BALLOONSHOW);
 		}
 
 		internal override bool Text(IntPtr handle, string text)
 		{
-			Hwnd    hwnd;
-			hwnd = Hwnd.ObjectFromHandle(handle);
+			Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
+			var classHints = new XClassHint
+			{
+				res_name = text,
+				res_class = text
+			};
 
 			lock (XlibLock)
 			{
 				XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_NAME, UTF8_STRING, 8,
-								PropertyMode.Replace, text, Encoding.UTF8.GetByteCount (text));
+								PropertyMode.Replace, text, Encoding.UTF8.GetByteCount(text));
 				// XXX this has problems with UTF8.
 				// we need to either use the actual
 				// text if it's latin-1, or convert it
 				// to compound text if it's in a
 				// different charset.
 				XStoreName(DisplayHandle, Hwnd.ObjectFromHandle(handle).whole_window, text);
+				XSetClassHint(DisplayHandle, hwnd.whole_window, ref classHints);
 			}
 
 			return true;
@@ -7174,12 +6825,12 @@ namespace System.Windows.Forms
 
 		internal override bool TranslateMessage(ref MSG msg)
 		{
-			return Keyboard.TranslateMessage (ref msg);
+			return Keyboard.TranslateMessage(ref msg);
 		}
 
 		internal override void UpdateWindow(IntPtr handle)
 		{
-			Hwnd    hwnd;
+			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			if (!hwnd.visible || !hwnd.expose_pending || !hwnd.Mapped)
@@ -7191,32 +6842,32 @@ namespace System.Windows.Forms
 			hwnd.Queue.Paint.Remove(hwnd);
 		}
 
-		internal override void CreateOffscreenDrawable (IntPtr handle,
+		internal override void CreateOffscreenDrawable(IntPtr handle,
 				int width, int height,
 				out object offscreen_drawable)
 		{
 			IntPtr root_out;
 			int x_out, y_out, width_out, height_out, border_width_out, depth_out;
-			XGetGeometry (DisplayHandle, handle,
-						  out root_out,
-						  out x_out, out y_out,
-						  out width_out, out height_out,
-						  out border_width_out, out depth_out);
-			IntPtr pixmap = XCreatePixmap (DisplayHandle, handle, width, height, depth_out);
+			XGetGeometry(DisplayHandle, handle,
+						 out root_out,
+						 out x_out, out y_out,
+						 out width_out, out height_out,
+						 out border_width_out, out depth_out);
+			IntPtr pixmap = XCreatePixmap(DisplayHandle, handle, width, height, depth_out);
 			offscreen_drawable = pixmap;
 		}
 
-		internal override void DestroyOffscreenDrawable (object offscreen_drawable)
+		internal override void DestroyOffscreenDrawable(object offscreen_drawable)
 		{
-			XFreePixmap (DisplayHandle, (IntPtr)offscreen_drawable);
+			XFreePixmap(DisplayHandle, (IntPtr)offscreen_drawable);
 		}
 
-		internal override Graphics GetOffscreenGraphics (object offscreen_drawable)
+		internal override Graphics GetOffscreenGraphics(object offscreen_drawable)
 		{
-			return Graphics.FromHwnd ((IntPtr) offscreen_drawable);
+			return Graphics.FromHwnd((IntPtr)offscreen_drawable);
 		}
 
-		internal override void BlitFromOffscreen (IntPtr dest_handle,
+		internal override void BlitFromOffscreen(IntPtr dest_handle,
 				Graphics dest_dc,
 				object offscreen_drawable,
 				Graphics offscreen_dc,
@@ -7225,17 +6876,17 @@ namespace System.Windows.Forms
 			XGCValues gc_values;
 			IntPtr gc;
 			gc_values = new XGCValues();
-			gc = XCreateGC (DisplayHandle, dest_handle, IntPtr.Zero, ref gc_values);
-			XCopyArea (DisplayHandle, (IntPtr)offscreen_drawable, dest_handle,
-					   gc, r.X, r.Y, r.Width, r.Height, r.X, r.Y);
-			XFreeGC (DisplayHandle, gc);
+			gc = XCreateGC(DisplayHandle, dest_handle, IntPtr.Zero, ref gc_values);
+			XCopyArea(DisplayHandle, (IntPtr)offscreen_drawable, dest_handle,
+					  gc, r.X, r.Y, r.Width, r.Height, r.X, r.Y);
+			XFreeGC(DisplayHandle, gc);
 		}
 
-		#endregion  // Public Static Methods
+		#endregion // Public Static Methods
 
 		#region Events
 		internal override event EventHandler Idle;
-		#endregion  // Events
+		#endregion    // Events
 
 
 #if TRACE && false
@@ -7409,6 +7060,14 @@ namespace System.Windows.Forms
 			return _XFlush(display);
 		}
 
+		[DllImport ("libX11", EntryPoint = "XSetClassHint")]
+		internal extern static int _XSetClassHint(IntPtr display, IntPtr window, ref XClassHint class_hint);
+		internal static int XSetClassHint(IntPtr display, IntPtr window, ref XClassHint class_hint)
+		{
+			DebugHelper.TraceWriteLine ("XSetClassHint");
+			return _XSetClassHint(display, window, ref class_hint);
+		}
+
 		[DllImport ("libX11", EntryPoint = "XSetWMName")]
 		internal extern static int _XSetWMName(IntPtr display, IntPtr window, ref XTextProperty text_prop);
 		internal static int XSetWMName(IntPtr display, IntPtr window, ref XTextProperty text_prop)
@@ -7503,6 +7162,14 @@ namespace System.Windows.Forms
 		{
 			DebugHelper.TraceWriteLine ("XSetWMProtocols");
 			return _XSetWMProtocols(display, window, protocols, count);
+		}
+
+		[DllImport ("libX11", EntryPoint = "XGetAtomName")]
+		extern static IntPtr __XGetAtomName(IntPtr display, IntPtr atom);
+		static IntPtr _XGetAtomName(IntPtr display, IntPtr atom)
+		{
+			DebugHelper.TraceWriteLine ("XGetAtomName");
+			return __XGetAtomName(display, atom);
 		}
 
 		[DllImport ("libX11", EntryPoint = "XGrabPointer")]
@@ -8162,371 +7829,363 @@ namespace System.Windows.Forms
 #else //no TRACE defined
 
 		#region Xcursor imports
-		[DllImport ("libXcursor", EntryPoint = "XcursorLibraryLoadCursor")]
-		internal extern static IntPtr XcursorLibraryLoadCursor (IntPtr display, [MarshalAs (UnmanagedType.LPStr)] string name);
+		[DllImport("libXcursor", EntryPoint = "XcursorLibraryLoadCursor")]
+		internal extern static IntPtr XcursorLibraryLoadCursor(IntPtr display, [MarshalAs(UnmanagedType.LPStr)] string name);
 
-		[DllImport ("libXcursor", EntryPoint = "XcursorLibraryLoadImages")]
-		internal extern static IntPtr XcursorLibraryLoadImages ([MarshalAs (UnmanagedType.LPStr)] string file, IntPtr theme, int size);
+		[DllImport("libXcursor", EntryPoint = "XcursorLibraryLoadImages")]
+		internal extern static IntPtr XcursorLibraryLoadImages([MarshalAs(UnmanagedType.LPStr)] string file, IntPtr theme, int size);
 
-		[DllImport ("libXcursor", EntryPoint = "XcursorImagesDestroy")]
-		internal extern static void XcursorImagesDestroy (IntPtr images);
+		[DllImport("libXcursor", EntryPoint = "XcursorImagesDestroy")]
+		internal extern static void XcursorImagesDestroy(IntPtr images);
 
-		[DllImport ("libXcursor", EntryPoint = "XcursorGetDefaultSize")]
-		internal extern static int XcursorGetDefaultSize (IntPtr display);
+		[DllImport("libXcursor", EntryPoint = "XcursorGetDefaultSize")]
+		internal extern static int XcursorGetDefaultSize(IntPtr display);
 
-		[DllImport ("libXcursor", EntryPoint = "XcursorImageLoadCursor")]
-		internal extern static IntPtr XcursorImageLoadCursor (IntPtr display, IntPtr image);
+		[DllImport("libXcursor", EntryPoint = "XcursorImageLoadCursor")]
+		internal extern static IntPtr XcursorImageLoadCursor(IntPtr display, IntPtr image);
 
-		[DllImport ("libXcursor", EntryPoint = "XcursorGetTheme")]
-		internal extern static IntPtr XcursorGetTheme (IntPtr display);
+		[DllImport("libXcursor", EntryPoint = "XcursorGetTheme")]
+		internal extern static IntPtr XcursorGetTheme(IntPtr display);
 		#endregion
 		#region X11 Imports
-		[DllImport ("libX11", EntryPoint = "XOpenDisplay")]
+		[DllImport("libX11", EntryPoint = "XOpenDisplay")]
 		internal extern static IntPtr XOpenDisplay(IntPtr display);
-		[DllImport ("libX11", EntryPoint = "XCloseDisplay")]
+		[DllImport("libX11", EntryPoint = "XCloseDisplay")]
 		internal extern static int XCloseDisplay(IntPtr display);
-		[DllImport ("libX11", EntryPoint = "XSynchronize")]
+		[DllImport("libX11", EntryPoint = "XSynchronize")]
 		internal extern static IntPtr XSynchronize(IntPtr display, bool onoff);
 
-		[DllImport ("libX11", EntryPoint = "XCreateWindow")]
+		[DllImport("libX11", EntryPoint = "XCreateWindow")]
 		internal extern static IntPtr XCreateWindow(IntPtr display, IntPtr parent, int x, int y, int width, int height, int border_width, int depth, int xclass, IntPtr visual, UIntPtr valuemask, ref XSetWindowAttributes attributes);
 
-		[DllImport ("libX11", EntryPoint = "XCreateSimpleWindow")]
+		[DllImport("libX11", EntryPoint = "XCreateSimpleWindow")]
 		internal extern static IntPtr XCreateSimpleWindow(IntPtr display, IntPtr parent, int x, int y, int width, int height, int border_width, UIntPtr border, UIntPtr background);
 
-		[DllImport ("libX11", EntryPoint = "XMapWindow")]
+		[DllImport("libX11", EntryPoint = "XMapWindow")]
 		internal extern static int XMapWindow(IntPtr display, IntPtr window);
 
-		[DllImport ("libX11", EntryPoint = "XMapRaised")]
+		[DllImport("libX11", EntryPoint = "XMapRaised")]
 		internal extern static int XMapRaised(IntPtr display, IntPtr window);
 
-		[DllImport ("libX11", EntryPoint = "XUnmapWindow")]
+		[DllImport("libX11", EntryPoint = "XUnmapWindow")]
 		internal extern static int XUnmapWindow(IntPtr display, IntPtr window);
 
-		[DllImport ("libX11", EntryPoint = "XMapSubwindows")]
+		[DllImport("libX11", EntryPoint = "XMapSubwindows")]
 		internal extern static int XMapSubindows(IntPtr display, IntPtr window);
 
-		[DllImport ("libX11", EntryPoint = "XUnmapSubwindows")]
+		[DllImport("libX11", EntryPoint = "XUnmapSubwindows")]
 		internal extern static int XUnmapSubwindows(IntPtr display, IntPtr window);
 
-		[DllImport ("libX11", EntryPoint = "XRootWindow")]
+		[DllImport("libX11", EntryPoint = "XRootWindow")]
 		internal extern static IntPtr XRootWindow(IntPtr display, int screen_number);
 
-		[DllImport ("libX11", EntryPoint = "XNextEvent")]
+		[DllImport("libX11", EntryPoint = "XNextEvent")]
 		internal extern static IntPtr XNextEvent(IntPtr display, ref XEvent xevent);
 
-		[DllImport ("libX11", EntryPoint = "XConnectionNumber")]
-		internal extern static int XConnectionNumber (IntPtr display);
+		[DllImport("libX11", EntryPoint = "XConnectionNumber")]
+		internal extern static int XConnectionNumber(IntPtr display);
 
-		[DllImport ("libX11", EntryPoint = "XPending")]
-		internal extern static int XPending (IntPtr display);
+		[DllImport("libX11", EntryPoint = "XPending")]
+		internal extern static int XPending(IntPtr display);
 
-		[DllImport ("libX11", EntryPoint = "XSelectInput")]
+		[DllImport("libX11", EntryPoint = "XSelectInput")]
 		internal extern static IntPtr XSelectInput(IntPtr display, IntPtr window, IntPtr mask);
 
-		[DllImport ("libX11", EntryPoint = "XDestroyWindow")]
+		[DllImport("libX11", EntryPoint = "XDestroyWindow")]
 		internal extern static int XDestroyWindow(IntPtr display, IntPtr window);
 
-		[DllImport ("libX11", EntryPoint = "XReparentWindow")]
+		[DllImport("libX11", EntryPoint = "XReparentWindow")]
 		internal extern static int XReparentWindow(IntPtr display, IntPtr window, IntPtr parent, int x, int y);
 
-		[DllImport ("libX11", EntryPoint = "XMoveResizeWindow")]
+		[DllImport("libX11", EntryPoint = "XMoveResizeWindow")]
 		extern static int XMoveResizeWindow(IntPtr display, IntPtr window, int x, int y, int width, int height);
-
 		internal static int MoveResizeWindow(IntPtr display, IntPtr window, int x, int y, int width, int height)
 		{
-			int ret = XMoveResizeWindow (display, window, x, y, width, height);
-			Keyboard.MoveCurrentCaretPos ();
+			int ret = XMoveResizeWindow(display, window, x, y, width, height);
+			Keyboard.MoveCurrentCaretPos();
 			return ret;
 		}
 
-		[DllImport ("libX11", EntryPoint = "XResizeWindow")]
+		[DllImport("libX11", EntryPoint = "XResizeWindow")]
 		internal extern static int XResizeWindow(IntPtr display, IntPtr window, int width, int height);
 
-		[DllImport ("libX11", EntryPoint = "XGetWindowAttributes")]
+		[DllImport("libX11", EntryPoint = "XGetWindowAttributes")]
 		internal extern static int XGetWindowAttributes(IntPtr display, IntPtr window, ref XWindowAttributes attributes);
 
-		[DllImport ("libX11", EntryPoint = "XFlush")]
+		[DllImport("libX11", EntryPoint = "XFlush")]
 		internal extern static int XFlush(IntPtr display);
 
-		[DllImport ("libX11", EntryPoint = "XSetWMName")]
+		[DllImport("libX11", EntryPoint = "XSetClassHint")]
+		internal extern static int XSetClassHint(IntPtr display, IntPtr window, ref XClassHint class_hint);
+
+		[DllImport("libX11", EntryPoint = "XSetWMName")]
 		internal extern static int XSetWMName(IntPtr display, IntPtr window, ref XTextProperty text_prop);
 
-		[DllImport ("libX11", EntryPoint = "XStoreName")]
+		[DllImport("libX11", EntryPoint = "XStoreName")]
 		internal extern static int XStoreName(IntPtr display, IntPtr window, string window_name);
 
-		[DllImport ("libX11", EntryPoint = "XFetchName")]
+		[DllImport("libX11", EntryPoint = "XFetchName")]
 		internal extern static int XFetchName(IntPtr display, IntPtr window, ref IntPtr window_name);
 
-		[DllImport ("libX11", EntryPoint = "XSendEvent")]
+		[DllImport("libX11", EntryPoint = "XSendEvent")]
 		internal extern static int XSendEvent(IntPtr display, IntPtr window, bool propagate, IntPtr event_mask, ref XEvent send_event);
 
-		[DllImport ("libX11", EntryPoint = "XQueryTree")]
+		[DllImport("libX11", EntryPoint = "XQueryTree")]
 		internal extern static int XQueryTree(IntPtr display, IntPtr window, out IntPtr root_return, out IntPtr parent_return, out IntPtr children_return, out int nchildren_return);
 
-		[DllImport ("libX11", EntryPoint = "XFree")]
+		[DllImport("libX11", EntryPoint = "XFree")]
 		internal extern static int XFree(IntPtr data);
 
-		[DllImport ("libX11", EntryPoint = "XRaiseWindow")]
+		[DllImport("libX11", EntryPoint = "XRaiseWindow")]
 		internal extern static int XRaiseWindow(IntPtr display, IntPtr window);
 
-		[DllImport ("libX11", EntryPoint = "XLowerWindow")]
+		[DllImport("libX11", EntryPoint = "XLowerWindow")]
 		internal extern static uint XLowerWindow(IntPtr display, IntPtr window);
 
-		[DllImport ("libX11", EntryPoint = "XConfigureWindow")]
+		[DllImport("libX11", EntryPoint = "XConfigureWindow")]
 		internal extern static uint XConfigureWindow(IntPtr display, IntPtr window, ChangeWindowFlags value_mask, ref XWindowChanges values);
 
-		[DllImport ("libX11", EntryPoint = "XInternAtom")]
+		[DllImport("libX11", EntryPoint = "XInternAtom")]
 		internal extern static IntPtr XInternAtom(IntPtr display, string atom_name, bool only_if_exists);
 
-		[DllImport ("libX11", EntryPoint = "XInternAtoms")]
+		[DllImport("libX11", EntryPoint = "XInternAtoms")]
 		internal extern static int XInternAtoms(IntPtr display, string[] atom_names, int atom_count, bool only_if_exists, IntPtr[] atoms);
 
-		[DllImport ("libX11", EntryPoint = "XSetWMProtocols")]
+		[DllImport("libX11", EntryPoint = "XGetAtomName")]
+		extern static IntPtr _XGetAtomName(IntPtr display, IntPtr atom);
+
+		[DllImport("libX11", EntryPoint = "XSetWMProtocols")]
 		internal extern static int XSetWMProtocols(IntPtr display, IntPtr window, IntPtr[] protocols, int count);
 
-		[DllImport ("libX11", EntryPoint = "XGrabPointer")]
+		[DllImport("libX11", EntryPoint = "XGrabPointer")]
 		internal extern static int XGrabPointer(IntPtr display, IntPtr window, bool owner_events, EventMask event_mask, GrabMode pointer_mode, GrabMode keyboard_mode, IntPtr confine_to, IntPtr cursor, IntPtr timestamp);
 
-		[DllImport ("libX11", EntryPoint = "XUngrabPointer")]
+		[DllImport("libX11", EntryPoint = "XUngrabPointer")]
 		internal extern static int XUngrabPointer(IntPtr display, IntPtr timestamp);
 
-		[DllImport ("libX11", EntryPoint = "XQueryPointer")]
+		[DllImport("libX11", EntryPoint = "XQueryPointer")]
 		internal extern static bool XQueryPointer(IntPtr display, IntPtr window, out IntPtr root, out IntPtr child, out int root_x, out int root_y, out int win_x, out int win_y, out int keys_buttons);
 
-		[DllImport ("libX11", EntryPoint = "XTranslateCoordinates")]
-		internal extern static bool XTranslateCoordinates (IntPtr display, IntPtr src_w, IntPtr dest_w, int src_x, int src_y, out int intdest_x_return, out int dest_y_return, out IntPtr child_return);
+		[DllImport("libX11", EntryPoint = "XTranslateCoordinates")]
+		internal extern static bool XTranslateCoordinates(IntPtr display, IntPtr src_w, IntPtr dest_w, int src_x, int src_y, out int intdest_x_return, out int dest_y_return, out IntPtr child_return);
 
-		[DllImport ("libX11", EntryPoint = "XGetGeometry")]
+		[DllImport("libX11", EntryPoint = "XGetGeometry")]
 		internal extern static bool XGetGeometry(IntPtr display, IntPtr window, out IntPtr root, out int x, out int y, out int width, out int height, out int border_width, out int depth);
 
-		[DllImport ("libX11", EntryPoint = "XGetGeometry")]
+		[DllImport("libX11", EntryPoint = "XGetGeometry")]
 		internal extern static bool XGetGeometry(IntPtr display, IntPtr window, IntPtr root, out int x, out int y, out int width, out int height, IntPtr border_width, IntPtr depth);
 
-		[DllImport ("libX11", EntryPoint = "XGetGeometry")]
+		[DllImport("libX11", EntryPoint = "XGetGeometry")]
 		internal extern static bool XGetGeometry(IntPtr display, IntPtr window, IntPtr root, out int x, out int y, IntPtr width, IntPtr height, IntPtr border_width, IntPtr depth);
 
-		[DllImport ("libX11", EntryPoint = "XGetGeometry")]
+		[DllImport("libX11", EntryPoint = "XGetGeometry")]
 		internal extern static bool XGetGeometry(IntPtr display, IntPtr window, IntPtr root, IntPtr x, IntPtr y, out int width, out int height, IntPtr border_width, IntPtr depth);
 
-		[DllImport ("libX11", EntryPoint = "XWarpPointer")]
+		[DllImport("libX11", EntryPoint = "XWarpPointer")]
 		internal extern static uint XWarpPointer(IntPtr display, IntPtr src_w, IntPtr dest_w, int src_x, int src_y, uint src_width, uint src_height, int dest_x, int dest_y);
 
-		[DllImport ("libX11", EntryPoint = "XClearWindow")]
+		[DllImport("libX11", EntryPoint = "XClearWindow")]
 		internal extern static int XClearWindow(IntPtr display, IntPtr window);
 
-		[DllImport ("libX11", EntryPoint = "XClearArea")]
+		[DllImport("libX11", EntryPoint = "XClearArea")]
 		internal extern static int XClearArea(IntPtr display, IntPtr window, int x, int y, int width, int height, bool exposures);
 
 		// Colormaps
-		[DllImport ("libX11", EntryPoint = "XDefaultScreenOfDisplay")]
+		[DllImport("libX11", EntryPoint = "XDefaultScreenOfDisplay")]
 		internal extern static IntPtr XDefaultScreenOfDisplay(IntPtr display);
 
-		[DllImport ("libX11", EntryPoint = "XScreenNumberOfScreen")]
+		[DllImport("libX11", EntryPoint = "XScreenNumberOfScreen")]
 		internal extern static int XScreenNumberOfScreen(IntPtr display, IntPtr Screen);
 
-		[DllImport ("libX11", EntryPoint = "XDefaultVisual")]
+		[DllImport("libX11", EntryPoint = "XDefaultVisual")]
 		internal extern static IntPtr XDefaultVisual(IntPtr display, int screen_number);
 
-		[DllImport ("libX11", EntryPoint = "XDefaultDepth")]
+		[DllImport("libX11", EntryPoint = "XDefaultDepth")]
 		internal extern static uint XDefaultDepth(IntPtr display, int screen_number);
 
-		[DllImport ("libX11", EntryPoint = "XDefaultScreen")]
+		[DllImport("libX11", EntryPoint = "XDefaultScreen")]
 		internal extern static int XDefaultScreen(IntPtr display);
 
-		[DllImport ("libX11", EntryPoint = "XDefaultColormap")]
+		[DllImport("libX11", EntryPoint = "XDefaultColormap")]
 		internal extern static IntPtr XDefaultColormap(IntPtr display, int screen_number);
 
-		[DllImport ("libX11", EntryPoint = "XLookupColor")]
+		[DllImport("libX11", EntryPoint = "XLookupColor")]
 		internal extern static int XLookupColor(IntPtr display, IntPtr Colormap, string Coloranem, ref XColor exact_def_color, ref XColor screen_def_color);
 
-		[DllImport ("libX11", EntryPoint = "XAllocColor")]
+		[DllImport("libX11", EntryPoint = "XAllocColor")]
 		internal extern static int XAllocColor(IntPtr display, IntPtr Colormap, ref XColor colorcell_def);
 
-		[DllImport ("libX11", EntryPoint = "XSetTransientForHint")]
+		[DllImport("libX11", EntryPoint = "XSetTransientForHint")]
 		internal extern static int XSetTransientForHint(IntPtr display, IntPtr window, IntPtr prop_window);
 
-		[DllImport ("libX11", EntryPoint = "XChangeProperty")]
+		[DllImport("libX11", EntryPoint = "XChangeProperty")]
 		internal extern static int XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode mode, ref MotifWmHints data, int nelements);
 
-		[DllImport ("libX11", EntryPoint = "XChangeProperty")]
+		[DllImport("libX11", EntryPoint = "XChangeProperty")]
 		internal extern static int XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode mode, ref uint value, int nelements);
 
-		[DllImport ("libX11", EntryPoint = "XChangeProperty")]
+		[DllImport("libX11", EntryPoint = "XChangeProperty")]
 		internal extern static int XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode mode, ref IntPtr value, int nelements);
 
-		[DllImport ("libX11", EntryPoint = "XChangeProperty")]
+		[DllImport("libX11", EntryPoint = "XChangeProperty")]
 		internal extern static int XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode mode, uint[] data, int nelements);
 
-		[DllImport ("libX11", EntryPoint = "XChangeProperty")]
+		[DllImport("libX11", EntryPoint = "XChangeProperty")]
 		internal extern static int XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode mode, int[] data, int nelements);
 
-		[DllImport ("libX11", EntryPoint = "XChangeProperty")]
+		[DllImport("libX11", EntryPoint = "XChangeProperty")]
 		internal extern static int XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode mode, IntPtr[] data, int nelements);
 
-		[DllImport ("libX11", EntryPoint = "XChangeProperty")]
+		[DllImport("libX11", EntryPoint = "XChangeProperty")]
 		internal extern static int XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode mode, IntPtr atoms, int nelements);
 
-		[DllImport ("libX11", EntryPoint = "XChangeProperty", CharSet = CharSet.Ansi)]
+		[DllImport("libX11", EntryPoint = "XChangeProperty", CharSet = CharSet.Ansi)]
 		internal extern static int XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode mode, string text, int text_length);
 
-		[DllImport ("libX11", EntryPoint = "XDeleteProperty")]
+		[DllImport("libX11", EntryPoint = "XDeleteProperty")]
 		internal extern static int XDeleteProperty(IntPtr display, IntPtr window, IntPtr property);
 
 		// Drawing
-		[DllImport ("libX11", EntryPoint = "XCreateGC")]
+		[DllImport("libX11", EntryPoint = "XCreateGC")]
 		internal extern static IntPtr XCreateGC(IntPtr display, IntPtr window, IntPtr valuemask, ref XGCValues values);
 
-		[DllImport ("libX11", EntryPoint = "XFreeGC")]
+		[DllImport("libX11", EntryPoint = "XFreeGC")]
 		internal extern static int XFreeGC(IntPtr display, IntPtr gc);
 
-		[DllImport ("libX11", EntryPoint = "XSetFunction")]
+		[DllImport("libX11", EntryPoint = "XSetFunction")]
 		internal extern static int XSetFunction(IntPtr display, IntPtr gc, GXFunction function);
 
-		[DllImport ("libX11", EntryPoint = "XSetLineAttributes")]
+		[DllImport("libX11", EntryPoint = "XSetLineAttributes")]
 		internal extern static int XSetLineAttributes(IntPtr display, IntPtr gc, int line_width, GCLineStyle line_style, GCCapStyle cap_style, GCJoinStyle join_style);
 
-		[DllImport ("libX11", EntryPoint = "XDrawLine")]
+		[DllImport("libX11", EntryPoint = "XDrawLine")]
 		internal extern static int XDrawLine(IntPtr display, IntPtr drawable, IntPtr gc, int x1, int y1, int x2, int y2);
 
-		[DllImport ("libX11", EntryPoint = "XDrawRectangle")]
+		[DllImport("libX11", EntryPoint = "XDrawRectangle")]
 		internal extern static int XDrawRectangle(IntPtr display, IntPtr drawable, IntPtr gc, int x1, int y1, int width, int height);
 
-		[DllImport ("libX11", EntryPoint = "XFillRectangle")]
+		[DllImport("libX11", EntryPoint = "XFillRectangle")]
 		internal extern static int XFillRectangle(IntPtr display, IntPtr drawable, IntPtr gc, int x1, int y1, int width, int height);
 
-		[DllImport ("libX11", EntryPoint = "XSetWindowBackground")]
+		[DllImport("libX11", EntryPoint = "XSetWindowBackground")]
 		internal extern static int XSetWindowBackground(IntPtr display, IntPtr window, IntPtr background);
 
-		[DllImport ("libX11", EntryPoint = "XCopyArea")]
+		[DllImport("libX11", EntryPoint = "XCopyArea")]
 		internal extern static int XCopyArea(IntPtr display, IntPtr src, IntPtr dest, IntPtr gc, int src_x, int src_y, int width, int height, int dest_x, int dest_y);
 
-		[DllImport ("libX11", EntryPoint = "XGetWindowProperty")]
+		[DllImport("libX11", EntryPoint = "XGetWindowProperty")]
 		internal extern static int XGetWindowProperty(IntPtr display, IntPtr window, IntPtr atom, IntPtr long_offset, IntPtr long_length, bool delete, IntPtr req_type, out IntPtr actual_type, out int actual_format, out IntPtr nitems, out IntPtr bytes_after, ref IntPtr prop);
 
-		[DllImport ("libX11", EntryPoint = "XSetInputFocus")]
+		[DllImport("libX11", EntryPoint = "XSetInputFocus")]
 		internal extern static int XSetInputFocus(IntPtr display, IntPtr window, RevertTo revert_to, IntPtr time);
 
-		[DllImport ("libX11", EntryPoint = "XIconifyWindow")]
+		[DllImport("libX11", EntryPoint = "XIconifyWindow")]
 		internal extern static int XIconifyWindow(IntPtr display, IntPtr window, int screen_number);
 
-		[DllImport ("libX11", EntryPoint = "XDefineCursor")]
+		[DllImport("libX11", EntryPoint = "XDefineCursor")]
 		internal extern static int XDefineCursor(IntPtr display, IntPtr window, IntPtr cursor);
 
-		[DllImport ("libX11", EntryPoint = "XUndefineCursor")]
+		[DllImport("libX11", EntryPoint = "XUndefineCursor")]
 		internal extern static int XUndefineCursor(IntPtr display, IntPtr window);
 
-		[DllImport ("libX11", EntryPoint = "XFreeCursor")]
+		[DllImport("libX11", EntryPoint = "XFreeCursor")]
 		internal extern static int XFreeCursor(IntPtr display, IntPtr cursor);
 
-		[DllImport ("libX11", EntryPoint = "XCreateFontCursor")]
+		[DllImport("libX11", EntryPoint = "XCreateFontCursor")]
 		internal extern static IntPtr XCreateFontCursor(IntPtr display, CursorFontShape shape);
 
-		[DllImport ("libX11", EntryPoint = "XCreatePixmapCursor")]
+		[DllImport("libX11", EntryPoint = "XCreatePixmapCursor")]
 		internal extern static IntPtr XCreatePixmapCursor(IntPtr display, IntPtr source, IntPtr mask, ref XColor foreground_color, ref XColor background_color, int x_hot, int y_hot);
 
-		[DllImport ("libX11", EntryPoint = "XCreatePixmapFromBitmapData")]
+		[DllImport("libX11", EntryPoint = "XCreatePixmapFromBitmapData")]
 		internal extern static IntPtr XCreatePixmapFromBitmapData(IntPtr display, IntPtr drawable, byte[] data, int width, int height, IntPtr fg, IntPtr bg, int depth);
 
-		[DllImport ("libX11", EntryPoint = "XCreatePixmap")]
+		[DllImport("libX11", EntryPoint = "XCreatePixmap")]
 		internal extern static IntPtr XCreatePixmap(IntPtr display, IntPtr d, int width, int height, int depth);
 
-		[DllImport ("libX11", EntryPoint = "XFreePixmap")]
+		[DllImport("libX11", EntryPoint = "XFreePixmap")]
 		internal extern static IntPtr XFreePixmap(IntPtr display, IntPtr pixmap);
 
-		[DllImport ("libX11", EntryPoint = "XQueryBestCursor")]
+		[DllImport("libX11", EntryPoint = "XQueryBestCursor")]
 		internal extern static int XQueryBestCursor(IntPtr display, IntPtr drawable, int width, int height, out int best_width, out int best_height);
 
-		[DllImport ("libX11", EntryPoint = "XQueryExtension")]
+		[DllImport("libX11", EntryPoint = "XQueryExtension")]
 		internal extern static int XQueryExtension(IntPtr display, string extension_name, ref int major, ref int first_event, ref int first_error);
 
-		[DllImport ("libX11", EntryPoint = "XWhitePixel")]
+		[DllImport("libX11", EntryPoint = "XWhitePixel")]
 		internal extern static IntPtr XWhitePixel(IntPtr display, int screen_no);
 
-		[DllImport ("libX11", EntryPoint = "XBlackPixel")]
+		[DllImport("libX11", EntryPoint = "XBlackPixel")]
 		internal extern static IntPtr XBlackPixel(IntPtr display, int screen_no);
 
-		[DllImport ("libX11", EntryPoint = "XGrabServer")]
+		[DllImport("libX11", EntryPoint = "XGrabServer")]
 		internal extern static void XGrabServer(IntPtr display);
 
-		[DllImport ("libX11", EntryPoint = "XUngrabServer")]
+		[DllImport("libX11", EntryPoint = "XUngrabServer")]
 		internal extern static void XUngrabServer(IntPtr display);
 
-		[DllImport ("libX11", EntryPoint = "XGetWMNormalHints")]
+		[DllImport("libX11", EntryPoint = "XGetWMNormalHints")]
 		internal extern static void XGetWMNormalHints(IntPtr display, IntPtr window, ref XSizeHints hints, out IntPtr supplied_return);
 
-		[DllImport ("libX11", EntryPoint = "XSetWMNormalHints")]
+		[DllImport("libX11", EntryPoint = "XSetWMNormalHints")]
 		internal extern static void XSetWMNormalHints(IntPtr display, IntPtr window, ref XSizeHints hints);
 
-		[DllImport ("libX11", EntryPoint = "XSetZoomHints")]
+		[DllImport("libX11", EntryPoint = "XSetZoomHints")]
 		internal extern static void XSetZoomHints(IntPtr display, IntPtr window, ref XSizeHints hints);
 
-		[DllImport ("libX11", EntryPoint = "XSetWMHints")]
+		[DllImport("libX11", EntryPoint = "XSetWMHints")]
 		internal extern static void XSetWMHints(IntPtr display, IntPtr window, ref XWMHints wmhints);
 
-		[DllImport ("libX11", EntryPoint = "XGetIconSizes")]
+		[DllImport("libX11", EntryPoint = "XGetIconSizes")]
 		internal extern static int XGetIconSizes(IntPtr display, IntPtr window, out IntPtr size_list, out int count);
 
-		[DllImport ("libX11", EntryPoint = "XSetErrorHandler")]
+		[DllImport("libX11", EntryPoint = "XSetErrorHandler")]
 		internal extern static IntPtr XSetErrorHandler(XErrorHandler error_handler);
 
-		[DllImport ("libX11", EntryPoint = "XGetErrorText")]
+		[DllImport("libX11", EntryPoint = "XGetErrorText")]
 		internal extern static IntPtr XGetErrorText(IntPtr display, byte code, StringBuilder buffer, int length);
 
-		[DllImport ("libX11", EntryPoint = "XInitThreads")]
+		[DllImport("libX11", EntryPoint = "XInitThreads")]
 		internal extern static int XInitThreads();
 
-		[DllImport ("libX11", EntryPoint = "XConvertSelection")]
+		[DllImport("libX11", EntryPoint = "XConvertSelection")]
 		internal extern static int XConvertSelection(IntPtr display, IntPtr selection, IntPtr target, IntPtr property, IntPtr requestor, IntPtr time);
 
-		[DllImport ("libX11", EntryPoint = "XGetSelectionOwner")]
+		[DllImport("libX11", EntryPoint = "XGetSelectionOwner")]
 		internal extern static IntPtr XGetSelectionOwner(IntPtr display, IntPtr selection);
 
-		[DllImport ("libX11", EntryPoint = "XSetSelectionOwner")]
-		internal extern static int XSetSelectionOwner(IntPtr display, IntPtr selection, IntPtr owner, IntPtr time);
+		[DllImport("libX11", EntryPoint = "XSetSelectionOwner")]
+		internal extern static int XSetSelectionOwner(IntPtr display, IntPtr selection, IntPtr owner, UIntPtr time);
 
-		[DllImport ("libX11", EntryPoint = "XSetPlaneMask")]
+		[DllImport("libX11", EntryPoint = "XSetPlaneMask")]
 		internal extern static int XSetPlaneMask(IntPtr display, IntPtr gc, IntPtr mask);
 
-		[DllImport ("libX11", EntryPoint = "XSetForeground")]
+		[DllImport("libX11", EntryPoint = "XSetForeground")]
 		internal extern static int XSetForeground(IntPtr display, IntPtr gc, UIntPtr foreground);
 
-		[DllImport ("libX11", EntryPoint = "XSetBackground")]
+		[DllImport("libX11", EntryPoint = "XSetBackground")]
 		internal extern static int XSetBackground(IntPtr display, IntPtr gc, UIntPtr background);
 
-		[DllImport ("libX11", EntryPoint = "XBell")]
+		[DllImport("libX11", EntryPoint = "XBell")]
 		internal extern static int XBell(IntPtr display, int percent);
 
-		[DllImport ("libX11", EntryPoint = "XChangeActivePointerGrab")]
-		internal extern static int XChangeActivePointerGrab (IntPtr display, EventMask event_mask, IntPtr cursor, IntPtr time);
+		[DllImport("libX11", EntryPoint = "XChangeActivePointerGrab")]
+		internal extern static int XChangeActivePointerGrab(IntPtr display, EventMask event_mask, IntPtr cursor, IntPtr time);
 
-		[DllImport ("libX11", EntryPoint = "XFilterEvent")]
+		[DllImport("libX11", EntryPoint = "XFilterEvent")]
 		internal extern static bool XFilterEvent(ref XEvent xevent, IntPtr window);
 
-		[DllImport ("libX11", EntryPoint = "XkbSetDetectableAutoRepeat")]
-		internal extern static void XkbSetDetectableAutoRepeat (IntPtr display, bool detectable, IntPtr supported);
+		[DllImport("libX11", EntryPoint = "XkbSetDetectableAutoRepeat")]
+		internal extern static void XkbSetDetectableAutoRepeat(IntPtr display, bool detectable, IntPtr supported);
 
-		[DllImport ("libX11", EntryPoint = "XPeekEvent")]
-		internal extern static void XPeekEvent (IntPtr display, ref XEvent xevent);
+		[DllImport("libX11", EntryPoint = "XPeekEvent")]
+		internal extern static void XPeekEvent(IntPtr display, ref XEvent xevent);
 
-		[DllImport ("libX11", EntryPoint = "XIfEvent")]
-		internal extern static void XIfEvent (IntPtr display, ref XEvent xevent, Delegate event_predicate, IntPtr arg);
+		[DllImport("libX11", EntryPoint = "XIfEvent")]
+		internal extern static void XIfEvent(IntPtr display, ref XEvent xevent, Delegate event_predicate, IntPtr arg);
 
-		[DllImport ("libX11", EntryPoint = "XGetInputFocus")]
-		internal extern static void XGetInputFocus (IntPtr display, out IntPtr focus, out IntPtr revert_to);
-		#endregion
-		#region Gtk/Gdk imports
-		[DllImport("libgdk-x11-2.0")]
-		internal extern static IntPtr gdk_atom_intern (string atomName, bool onlyIfExists);
-
-		[DllImport("libgtk-x11-2.0")]
-		internal extern static IntPtr gtk_clipboard_get (IntPtr atom);
-
-		[DllImport("libgtk-x11-2.0")]
-		internal extern static void gtk_clipboard_store (IntPtr clipboard);
-
-		[DllImport("libgtk-x11-2.0")]
-		internal extern static void gtk_clipboard_set_text (IntPtr clipboard, string text, int len);
+		[DllImport("libX11", EntryPoint = "XGetInputFocus")]
+		internal extern static void XGetInputFocus(IntPtr display, out IntPtr focus, out IntPtr revert_to);
 		#endregion
 
 		#region Shape extension imports
@@ -8538,21 +8197,21 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Xinerama imports
-		[DllImport ("libXinerama")]
-		internal extern static IntPtr XineramaQueryScreens (IntPtr display, out int number);
+		[DllImport("libXinerama")]
+		internal extern static IntPtr XineramaQueryScreens(IntPtr display, out int number);
 
-		[DllImport ("libXinerama", EntryPoint = "XineramaIsActive")]
-		extern static bool _XineramaIsActive (IntPtr display);
+		[DllImport("libXinerama", EntryPoint = "XineramaIsActive")]
+		extern static bool _XineramaIsActive(IntPtr display);
 		static bool XineramaNotInstalled;
 
-		internal static bool XineramaIsActive (IntPtr display)
+		internal static bool XineramaIsActive(IntPtr display)
 		{
 			if (XineramaNotInstalled)
 				return false;
 
 			try
 			{
-				return _XineramaIsActive (display);
+				return _XineramaIsActive(display);
 			}
 			catch (DllNotFoundException)
 			{

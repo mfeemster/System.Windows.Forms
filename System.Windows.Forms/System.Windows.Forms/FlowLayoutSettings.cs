@@ -28,7 +28,7 @@
 
 namespace System.Windows.Forms
 {
-	[DefaultProperty ("FlowDirection")]
+	[DefaultProperty("FlowDirection")]
 	public class FlowLayoutSettings : LayoutSettings
 	{
 		private FlowDirection flow_direction;
@@ -36,20 +36,25 @@ namespace System.Windows.Forms
 		private Dictionary<object, bool> flow_breaks;
 		private Control owner;
 
-		internal FlowLayoutSettings () : this (null)
+		internal FlowLayoutSettings() : this(null)
 		{
 		}
 
-		internal FlowLayoutSettings (Control owner)
+		internal FlowLayoutSettings(Control owner)
 		{
-			flow_breaks = new Dictionary<object, bool> ();
+			flow_breaks = new Dictionary<object, bool>();
 			wrap_contents = true;
 			flow_direction = FlowDirection.LeftToRight;
 			this.owner = owner;
 		}
 
+		internal void RemoveFlowBreak(Object child)
+		{
+			flow_breaks.Remove(child);
+		}
+
 		#region Public Properties
-		[DefaultValue (FlowDirection.LeftToRight)]
+		[DefaultValue(FlowDirection.LeftToRight)]
 		public FlowDirection FlowDirection
 		{
 			get { return this.flow_direction; }
@@ -60,7 +65,7 @@ namespace System.Windows.Forms
 					this.flow_direction = value;
 
 					if (owner != null)
-						owner.PerformLayout (owner, "FlowDirection");
+						owner.PerformLayout(owner, "FlowDirection");
 				}
 			}
 		}
@@ -73,7 +78,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[DefaultValue (true)]
+		[DefaultValue(true)]
 		public bool WrapContents
 		{
 			get { return this.wrap_contents; }
@@ -84,29 +89,29 @@ namespace System.Windows.Forms
 					this.wrap_contents = value;
 
 					if (owner != null)
-						owner.PerformLayout (owner, "WrapContents");
+						owner.PerformLayout(owner, "WrapContents");
 				}
 			}
 		}
 		#endregion
 
 		#region Public Methods
-		public bool GetFlowBreak (Object child)
+		public bool GetFlowBreak(Object child)
 		{
 			bool retval;
 
-			if (flow_breaks.TryGetValue (child, out retval))
+			if (flow_breaks.TryGetValue(child, out retval))
 				return retval;
 
 			return false;
 		}
 
-		public void SetFlowBreak (Object child, bool value)
+		public void SetFlowBreak(Object child, bool value)
 		{
 			flow_breaks[child] = value;
 
 			if (owner != null)
-				owner.PerformLayout ((Control)child, "FlowBreak");
+				owner.PerformLayout((Control)child, "FlowBreak");
 		}
 		#endregion
 	}
