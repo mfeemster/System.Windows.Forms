@@ -156,7 +156,7 @@ namespace System.Windows.Forms
 				return form.window_manager != null;
 			}
 		}
-		internal WindowExStyles WindowExStyle
+		public WindowExStyles WindowExStyle//Keysharp: need this public.
 		{
 			get
 			{
@@ -168,7 +168,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal WindowStyles WindowStyle
+		public WindowStyles WindowStyle//Keysharp: need this public.
 		{
 			get
 			{

@@ -25,12 +25,12 @@
 // *** When you make some changes to this file, dont forget to update Tests/TestHelper class ***
 
 // NOT COMPLETE
-
-#if PUBLIC_TYPES
-	namespace Mono.Winforms
-#else
-	namespace System.Windows.Forms
-#endif
+#define PUBLIC_TYPES//Keysharp: need these types public so they can be used in Keysharp.
+//#if PUBLIC_TYPES
+//namespace Mono.Winforms
+//#else
+namespace System.Windows.Forms
+//#endif
 {
 	[Flags]
 #if PUBLIC_TYPES
