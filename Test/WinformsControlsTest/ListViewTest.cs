@@ -11,15 +11,15 @@ public partial class ListViewTest : Form
 	public ListViewTest()
 	{
 		InitializeComponent();
-		CreateMyListView();
+		//CreateMyListView();
 		listView1.LabelEdit = true;
-		listView1.View = View.Tile;
+		//listView1.View = View.Tile;
 		Random random = new ();
 		int i = random.Next(100, 300);
 		listView1.TileSize = new Size(200, 50);
-		listView1.Items[0].ImageIndex = 0;
-		listView1.Items[1].ImageIndex = 1;
-		listView1.Items[2].ImageIndex = 2;
+		//listView1.Items[0].ImageIndex = 0;
+		//listView1.Items[1].ImageIndex = 1;
+		//listView1.Items[2].ImageIndex = 2;
 		listView1.Click += (s, e) =>
 		{
 			// listView1.TileSize = new Size(random.Next(100, 300), random.Next(25, 50));
@@ -30,6 +30,7 @@ public partial class ListViewTest : Form
 		};
 		//AddCollapsibleGroupToListView();
 		//AddGroupTasks();
+		this.listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
 	}
 
 	private void CreateMyListView()
@@ -54,8 +55,8 @@ public partial class ListViewTest : Form
 			// Sort the items in the list in ascending order.
 			Sorting = SortOrder.Ascending,
 
-			VirtualMode = true,
-			VirtualListSize = 3,
+			//VirtualMode = true,
+			//VirtualListSize = 3,
 		};
 		listView2.SelectedIndexChanged += listView2_SelectedIndexChanged;
 		listView2.Click += listView2_Click;
@@ -106,7 +107,6 @@ public partial class ListViewTest : Form
 		ImageList imageListLarge = new (components);
 		// Initialize the ImageList objects with bitmaps.
 		var prefix = "Images" + System.IO.Path.DirectorySeparatorChar;
-
 		imageListSmall.Images.Add(Image.FromFile($"{prefix}SmallA.bmp"));
 		imageListSmall.Images.Add(Image.FromFile($"{prefix}SmallABlue.bmp"));
 		imageListLarge.Images.Add(Image.FromFile($"{prefix}LargeA.bmp"));
@@ -121,32 +121,28 @@ public partial class ListViewTest : Form
 	/*
 	    private void AddCollapsibleGroupToListView()
 	    {
-	    ListViewGroup lvgroup1 = new()
+	    ListViewGroup lvgroup1 = new ()
 	    {
-	        Header = "CollapsibleGroup1",
-	        CollapsedState = ListViewGroupCollapsedState.Expanded
+	    Header = "CollapsibleGroup1",
+	    CollapsedState = ListViewGroupCollapsedState.Expanded
 	    };
-
 	    listView1.Groups.Add(lvgroup1);
 	    listView1.Items.Add(new ListViewItem
 	    {
-	        Text = "Item4",
-	        Group = lvgroup1
+	    Text = "Item4",
+	    Group = lvgroup1
 	    });
-
-	    ListViewGroup lvgroup2 = new()
+	    ListViewGroup lvgroup2 = new ()
 	    {
-	        Header = "CollapsibleGroup2",
-	        CollapsedState = ListViewGroupCollapsedState.Collapsed
+	    Header = "CollapsibleGroup2",
+	    CollapsedState = ListViewGroupCollapsedState.Collapsed
 	    };
-
 	    listView1.Groups.Add(lvgroup2);
 	    listView1.Items.Add(new ListViewItem
 	    {
-	        Text = "Item5",
-	        Group = lvgroup2
+	    Text = "Item5",
+	    Group = lvgroup2
 	    });
-
 	    listView1.GroupCollapsedStateChanged += listView1_GroupCollapsedStateChanged;
 	    }
 
@@ -162,14 +158,14 @@ public partial class ListViewTest : Form
 	    listView1.GroupTaskLinkClick += listView1_GroupTaskLinkClick;
 	    ListViewGroup lvgroup1 = new ()
 	    {
-	        Header = "TaskGroup",
-	        TaskLink = "Task2"
+	    Header = "TaskGroup",
+	    TaskLink = "Task2"
 	    };
 	    listView1.Groups.Add(lvgroup1);
 	    listView1.Items.Add(new ListViewItem
 	    {
-	        Text = "Item6",
-	        Group = lvgroup1
+	    Text = "Item6",
+	    Group = lvgroup1
 	    });
 	    }
 
@@ -199,52 +195,48 @@ public partial class ListViewTest : Form
 	private void btnClearListView1_Click(object sender, EventArgs e)
 	{
 		listView1.Clear();
-		LargeImageList.Images.Clear();
-		listView1.LargeImageList = LargeImageList;
-		listView1.View = View.LargeIcon;
+		//LargeImageList.Images.Clear();
+		//listView1.LargeImageList = LargeImageList;
+		//listView1.View = View.LargeIcon;
 	}
 
 	private void btnLoadImagesListView1_Click(object sender, EventArgs e)
 	{
-		if (openFileDialog1.ShowDialog() != DialogResult.OK)
-		{
-			return;
-		}
-
-		foreach (string file in openFileDialog1.FileNames)
-		{
-			Bitmap bitmap = (Bitmap)Image.FromFile(file);
-			LargeImageList.Images.Add(file, bitmap);
-			ListViewItem item = new ListViewItem
-			{
-				Text = Path.GetFileName(file),
-				Name = file,
-				ImageKey = file,
-				Checked = true
-			};
-			listView1.Items.Add(item);
-		}
+		//if (openFileDialog1.ShowDialog() != DialogResult.OK)
+		//{
+		//  return;
+		//}
+		//foreach (string file in openFileDialog1.FileNames)
+		//{
+		//  Bitmap bitmap = (Bitmap)Image.FromFile(file);
+		//  LargeImageList.Images.Add(file, bitmap);
+		//  ListViewItem item = new ListViewItem
+		//  {
+		//      Text = Path.GetFileName(file),
+		//      Name = file,
+		//      ImageKey = file,
+		//      Checked = true
+		//  };
+		//  listView1.Items.Add(item);
+		//}
 	}
 
 	private void btnReplaceImageListView1_Click(object sender, EventArgs e)
 	{
-		if (listView1.SelectedIndices.Count != 1)
-		{
-			return;
-		}
-
-		openFileDialog1.Multiselect = false;
-		DialogResult result = openFileDialog1.ShowDialog();
-		openFileDialog1.Multiselect = true;
-
-		if (result != DialogResult.OK)
-		{
-			return;
-		}
-
-		string file = openFileDialog1.FileName;
-		Bitmap bitmap = (Bitmap)Image.FromFile(file);
-		LargeImageList.Images[listView1.SelectedIndices[0]] = bitmap;
+		//if (listView1.SelectedIndices.Count != 1)
+		//{
+		//  return;
+		//}
+		//openFileDialog1.Multiselect = false;
+		//DialogResult result = openFileDialog1.ShowDialog();
+		//openFileDialog1.Multiselect = true;
+		//if (result != DialogResult.OK)
+		//{
+		//  return;
+		//}
+		//string file = openFileDialog1.FileName;
+		//Bitmap bitmap = (Bitmap)Image.FromFile(file);
+		//LargeImageList.Images[listView1.SelectedIndices[0]] = bitmap;
 		listView1.Refresh();
 	}
 }
