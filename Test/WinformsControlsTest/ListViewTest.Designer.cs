@@ -162,10 +162,16 @@ partial class ListViewTest
 		this.components = new System.ComponentModel.Container();
 		System.ComponentModel.ComponentResourceManager resources = new (typeof(ListViewTest));
 		this.listView1 = new System.Windows.Forms.ListView();
-		this.columnHeader1 = (System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader());
-		this.columnHeader2 = (System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader());
+		this.columnHeader1 = (System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader() { Text = "col1" });
+		this.columnHeader2 = (System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader() { Text = "col2" });
 		this.btnClearListView1 = new System.Windows.Forms.Button();
+		this.groupBox1 = new GroupBox();
 		this.SuspendLayout();
+		groupBox1.Left = 10;
+		groupBox1.Top = 10;
+		groupBox1.Width = 200;
+		groupBox1.Height = 250;
+		groupBox1.Text = "GB 1";
 		//
 		// columnHeader1
 		//
@@ -183,15 +189,17 @@ partial class ListViewTest
 			this.columnHeader1,
 			this.columnHeader2
 		});
-		this.listView1.HideSelection = false; this.listView1.Items.AddRange(new System.Windows.Forms.ListViewItem[]
+		this.listView1.HideSelection = false;
+		this.listView1.Items.AddRange(new System.Windows.Forms.ListViewItem[]
 		{
 			new ListViewItem("Item 1"),
 			new ListViewItem("Item 2"),
 			new ListViewItem("Item 3"),
+			new ListViewItem("Item 4"),
 		});
-		this.listView1.Location = new System.Drawing.Point(12, 33);
+		this.listView1.Location = new System.Drawing.Point(12, 23);
 		this.listView1.Name = "listView1";
-		this.listView1.Size = new System.Drawing.Size(439, 100);
+		this.listView1.Size = new System.Drawing.Size(150, 100);
 		this.listView1.TabIndex = 0;
 		this.listView1.UseCompatibleStateImageBehavior = false;
 		this.listView1.HeaderStyle = ColumnHeaderStyle.Clickable;
@@ -199,7 +207,7 @@ partial class ListViewTest
 		//
 		// btnClearListView1
 		//
-		this.btnClearListView1.Location = new System.Drawing.Point(13, 4);
+		this.btnClearListView1.Location = new System.Drawing.Point(13, 175);
 		this.btnClearListView1.Name = "btnClearListView1";
 		this.btnClearListView1.Size = new System.Drawing.Size(75, 23);
 		this.btnClearListView1.TabIndex = 1;
@@ -208,9 +216,13 @@ partial class ListViewTest
 		this.btnClearListView1.Click += new System.EventHandler(this.btnClearListView1_Click);
 		//
 		//
+		groupBox1.Controls.Add(listView1);
+		groupBox1.Controls.Add(btnClearListView1);
 		this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-		this.Controls.Add(this.btnClearListView1);
-		this.Controls.Add(this.listView1);
+		//this.Controls.Add(this.btnClearListView1);
+		//this.Controls.Add(this.listView1);
+		this.Controls.Add(this.groupBox1);
+		this.Height = groupBox1.Top + groupBox1.Height + 45;
 		this.Name = "ListViewTest";
 		this.Text = "ListView Test";
 		this.ResumeLayout(false);
@@ -233,4 +245,5 @@ partial class ListViewTest
 	private System.Windows.Forms.ColumnHeader columnHeader1;
 	private System.Windows.Forms.Button btnClearListView1;
 	private System.Windows.Forms.ColumnHeader columnHeader2;
+	private System.Windows.Forms.GroupBox groupBox1;
 }

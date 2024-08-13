@@ -16,7 +16,7 @@ public partial class ListViewTest : Form
 		//listView1.View = View.Tile;
 		Random random = new ();
 		int i = random.Next(100, 300);
-		listView1.TileSize = new Size(200, 50);
+		//listView1.TileSize = new Size(200, 50);
 		//listView1.Items[0].ImageIndex = 0;
 		//listView1.Items[1].ImageIndex = 1;
 		//listView1.Items[2].ImageIndex = 2;
