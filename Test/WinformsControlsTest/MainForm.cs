@@ -7,6 +7,7 @@ using System.Windows.Forms.IntegrationTests.Common;
 using Microsoft.Win32;
 using WindowsFormsApp1;
 using WinformsControlsTest.UserControls;
+using System.Linq;
 
 namespace WinformsControlsTest;
 
@@ -18,7 +19,8 @@ public partial class MainForm : Form
 		InitializeComponent();
 		// Init buttons
 		IReadOnlyDictionary<MainFormControlsTabOrder, InitInfo> buttonsInitInfo = GetButtonsInitInfo();
-		Array mainFormControlsTabOrderItems = Enum.GetValues(typeof(MainFormControlsTabOrder));
+		var mainFormControlsTabOrderItems = Enum.GetValues<MainFormControlsTabOrder>().OrderBy(v => v.ToString());
+		var i = 0;
 
 		foreach (MainFormControlsTabOrder item in mainFormControlsTabOrderItems)
 		{
@@ -27,7 +29,7 @@ public partial class MainForm : Form
 			{
 				AutoSizeMode = AutoSizeMode.GrowAndShrink,
 				Name = info.Name,
-				TabIndex = (int)item,
+				TabIndex = i++,
 				Text = info.Name,
 				UseVisualStyleBackColor = true
 			};

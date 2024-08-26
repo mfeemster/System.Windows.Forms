@@ -209,6 +209,7 @@ partial class ToolStripTests
 		this.toolStrip2_Button5.Name = "toolStrip2_Button5";
 		this.toolStrip2_Button5.Size = new System.Drawing.Size(114, 22);
 		this.toolStrip2_Button5.Text = "toolStrip2_Button5";
+		this.toolStrip2_Button5.Click += ToolStrip2_Button5_Click;
 		//
 		// toolStrip2_Button6
 		//
