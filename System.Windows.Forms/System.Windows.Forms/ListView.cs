@@ -32,12 +32,12 @@
 
 namespace System.Windows.Forms
 {
-	[DefaultEvent ("SelectedIndexChanged")]
-	[DefaultProperty ("Items")]
-	[Designer ("System.Windows.Forms.Design.ListViewDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-	[ClassInterface (ClassInterfaceType.AutoDispatch)]
-	[ComVisible (true)]
-	[Docking (DockingBehavior.Ask)]
+	[DefaultEvent("SelectedIndexChanged")]
+	[DefaultProperty("Items")]
+	[Designer("System.Windows.Forms.Design.ListViewDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+	[ClassInterface(ClassInterfaceType.AutoDispatch)]
+	[ComVisible(true)]
+	[Docking(DockingBehavior.Ask)]
 	public class ListView : Control
 	{
 		private ItemActivation activation = ItemActivation.Standard;
@@ -83,8 +83,8 @@ namespace System.Windows.Forms
 		static private readonly int keysearch_keydelay = 1000;
 		private int[] reordered_column_indices;
 		private int[] reordered_items_indices;
-		private Point [] items_location;
-		private ItemMatrixLocation [] items_matrix_location;
+		private Point[] items_location;
+		private ItemMatrixLocation[] items_matrix_location;
 		private Size item_size; // used for caching item size
 		private int custom_column_width; // used when using Columns with SmallIcon/List views
 		private int hot_item_index = -1;
@@ -106,34 +106,34 @@ namespace System.Windows.Forms
 		internal Size text_size = Size.Empty;
 
 		#region Events
-		static object AfterLabelEditEvent = new object ();
-		static object BeforeLabelEditEvent = new object ();
-		static object ColumnClickEvent = new object ();
-		static object ItemActivateEvent = new object ();
-		static object ItemCheckEvent = new object ();
-		static object ItemDragEvent = new object ();
-		static object SelectedIndexChangedEvent = new object ();
+		static object AfterLabelEditEvent = new object();
+		static object BeforeLabelEditEvent = new object();
+		static object ColumnClickEvent = new object();
+		static object ItemActivateEvent = new object();
+		static object ItemCheckEvent = new object();
+		static object ItemDragEvent = new object();
+		static object SelectedIndexChangedEvent = new object();
 		static object DrawColumnHeaderEvent = new object();
 		static object DrawItemEvent = new object();
 		static object DrawSubItemEvent = new object();
-		static object ItemCheckedEvent = new object ();
-		static object ItemMouseHoverEvent = new object ();
-		static object ItemSelectionChangedEvent = new object ();
-		static object CacheVirtualItemsEvent = new object ();
-		static object RetrieveVirtualItemEvent = new object ();
-		static object RightToLeftLayoutChangedEvent = new object ();
-		static object SearchForVirtualItemEvent = new object ();
-		static object VirtualItemsSelectionRangeChangedEvent = new object ();
+		static object ItemCheckedEvent = new object();
+		static object ItemMouseHoverEvent = new object();
+		static object ItemSelectionChangedEvent = new object();
+		static object CacheVirtualItemsEvent = new object();
+		static object RetrieveVirtualItemEvent = new object();
+		static object RightToLeftLayoutChangedEvent = new object();
+		static object SearchForVirtualItemEvent = new object();
+		static object VirtualItemsSelectionRangeChangedEvent = new object();
 
 		public event LabelEditEventHandler AfterLabelEdit
 		{
-			add { Events.AddHandler (AfterLabelEditEvent, value); }
-			remove { Events.RemoveHandler (AfterLabelEditEvent, value); }
+			add { Events.AddHandler(AfterLabelEditEvent, value); }
+			remove { Events.RemoveHandler(AfterLabelEditEvent, value); }
 		}
 
 
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageLayoutChanged
 		{
 			add { base.BackgroundImageLayoutChanged += value; }
@@ -142,14 +142,14 @@ namespace System.Windows.Forms
 
 		public event LabelEditEventHandler BeforeLabelEdit
 		{
-			add { Events.AddHandler (BeforeLabelEditEvent, value); }
-			remove { Events.RemoveHandler (BeforeLabelEditEvent, value); }
+			add { Events.AddHandler(BeforeLabelEditEvent, value); }
+			remove { Events.RemoveHandler(BeforeLabelEditEvent, value); }
 		}
 
 		public event ColumnClickEventHandler ColumnClick
 		{
-			add { Events.AddHandler (ColumnClickEvent, value); }
-			remove { Events.RemoveHandler (ColumnClickEvent, value); }
+			add { Events.AddHandler(ColumnClickEvent, value); }
+			remove { Events.RemoveHandler(ColumnClickEvent, value); }
 		}
 
 		public event DrawListViewColumnHeaderEventHandler DrawColumnHeader
@@ -172,50 +172,50 @@ namespace System.Windows.Forms
 
 		public event EventHandler ItemActivate
 		{
-			add { Events.AddHandler (ItemActivateEvent, value); }
-			remove { Events.RemoveHandler (ItemActivateEvent, value); }
+			add { Events.AddHandler(ItemActivateEvent, value); }
+			remove { Events.RemoveHandler(ItemActivateEvent, value); }
 		}
 
 		public event ItemCheckEventHandler ItemCheck
 		{
-			add { Events.AddHandler (ItemCheckEvent, value); }
-			remove { Events.RemoveHandler (ItemCheckEvent, value); }
+			add { Events.AddHandler(ItemCheckEvent, value); }
+			remove { Events.RemoveHandler(ItemCheckEvent, value); }
 		}
 
 		public event ItemCheckedEventHandler ItemChecked
 		{
-			add { Events.AddHandler (ItemCheckedEvent, value); }
-			remove { Events.RemoveHandler (ItemCheckedEvent, value); }
+			add { Events.AddHandler(ItemCheckedEvent, value); }
+			remove { Events.RemoveHandler(ItemCheckedEvent, value); }
 		}
 
 		public event ItemDragEventHandler ItemDrag
 		{
-			add { Events.AddHandler (ItemDragEvent, value); }
-			remove { Events.RemoveHandler (ItemDragEvent, value); }
+			add { Events.AddHandler(ItemDragEvent, value); }
+			remove { Events.RemoveHandler(ItemDragEvent, value); }
 		}
 
 		public event ListViewItemMouseHoverEventHandler ItemMouseHover
 		{
-			add { Events.AddHandler (ItemMouseHoverEvent, value); }
-			remove { Events.RemoveHandler (ItemMouseHoverEvent, value); }
+			add { Events.AddHandler(ItemMouseHoverEvent, value); }
+			remove { Events.RemoveHandler(ItemMouseHoverEvent, value); }
 		}
 
 		public event ListViewItemSelectionChangedEventHandler ItemSelectionChanged
 		{
-			add { Events.AddHandler (ItemSelectionChangedEvent, value); }
-			remove { Events.RemoveHandler (ItemSelectionChangedEvent, value); }
+			add { Events.AddHandler(ItemSelectionChangedEvent, value); }
+			remove { Events.RemoveHandler(ItemSelectionChangedEvent, value); }
 		}
 
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event EventHandler PaddingChanged
 		{
 			add { base.PaddingChanged += value; }
 			remove { base.PaddingChanged -= value; }
 		}
 
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event PaintEventHandler Paint
 		{
 			add { base.Paint += value; }
@@ -224,12 +224,12 @@ namespace System.Windows.Forms
 
 		public event EventHandler SelectedIndexChanged
 		{
-			add { Events.AddHandler (SelectedIndexChangedEvent, value); }
-			remove { Events.RemoveHandler (SelectedIndexChangedEvent, value); }
+			add { Events.AddHandler(SelectedIndexChangedEvent, value); }
+			remove { Events.RemoveHandler(SelectedIndexChangedEvent, value); }
 		}
 
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event EventHandler TextChanged
 		{
 			add { base.TextChanged += value; }
@@ -238,65 +238,65 @@ namespace System.Windows.Forms
 
 		public event CacheVirtualItemsEventHandler CacheVirtualItems
 		{
-			add { Events.AddHandler (CacheVirtualItemsEvent, value); }
-			remove { Events.RemoveHandler (CacheVirtualItemsEvent, value); }
+			add { Events.AddHandler(CacheVirtualItemsEvent, value); }
+			remove { Events.RemoveHandler(CacheVirtualItemsEvent, value); }
 		}
 
 		public event RetrieveVirtualItemEventHandler RetrieveVirtualItem
 		{
-			add { Events.AddHandler (RetrieveVirtualItemEvent, value); }
-			remove { Events.RemoveHandler (RetrieveVirtualItemEvent, value); }
+			add { Events.AddHandler(RetrieveVirtualItemEvent, value); }
+			remove { Events.RemoveHandler(RetrieveVirtualItemEvent, value); }
 		}
 
 		public event EventHandler RightToLeftLayoutChanged
 		{
-			add { Events.AddHandler (RightToLeftLayoutChangedEvent, value); }
-			remove { Events.RemoveHandler (RightToLeftLayoutChangedEvent, value); }
+			add { Events.AddHandler(RightToLeftLayoutChangedEvent, value); }
+			remove { Events.RemoveHandler(RightToLeftLayoutChangedEvent, value); }
 		}
 
 		public event SearchForVirtualItemEventHandler SearchForVirtualItem
 		{
-			add { Events.AddHandler (SearchForVirtualItemEvent, value); }
-			remove { Events.AddHandler (SearchForVirtualItemEvent, value); }
+			add { Events.AddHandler(SearchForVirtualItemEvent, value); }
+			remove { Events.AddHandler(SearchForVirtualItemEvent, value); }
 		}
 
 		public event ListViewVirtualItemsSelectionRangeChangedEventHandler VirtualItemsSelectionRangeChanged
 		{
-			add { Events.AddHandler (VirtualItemsSelectionRangeChangedEvent, value); }
-			remove { Events.RemoveHandler (VirtualItemsSelectionRangeChangedEvent, value); }
+			add { Events.AddHandler(VirtualItemsSelectionRangeChangedEvent, value); }
+			remove { Events.RemoveHandler(VirtualItemsSelectionRangeChangedEvent, value); }
 		}
 
 		#endregion // Events
 
 		#region Public Constructors
-		public ListView ()
+		public ListView()
 		{
 			background_color = ThemeEngine.Current.ColorWindow;
-			groups = new ListViewGroupCollection (this);
-			items = new ListViewItemCollection (this);
-			items.Changed += new CollectionChangedHandler (OnItemsChanged);
-			checked_indices = new CheckedIndexCollection (this);
-			checked_items = new CheckedListViewItemCollection (this);
-			columns = new ColumnHeaderCollection (this);
+			groups = new ListViewGroupCollection(this);
+			items = new ListViewItemCollection(this);
+			items.Changed += new CollectionChangedHandler(OnItemsChanged);
+			checked_indices = new CheckedIndexCollection(this);
+			checked_items = new CheckedListViewItemCollection(this);
+			columns = new ColumnHeaderCollection(this);
 			foreground_color = SystemColors.WindowText;
-			selected_indices = new SelectedIndexCollection (this);
-			selected_items = new SelectedListViewItemCollection (this);
-			items_location = new Point [16];
-			items_matrix_location = new ItemMatrixLocation [16];
-			reordered_items_indices = new int [16];
-			item_tooltip = new ToolTip ();
+			selected_indices = new SelectedIndexCollection(this);
+			selected_items = new SelectedListViewItemCollection(this);
+			items_location = new Point[16];
+			items_matrix_location = new ItemMatrixLocation[16];
+			reordered_items_indices = new int[16];
+			item_tooltip = new ToolTip();
 			item_tooltip.Active = false;
-			insertion_mark = new ListViewInsertionMark (this);
+			insertion_mark = new ListViewInsertionMark(this);
 			InternalBorderStyle = BorderStyle.Fixed3D;
-			header_control = new HeaderControl (this);
+			header_control = new HeaderControl(this);
 			header_control.Visible = false;
-			Controls.AddImplicit (header_control);
-			item_control = new ItemControl (this);
-			Controls.AddImplicit (item_control);
-			h_scroll = new ImplicitHScrollBar ();
-			Controls.AddImplicit (this.h_scroll);
-			v_scroll = new ImplicitVScrollBar ();
-			Controls.AddImplicit (this.v_scroll);
+			Controls.AddImplicit(header_control);
+			item_control = new ItemControl(this);
+			Controls.AddImplicit(item_control);
+			h_scroll = new ImplicitHScrollBar();
+			Controls.AddImplicit(this.h_scroll);
+			v_scroll = new ImplicitVScrollBar();
+			Controls.AddImplicit(this.v_scroll);
 			h_marker = v_marker = 0;
 			keysearch_tickcnt = 0;
 			// scroll bars are disabled initially
@@ -306,16 +306,16 @@ namespace System.Windows.Forms
 			v_scroll.ValueChanged += new EventHandler(VerticalScroller);
 			// event handlers
 			base.KeyDown += new KeyEventHandler(ListView_KeyDown);
-			SizeChanged += new EventHandler (ListView_SizeChanged);
-			GotFocus += new EventHandler (FocusChanged);
-			LostFocus += new EventHandler (FocusChanged);
+			SizeChanged += new EventHandler(ListView_SizeChanged);
+			GotFocus += new EventHandler(FocusChanged);
+			LostFocus += new EventHandler(FocusChanged);
 			MouseWheel += new MouseEventHandler(ListView_MouseWheel);
-			MouseEnter += new EventHandler (ListView_MouseEnter);
-			Invalidated += new InvalidateEventHandler (ListView_Invalidated);
+			MouseEnter += new EventHandler(ListView_MouseEnter);
+			Invalidated += new InvalidateEventHandler(ListView_Invalidated);
 			BackgroundImageTiled = false;
-			this.SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick
-						   | ControlStyles.UseTextForAccessibility
-						   , false);
+			this.SetStyle(ControlStyles.UserPaint | ControlStyles.StandardClick
+						  | ControlStyles.UseTextForAccessibility
+						  , false);
 		}
 		#endregion  // Public Constructors
 
@@ -343,11 +343,11 @@ namespace System.Windows.Forms
 				if (view != View.Details)
 					return item_size;
 
-				Size size = new Size ();
+				Size size = new Size();
 				size.Height = item_size.Height;
 
 				for (int i = 0; i < columns.Count; i++)
-					size.Width += columns [i].Wd;
+					size.Width += columns[i].Wd;
 
 				return size;
 			}
@@ -424,7 +424,7 @@ namespace System.Windows.Forms
 		#endregion  // Protected Properties
 
 		#region Public Instance Properties
-		[DefaultValue (ItemActivation.Standard)]
+		[DefaultValue(ItemActivation.Standard)]
 		public ItemActivation Activation
 		{
 			get { return activation; }
@@ -433,19 +433,19 @@ namespace System.Windows.Forms
 				if (value != ItemActivation.Standard && value != ItemActivation.OneClick &&
 						value != ItemActivation.TwoClick)
 				{
-					throw new InvalidEnumArgumentException (string.Format
-															("Enum argument value '{0}' is not valid for Activation", value));
+					throw new InvalidEnumArgumentException(string.Format
+														   ("Enum argument value '{0}' is not valid for Activation", value));
 				}
 
 				if (hot_tracking && value != ItemActivation.OneClick)
-					throw new ArgumentException ("When HotTracking is on, activation must be ItemActivation.OneClick");
+					throw new ArgumentException("When HotTracking is on, activation must be ItemActivation.OneClick");
 
 				activation = value;
 			}
 		}
 
-		[DefaultValue (ListViewAlignment.Top)]
-		[Localizable (true)]
+		[DefaultValue(ListViewAlignment.Top)]
+		[Localizable(true)]
 		public ListViewAlignment Alignment
 		{
 			get { return alignment; }
@@ -454,8 +454,8 @@ namespace System.Windows.Forms
 				if (value != ListViewAlignment.Default && value != ListViewAlignment.Left &&
 						value != ListViewAlignment.SnapToGrid && value != ListViewAlignment.Top)
 				{
-					throw new InvalidEnumArgumentException (string.Format
-															("Enum argument value '{0}' is not valid for Alignment", value));
+					throw new InvalidEnumArgumentException(string.Format
+														   ("Enum argument value '{0}' is not valid for Alignment", value));
 				}
 
 				if (this.alignment != value)
@@ -464,19 +464,19 @@ namespace System.Windows.Forms
 
 					// alignment does not matter in Details/List views
 					if (this.view == View.LargeIcon || this.View == View.SmallIcon)
-						this.Redraw (true);
+						this.Redraw(true);
 				}
 			}
 		}
 
-		[DefaultValue (false)]
+		[DefaultValue(false)]
 		public bool AllowColumnReorder
 		{
 			get { return allow_column_reorder; }
 			set { allow_column_reorder = value; }
 		}
 
-		[DefaultValue (true)]
+		[DefaultValue(true)]
 		public bool AutoArrange
 		{
 			get { return auto_arrange; }
@@ -488,7 +488,7 @@ namespace System.Windows.Forms
 
 					// autoarrange does not matter in Details/List views
 					if (this.view == View.LargeIcon || this.View == View.SmallIcon)
-						this.Redraw (true);
+						this.Redraw(true);
 				}
 			}
 		}
@@ -509,8 +509,8 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override ImageLayout BackgroundImageLayout
 		{
 			get
@@ -523,7 +523,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[DefaultValue (false)]
+		[DefaultValue(false)]
 		public bool BackgroundImageTiled
 		{
 			get
@@ -541,15 +541,15 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[DefaultValue (BorderStyle.Fixed3D)]
-		[DispId (-504)]
+		[DefaultValue(BorderStyle.Fixed3D)]
+		[DispId(-504)]
 		public BorderStyle BorderStyle
 		{
 			get { return InternalBorderStyle; }
 			set { InternalBorderStyle = value; }
 		}
 
-		[DefaultValue (false)]
+		[DefaultValue(false)]
 		public bool CheckBoxes
 		{
 			get { return check_boxes; }
@@ -558,43 +558,43 @@ namespace System.Windows.Forms
 				if (check_boxes != value)
 				{
 					if (value && View == View.Tile)
-						throw new NotSupportedException ("CheckBoxes are not"
-														 + " supported in Tile view. Choose a different"
-														 + " view or set CheckBoxes to false.");
+						throw new NotSupportedException("CheckBoxes are not"
+														+ " supported in Tile view. Choose a different"
+														+ " view or set CheckBoxes to false.");
 
 					check_boxes = value;
-					this.Redraw (true);
+					this.Redraw(true);
 					//UIA Framework: Event used by ListView to set/unset Toggle Pattern
-					OnUIACheckBoxesChanged ();
+					OnUIACheckBoxesChanged();
 				}
 			}
 		}
 
-		[Browsable (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public CheckedIndexCollection CheckedIndices
 		{
 			get { return checked_indices; }
 		}
 
-		[Browsable (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public CheckedListViewItemCollection CheckedItems
 		{
 			get { return checked_items; }
 		}
 
-		[Editor ("System.Windows.Forms.Design.ColumnHeaderCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		[Localizable (true)]
-		[MergableProperty (false)]
+		[Editor("System.Windows.Forms.Design.ColumnHeaderCollectionEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+		[Localizable(true)]
+		[MergableProperty(false)]
 		public ColumnHeaderCollection Columns
 		{
 			get { return columns; }
 		}
 
-		[Browsable (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public ListViewItem FocusedItem
 		{
 			get
@@ -602,7 +602,7 @@ namespace System.Windows.Forms
 				if (focused_item_index == -1)
 					return null;
 
-				return GetItemAtDisplayIndex (focused_item_index);
+				return GetItemAtDisplayIndex(focused_item_index);
 			}
 			set
 			{
@@ -610,7 +610,7 @@ namespace System.Windows.Forms
 						!IsHandleCreated)
 					return;
 
-				SetFocusedItem (value.DisplayIndex);
+				SetFocusedItem(value.DisplayIndex);
 			}
 		}
 
@@ -626,7 +626,7 @@ namespace System.Windows.Forms
 			set { foreground_color = value; }
 		}
 
-		[DefaultValue (false)]
+		[DefaultValue(false)]
 		public bool FullRowSelect
 		{
 			get { return full_row_select; }
@@ -635,12 +635,12 @@ namespace System.Windows.Forms
 				if (full_row_select != value)
 				{
 					full_row_select = value;
-					InvalidateSelection ();
+					InvalidateSelection();
 				}
 			}
 		}
 
-		[DefaultValue (false)]
+		[DefaultValue(false)]
 		public bool GridLines
 		{
 			get { return grid_lines; }
@@ -649,12 +649,12 @@ namespace System.Windows.Forms
 				if (grid_lines != value)
 				{
 					grid_lines = value;
-					this.Redraw (false);
+					this.Redraw(false);
 				}
 			}
 		}
 
-		[DefaultValue (ColumnHeaderStyle.Clickable)]
+		[DefaultValue(ColumnHeaderStyle.Clickable)]
 		public ColumnHeaderStyle HeaderStyle
 		{
 			get { return header_style; }
@@ -671,18 +671,18 @@ namespace System.Windows.Forms
 						break;
 
 					default:
-						throw new InvalidEnumArgumentException (string.Format
-																("Enum argument value '{0}' is not valid for ColumnHeaderStyle", value));
+						throw new InvalidEnumArgumentException(string.Format
+															   ("Enum argument value '{0}' is not valid for ColumnHeaderStyle", value));
 				}
 
 				header_style = value;
 
 				if (view == View.Details)
-					Redraw (true);
+					Redraw(true);
 			}
 		}
 
-		[DefaultValue (true)]
+		[DefaultValue(true)]
 		public bool HideSelection
 		{
 			get { return hide_selection; }
@@ -691,12 +691,12 @@ namespace System.Windows.Forms
 				if (hide_selection != value)
 				{
 					hide_selection = value;
-					InvalidateSelection ();
+					InvalidateSelection();
 				}
 			}
 		}
 
-		[DefaultValue (false)]
+		[DefaultValue(false)]
 		public bool HotTracking
 		{
 			get
@@ -718,21 +718,21 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[DefaultValue (false)]
+		[DefaultValue(false)]
 		public bool HoverSelection
 		{
 			get { return hover_selection; }
 			set
 			{
 				if (hot_tracking && value == false)
-					throw new ArgumentException ("When HotTracking is on, hover selection must be true");
+					throw new ArgumentException("When HotTracking is on, hover selection must be true");
 
 				hover_selection = value;
 			}
 		}
 
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[Browsable (false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
 		public ListViewInsertionMark InsertionMark
 		{
 			get
@@ -741,16 +741,16 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[Editor ("System.Windows.Forms.Design.ListViewItemCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		[Localizable (true)]
-		[MergableProperty (false)]
+		[Editor("System.Windows.Forms.Design.ListViewItemCollectionEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+		[Localizable(true)]
+		[MergableProperty(false)]
 		public ListViewItemCollection Items
 		{
 			get { return items; }
 		}
 
-		[DefaultValue (false)]
+		[DefaultValue(false)]
 		public bool LabelEdit
 		{
 			get { return label_edit; }
@@ -760,13 +760,13 @@ namespace System.Windows.Forms
 				{
 					label_edit = value;
 					// UIA Framework: Event used by Value Pattern in ListView.ListItem provider
-					OnUIALabelEditChanged ();
+					OnUIALabelEditChanged();
 				}
 			}
 		}
 
-		[DefaultValue (true)]
-		[Localizable (true)]
+		[DefaultValue(true)]
+		[Localizable(true)]
 		public bool LabelWrap
 		{
 			get { return label_wrap; }
@@ -775,24 +775,24 @@ namespace System.Windows.Forms
 				if (label_wrap != value)
 				{
 					label_wrap = value;
-					this.Redraw (true);
+					this.Redraw(true);
 				}
 			}
 		}
 
-		[DefaultValue (null)]
+		[DefaultValue(null)]
 		public ImageList LargeImageList
 		{
 			get { return large_image_list; }
 			set
 			{
 				large_image_list = value;
-				this.Redraw (true);
+				this.Redraw(true);
 			}
 		}
 
-		[Browsable (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public IComparer ListViewItemSorter
 		{
 			get
@@ -807,12 +807,12 @@ namespace System.Windows.Forms
 				if (item_sorter != value)
 				{
 					item_sorter = value;
-					Sort ();
+					Sort();
 				}
 			}
 		}
 
-		[DefaultValue (true)]
+		[DefaultValue(true)]
 		public bool MultiSelect
 		{
 			get { return multiselect; }
@@ -822,7 +822,7 @@ namespace System.Windows.Forms
 				{
 					multiselect = value;
 					// UIA Framework: Event used by Selection Pattern in ListView.ListItem provider
-					OnUIAMultiSelectChanged ();
+					OnUIAMultiSelectChanged();
 				}
 			}
 		}
@@ -835,13 +835,13 @@ namespace System.Windows.Forms
 			set
 			{
 				owner_draw = value;
-				Redraw (true);
+				Redraw(true);
 			}
 		}
 
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public new Padding Padding
 		{
 			get
@@ -854,9 +854,9 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[MonoTODO ("RTL not supported")]
-		[Localizable (true)]
-		[DefaultValue (false)]
+		[MonoTODO("RTL not supported")]
+		[Localizable(true)]
+		[DefaultValue(false)]
 		public virtual bool RightToLeftLayout
 		{
 			get { return right_to_left_layout; }
@@ -865,12 +865,12 @@ namespace System.Windows.Forms
 				if (right_to_left_layout != value)
 				{
 					right_to_left_layout = value;
-					OnRightToLeftLayoutChanged (EventArgs.Empty);
+					OnRightToLeftLayoutChanged(EventArgs.Empty);
 				}
 			}
 		}
 
-		[DefaultValue (true)]
+		[DefaultValue(true)]
 		public bool Scrollable
 		{
 			get { return scrollable; }
@@ -879,20 +879,20 @@ namespace System.Windows.Forms
 				if (scrollable != value)
 				{
 					scrollable = value;
-					this.Redraw (true);
+					this.Redraw(true);
 				}
 			}
 		}
 
-		[Browsable (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public SelectedIndexCollection SelectedIndices
 		{
 			get { return selected_indices; }
 		}
 
-		[Browsable (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public SelectedListViewItemCollection SelectedItems
 		{
 			get { return selected_items; }
@@ -909,21 +909,21 @@ namespace System.Windows.Forms
 					show_groups = value;
 					Redraw(true);
 					// UIA Framework: Used to update a11y Tree
-					OnUIAShowGroupsChanged ();
+					OnUIAShowGroupsChanged();
 				}
 			}
 		}
 
-		[LocalizableAttribute (true)]
-		[MergableProperty (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		[Editor ("System.Windows.Forms.Design.ListViewGroupCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		[LocalizableAttribute(true)]
+		[MergableProperty(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+		[Editor("System.Windows.Forms.Design.ListViewGroupCollectionEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		public ListViewGroupCollection Groups
 		{
 			get { return groups; }
 		}
 
-		[DefaultValue (false)]
+		[DefaultValue(false)]
 		public bool ShowItemToolTips
 		{
 			get
@@ -937,27 +937,27 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[DefaultValue (null)]
+		[DefaultValue(null)]
 		public ImageList SmallImageList
 		{
 			get { return small_image_list; }
 			set
 			{
 				small_image_list = value;
-				this.Redraw (true);
+				this.Redraw(true);
 			}
 		}
 
-		[DefaultValue (SortOrder.None)]
+		[DefaultValue(SortOrder.None)]
 		public SortOrder Sorting
 		{
 			get { return sort_order; }
 			set
 			{
-				if (!Enum.IsDefined (typeof (SortOrder), value))
+				if (!Enum.IsDefined(typeof(SortOrder), value))
 				{
-					throw new InvalidEnumArgumentException ("value", (int) value,
-															typeof (SortOrder));
+					throw new InvalidEnumArgumentException("value", (int)value,
+														   typeof(SortOrder));
 				}
 
 				if (sort_order == value)
@@ -978,29 +978,29 @@ namespace System.Windows.Forms
 							item_sorter = null;
 					}
 
-					this.Redraw (false);
+					this.Redraw(false);
 				}
 				else
 				{
 					if (item_sorter == null)
-						item_sorter = new ItemComparer (value);
+						item_sorter = new ItemComparer(value);
 
 					if (item_sorter is ItemComparer)
 					{
-						item_sorter = new ItemComparer (value);
+						item_sorter = new ItemComparer(value);
 					}
 
-					Sort ();
+					Sort();
 				}
 			}
 		}
 
-		private void OnImageListChanged (object sender, EventArgs args)
+		private void OnImageListChanged(object sender, EventArgs args)
 		{
-			item_control.Invalidate ();
+			item_control.Invalidate();
 		}
 
-		[DefaultValue (null)]
+		[DefaultValue(null)]
 		public ImageList StateImageList
 		{
 			get { return state_image_list; }
@@ -1010,20 +1010,20 @@ namespace System.Windows.Forms
 					return;
 
 				if (state_image_list != null)
-					state_image_list.Images.Changed -= new EventHandler (OnImageListChanged);
+					state_image_list.Images.Changed -= new EventHandler(OnImageListChanged);
 
 				state_image_list = value;
 
 				if (state_image_list != null)
-					state_image_list.Images.Changed += new EventHandler (OnImageListChanged);
+					state_image_list.Images.Changed += new EventHandler(OnImageListChanged);
 
-				this.Redraw (true);
+				this.Redraw(true);
 			}
 		}
 
-		[Bindable (false)]
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Bindable(false)]
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override string Text
 		{
 			get { return base.Text; }
@@ -1033,11 +1033,11 @@ namespace System.Windows.Forms
 					return;
 
 				base.Text = value;
-				this.Redraw (true);
+				this.Redraw(true);
 			}
 		}
 
-		[Browsable (true)]
+		[Browsable(true)]
 		public Size TileSize
 		{
 			get
@@ -1047,23 +1047,23 @@ namespace System.Windows.Forms
 			set
 			{
 				if (value.Width <= 0 || value.Height <= 0)
-					throw new ArgumentOutOfRangeException ("value");
+					throw new ArgumentOutOfRangeException("value");
 
 				tile_size = value;
 
 				if (view == View.Tile)
-					Redraw (true);
+					Redraw(true);
 			}
 		}
 
-		[Browsable (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public ListViewItem TopItem
 		{
 			get
 			{
 				if (view == View.LargeIcon || view == View.SmallIcon || view == View.Tile)
-					throw new InvalidOperationException ("Cannot get the top item in LargeIcon, SmallIcon or Tile view.");
+					throw new InvalidOperationException("Cannot get the top item in LargeIcon, SmallIcon or Tile view.");
 
 				// there is no item
 				if (this.items.Count == 0)
@@ -1071,7 +1071,7 @@ namespace System.Windows.Forms
 				// if contents are not scrolled
 				// it is the first item
 				else if (h_marker == 0 && v_marker == 0)
-					return this.items [0];
+					return this.items[0];
 				// do a hit test for the scrolled position
 				else
 				{
@@ -1079,10 +1079,10 @@ namespace System.Windows.Forms
 
 					for (int i = 0; i < items.Count; i++)
 					{
-						Point item_loc = GetItemLocation (i);
+						Point item_loc = GetItemLocation(i);
 
 						if (item_loc.X >= 0 && item_loc.Y - header_offset >= 0)
-							return items [i];
+							return items[i];
 					}
 
 					return null;
@@ -1091,21 +1091,21 @@ namespace System.Windows.Forms
 			set
 			{
 				if (view == View.LargeIcon || view == View.SmallIcon || view == View.Tile)
-					throw new InvalidOperationException ("Cannot set the top item in LargeIcon, SmallIcon or Tile view.");
+					throw new InvalidOperationException("Cannot set the top item in LargeIcon, SmallIcon or Tile view.");
 
 				// .Net doesn't throw any exception in the cases below
 				if (value == null || value.ListView != this)
 					return;
 
 				// Take advantage this property is only valid for Details view.
-				SetScrollValue (v_scroll, item_size.Height * value.Index);
+				SetScrollValue(v_scroll, item_size.Height * value.Index);
 			}
 		}
 
-		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		[DefaultValue (true)]
-		[Browsable (false)]
-		[MonoInternalNote ("Stub, not implemented")]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[DefaultValue(true)]
+		[Browsable(false)]
+		[MonoInternalNote("Stub, not implemented")]
 		public bool UseCompatibleStateImageBehavior
 		{
 			get
@@ -1117,39 +1117,39 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[DefaultValue (View.LargeIcon)]
+		[DefaultValue(View.LargeIcon)]
 		public View View
 		{
 			get { return view; }
 			set
 			{
-				if (!Enum.IsDefined (typeof (View), value))
-					throw new InvalidEnumArgumentException ("value", (int) value,
-															typeof (View));
+				if (!Enum.IsDefined(typeof(View), value))
+					throw new InvalidEnumArgumentException("value", (int)value,
+														   typeof(View));
 
 				if (view != value)
 				{
 					if (CheckBoxes && value == View.Tile)
-						throw new NotSupportedException ("CheckBoxes are not"
-														 + " supported in Tile view. Choose a different"
-														 + " view or set CheckBoxes to false.");
+						throw new NotSupportedException("CheckBoxes are not"
+														+ " supported in Tile view. Choose a different"
+														+ " view or set CheckBoxes to false.");
 
 					if (VirtualMode && value == View.Tile)
-						throw new NotSupportedException ("VirtualMode is"
-														 + " not supported in Tile view. Choose a different"
-														 + " view or set ViewMode to false.");
+						throw new NotSupportedException("VirtualMode is"
+														+ " not supported in Tile view. Choose a different"
+														+ " view or set ViewMode to false.");
 
 					h_scroll.Value = v_scroll.Value = 0;
 					view = value;
-					Redraw (true);
+					Redraw(true);
 					// UIA Framework: Event used to update UIA Tree.
-					OnUIAViewChanged ();
+					OnUIAViewChanged();
 				}
 			}
 		}
 
-		[DefaultValue (false)]
-		[RefreshProperties (RefreshProperties.Repaint)]
+		[DefaultValue(false)]
+		[RefreshProperties(RefreshProperties.Repaint)]
 		public bool VirtualMode
 		{
 			get
@@ -1162,20 +1162,20 @@ namespace System.Windows.Forms
 					return;
 
 				if (!virtual_mode && items.Count > 0)
-					throw new InvalidOperationException ();
+					throw new InvalidOperationException();
 
 				if (value && view == View.Tile)
-					throw new NotSupportedException ("VirtualMode is"
-													 + " not supported in Tile view. Choose a different"
-													 + " view or set ViewMode to false.");
+					throw new NotSupportedException("VirtualMode is"
+													+ " not supported in Tile view. Choose a different"
+													+ " view or set ViewMode to false.");
 
 				virtual_mode = value;
-				Redraw (true);
+				Redraw(true);
 			}
 		}
 
-		[DefaultValue (0)]
-		[RefreshProperties (RefreshProperties.Repaint)]
+		[DefaultValue(0)]
+		[RefreshProperties(RefreshProperties.Repaint)]
 		public int VirtualListSize
 		{
 			get
@@ -1185,7 +1185,7 @@ namespace System.Windows.Forms
 			set
 			{
 				if (value < 0)
-					throw new ArgumentException ("value");
+					throw new ArgumentException("value");
 
 				if (virtual_list_size == value)
 					return;
@@ -1195,8 +1195,8 @@ namespace System.Windows.Forms
 				if (virtual_mode)
 				{
 					focused_item_index = -1;
-					selected_indices.Reset ();
-					Redraw (true);
+					selected_indices.Reset();
+					Redraw(true);
 				}
 			}
 		}
@@ -1246,7 +1246,7 @@ namespace System.Windows.Forms
 
 				for (int i = 0; i < items.Count; i++)
 				{
-					Rectangle item_rect = new Rectangle (GetItemLocation (i), item_size);
+					Rectangle item_rect = new Rectangle(GetItemLocation(i), item_size);
 
 					if (item_rect.Right >= 0 && item_rect.Bottom >= 0)
 						return i;
@@ -1265,12 +1265,12 @@ namespace System.Windows.Forms
 				{
 					if (View == View.List || Alignment == ListViewAlignment.Left)
 					{
-						if (GetItemLocation (i).X > item_control.ClientRectangle.Right)
+						if (GetItemLocation(i).X > item_control.ClientRectangle.Right)
 							return i - 1;
 					}
 					else
 					{
-						if (GetItemLocation (i).Y > item_control.ClientRectangle.Bottom)
+						if (GetItemLocation(i).Y > item_control.ClientRectangle.Bottom)
 							return i - 1;
 					}
 				}
@@ -1279,23 +1279,23 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal void OnSelectedIndexChanged ()
+		internal void OnSelectedIndexChanged()
 		{
 			if (is_selection_available)
-				OnSelectedIndexChanged (EventArgs.Empty);
+				OnSelectedIndexChanged(EventArgs.Empty);
 		}
 
 		internal int TotalWidth
 		{
-			get { return Math.Max (this.Width, this.layout_wd); }
+			get { return Math.Max(this.Width, this.layout_wd); }
 		}
 
 		internal int TotalHeight
 		{
-			get { return Math.Max (this.Height, this.layout_ht); }
+			get { return Math.Max(this.Height, this.layout_ht); }
 		}
 
-		internal void Redraw (bool recalculate)
+		internal void Redraw(bool recalculate)
 		{
 			// Avoid calculations when control is being updated
 			if (updating)
@@ -1306,37 +1306,37 @@ namespace System.Windows.Forms
 				return;
 
 			if (recalculate)
-				CalculateListView (this.alignment);
+				CalculateListView(this.alignment);
 
-			Invalidate (true);
+			Invalidate(true);
 		}
 
-		void InvalidateSelection ()
+		void InvalidateSelection()
 		{
 			foreach (int selected_index in SelectedIndices)
-				items [selected_index].Invalidate ();
+				items[selected_index].Invalidate();
 		}
 
 		const int text_padding = 15;
 
-		internal Size GetChildColumnSize (int index)
+		internal Size GetChildColumnSize(int index)
 		{
 			Size ret_size = Size.Empty;
-			ColumnHeader col = this.columns [index];
+			ColumnHeader col = this.columns[index];
 
 			if (col.Width == -2)   // autosize = max(items, columnheader)
 			{
-				Size size = Size.Ceiling (TextRenderer.MeasureString
-										  (col.Text, this.Font));
+				Size size = Size.Ceiling(TextRenderer.MeasureString
+										 (col.Text, this.Font));
 				size.Width += text_padding;
-				ret_size = BiggestItem (index);
+				ret_size = BiggestItem(index);
 
 				if (size.Width > ret_size.Width)
 					ret_size = size;
 			}
 			else   // -1 and all the values < -2 are put under one category
 			{
-				ret_size = BiggestItem (index);
+				ret_size = BiggestItem(index);
 
 				// fall back to empty columns' width if no subitem is available for a column
 				if (ret_size.IsEmpty)
@@ -1344,8 +1344,8 @@ namespace System.Windows.Forms
 					ret_size.Width = ThemeEngine.Current.ListViewEmptyColumnWidth;
 
 					if (col.Text.Length > 0)
-						ret_size.Height = Size.Ceiling (TextRenderer.MeasureString
-														(col.Text, this.Font)).Height;
+						ret_size.Height = Size.Ceiling(TextRenderer.MeasureString
+													   (col.Text, this.Font)).Height;
 					else
 						ret_size.Height = this.Font.Height;
 				}
@@ -1367,7 +1367,7 @@ namespace System.Windows.Forms
 
 		// Returns the size of biggest item text in a column
 		// or the sum of the text and indent count if we are on 2.0
-		private Size BiggestItem (int col)
+		private Size BiggestItem(int col)
 		{
 			Size temp = Size.Empty;
 			Size ret_size = Size.Empty;
@@ -1376,9 +1376,9 @@ namespace System.Windows.Forms
 			// VirtualMode uses the first item text size
 			if (virtual_mode && items.Count > 0)
 			{
-				ListViewItem item = items [0];
-				ret_size = Size.Ceiling (TextRenderer.MeasureString (item.SubItems[col].Text,
-										 Font));
+				ListViewItem item = items[0];
+				ret_size = Size.Ceiling(TextRenderer.MeasureString(item.SubItems[col].Text,
+										Font));
 
 				if (use_indent_count)
 					ret_size.Width += item.IndentCount * small_image_list.ImageSize.Width;
@@ -1393,8 +1393,8 @@ namespace System.Windows.Forms
 					if (col >= item.SubItems.Count)
 						continue;
 
-					temp = Size.Ceiling (TextRenderer.MeasureString
-										 (item.SubItems [col].Text, Font));
+					temp = Size.Ceiling(TextRenderer.MeasureString
+										(item.SubItems[col].Text, Font));
 
 					if (use_indent_count)
 						temp.Width += item.IndentCount * small_image_list.ImageSize.Width;
@@ -1414,7 +1414,7 @@ namespace System.Windows.Forms
 		const int max_wrap_padding = 30;
 
 		// Sets the size of the biggest item text as per the view
-		private void CalcTextSize ()
+		private void CalcTextSize()
 		{
 			// clear the old value
 			text_size = Size.Empty;
@@ -1422,7 +1422,7 @@ namespace System.Windows.Forms
 			if (items.Count == 0)
 				return;
 
-			text_size = BiggestItem (0);
+			text_size = BiggestItem(0);
 
 			if (view == View.LargeIcon && this.label_wrap)
 			{
@@ -1466,7 +1466,7 @@ namespace System.Windows.Forms
 			text_size.Height += 2;
 		}
 
-		private void SetScrollValue (ScrollBar scrollbar, int val)
+		private void SetScrollValue(ScrollBar scrollbar, int val)
 		{
 			int max;
 
@@ -1483,15 +1483,15 @@ namespace System.Windows.Forms
 			scrollbar.Value = val;
 		}
 
-		private void Scroll (ScrollBar scrollbar, int delta)
+		private void Scroll(ScrollBar scrollbar, int delta)
 		{
 			if (delta == 0 || !scrollbar.Visible)
 				return;
 
-			SetScrollValue (scrollbar, scrollbar.Value + delta);
+			SetScrollValue(scrollbar, scrollbar.Value + delta);
 		}
 
-		private void CalculateScrollBars ()
+		private void CalculateScrollBars()
 		{
 			Rectangle client_area = ClientRectangle;
 			int height = client_area.Height;
@@ -1502,7 +1502,7 @@ namespace System.Windows.Forms
 			{
 				h_scroll.Visible = false;
 				v_scroll.Visible = false;
-				item_control.Size = new Size (width, height);
+				item_control.Size = new Size(width, height);
 				header_control.Width = width;
 				return;
 			}
@@ -1541,7 +1541,7 @@ namespace System.Windows.Forms
 
 			if (h_scroll.is_visible)
 			{
-				h_scroll.Location = new Point (client_area.X, client_area.Bottom - h_scroll.Height);
+				h_scroll.Location = new Point(client_area.X, client_area.Bottom - h_scroll.Height);
 				h_scroll.Minimum = 0;
 
 				// if v_scroll is visible, adjust the maximum of the
@@ -1568,7 +1568,7 @@ namespace System.Windows.Forms
 
 			if (v_scroll.is_visible)
 			{
-				v_scroll.Location = new Point (client_area.Right - v_scroll.Width, client_area.Y);
+				v_scroll.Location = new Point(client_area.Right - v_scroll.Width, client_area.Y);
 				v_scroll.Minimum = 0;
 
 				// if h_scroll is visible, adjust the height of
@@ -1598,47 +1598,47 @@ namespace System.Windows.Forms
 				width -= v_scroll.Width;
 			}
 
-			item_control.Size = new Size (width, height);
+			item_control.Size = new Size(width, height);
 
 			if (header_control.is_visible)
 				header_control.Width = width;
 		}
 
-		internal int GetReorderedColumnIndex (ColumnHeader column)
+		internal int GetReorderedColumnIndex(ColumnHeader column)
 		{
 			if (reordered_column_indices == null)
 				return column.Index;
 
 			for (int i = 0; i < Columns.Count; i++)
-				if (reordered_column_indices [i] == column.Index)
+				if (reordered_column_indices[i] == column.Index)
 					return i;
 
 			return -1;
 		}
 
-		internal ColumnHeader GetReorderedColumn (int index)
+		internal ColumnHeader GetReorderedColumn(int index)
 		{
 			if (reordered_column_indices == null)
-				return Columns [index];
+				return Columns[index];
 			else
-				return Columns [reordered_column_indices [index]];
+				return Columns[reordered_column_indices[index]];
 		}
 
-		internal void ReorderColumn (ColumnHeader col, int index, bool fireEvent)
+		internal void ReorderColumn(ColumnHeader col, int index, bool fireEvent)
 		{
 			if (fireEvent)
 			{
-				ColumnReorderedEventHandler eh = (ColumnReorderedEventHandler) (Events [ColumnReorderedEvent]);
+				ColumnReorderedEventHandler eh = (ColumnReorderedEventHandler)(Events[ColumnReorderedEvent]);
 
 				if (eh != null)
 				{
-					ColumnReorderedEventArgs args = new ColumnReorderedEventArgs (col.Index, index, col);
-					eh (this, args);
+					ColumnReorderedEventArgs args = new ColumnReorderedEventArgs(col.Index, index, col);
+					eh(this, args);
 
 					if (args.Cancel)
 					{
-						header_control.Invalidate ();
-						item_control.Invalidate ();
+						header_control.Invalidate();
+						item_control.Invalidate();
 						return;
 					}
 				}
@@ -1648,64 +1648,62 @@ namespace System.Windows.Forms
 
 			if (reordered_column_indices == null)
 			{
-				reordered_column_indices = new int [column_count];
+				reordered_column_indices = new int[column_count];
 
 				for (int i = 0; i < column_count; i++)
-					reordered_column_indices [i] = i;
+					reordered_column_indices[i] = i;
 			}
 
-			if (reordered_column_indices [index] == col.Index)
+			if (reordered_column_indices[index] == col.Index)
 				return;
 
 			int[] curr = reordered_column_indices;
-			int [] result = new int [column_count];
+			int[] result = new int[column_count];
 			int curr_idx = 0;
 
 			for (int i = 0; i < column_count; i++)
 			{
-				if (curr_idx < column_count && curr [curr_idx] == col.Index)
+				if (curr_idx < column_count && curr[curr_idx] == col.Index)
 					curr_idx++;
 
 				if (i == index)
-					result [i] = col.Index;
+					result[i] = col.Index;
 				else
-					result [i] = curr [curr_idx++];
+					result[i] = curr[curr_idx++];
 			}
 
-			ReorderColumns (result, true);
+			ReorderColumns(result, true);
 		}
 
-		internal void ReorderColumns (int [] display_indices, bool redraw)
+		internal void ReorderColumns(int[] display_indices, bool redraw)
 		{
 			reordered_column_indices = display_indices;
 
 			for (int i = 0; i < Columns.Count; i++)
 			{
-				ColumnHeader col = Columns [i];
-				col.InternalDisplayIndex = reordered_column_indices [i];
+				ColumnHeader col = Columns[i];
+				col.InternalDisplayIndex = reordered_column_indices[i];
 			}
 
 			if (redraw && view == View.Details && IsHandleCreated)
 			{
-				LayoutDetails ();
-				header_control.Invalidate ();
-				item_control.Invalidate ();
+				RedrawDetails();
 			}
 		}
 
-		internal void AddColumn (ColumnHeader newCol, int index, bool redraw)
+		internal void AddColumn(ColumnHeader newCol, int index, bool redraw)
 		{
 			int column_count = Columns.Count;
-			newCol.SetListView (this);
-			int [] display_indices = new int [column_count];
+			newCol.SetListView(this);
+			int[] display_indices = new int[column_count];
 
 			for (int i = 0; i < column_count; i++)
 			{
-				ColumnHeader col = Columns [i];
+				ColumnHeader col = Columns[i];
 
 				if (i == index)
 				{
-					display_indices [i] = index;
+					display_indices[i] = index;
 				}
 				else
 				{
@@ -1713,17 +1711,17 @@ namespace System.Windows.Forms
 
 					if (display_index < index)
 					{
-						display_indices [i] = display_index;
+						display_indices[i] = display_index;
 					}
 					else
 					{
-						display_indices [i] = (display_index + 1);
+						display_indices[i] = (display_index + 1);
 					}
 				}
 			}
 
-			ReorderColumns (display_indices, redraw);
-			Invalidate ();
+			ReorderColumns(display_indices, redraw);
+			Invalidate();
 		}
 
 		Size LargeIconItemSize
@@ -1732,13 +1730,13 @@ namespace System.Windows.Forms
 			{
 				int image_w = LargeImageList == null ? 12 : LargeImageList.ImageSize.Width;
 				int image_h = LargeImageList == null ? 2 : LargeImageList.ImageSize.Height;
-				int h = text_size.Height + 2 + Math.Max (CheckBoxSize.Height, image_h);
-				int w = Math.Max (text_size.Width, image_w);
+				int h = text_size.Height + 2 + Math.Max(CheckBoxSize.Height, image_h);
+				int w = Math.Max(text_size.Width, image_w);
 
 				if (check_boxes)
 					w += 2 + CheckBoxSize.Width;
 
-				return new Size (w, h);
+				return new Size(w, h);
 			}
 		}
 
@@ -1748,13 +1746,13 @@ namespace System.Windows.Forms
 			{
 				int image_w = SmallImageList == null ? 0 : SmallImageList.ImageSize.Width;
 				int image_h = SmallImageList == null ? 0 : SmallImageList.ImageSize.Height;
-				int h = Math.Max (text_size.Height, Math.Max (CheckBoxSize.Height, image_h));
+				int h = Math.Max(text_size.Height, Math.Max(CheckBoxSize.Height, image_h));
 				int w = text_size.Width + image_w;
 
 				if (check_boxes)
 					w += 2 + CheckBoxSize.Width;
 
-				return new Size (w, h);
+				return new Size(w, h);
 			}
 		}
 
@@ -1770,75 +1768,75 @@ namespace System.Windows.Forms
 					int image_w = LargeImageList == null ? 0 : LargeImageList.ImageSize.Width;
 					int image_h = LargeImageList == null ? 0 : LargeImageList.ImageSize.Height;
 					int w = (int)Font.Size * ThemeEngine.Current.ListViewTileWidthFactor + image_w + 4;
-					int h = Math.Max ((int)Font.Size * ThemeEngine.Current.ListViewTileHeightFactor, image_h);
-					tile_size = new Size (w, h);
+					int h = Math.Max((int)Font.Size * ThemeEngine.Current.ListViewTileHeightFactor, image_h);
+					tile_size = new Size(w, h);
 				}
 
 				return tile_size;
 			}
 		}
 
-		int GetDetailsItemHeight ()
+		int GetDetailsItemHeight()
 		{
 			int item_height;
 			int checkbox_height = CheckBoxes ? CheckBoxSize.Height : 0;
 			int small_image_height = SmallImageList == null ? 0 : SmallImageList.ImageSize.Height;
-			item_height = Math.Max (checkbox_height, text_size.Height);
-			item_height = Math.Max (item_height, small_image_height);
+			item_height = Math.Max(checkbox_height, text_size.Height);
+			item_height = Math.Max(item_height, small_image_height);
 			return item_height;
 		}
 
-		void SetItemLocation (int index, int x, int y, int row, int col)
+		void SetItemLocation(int index, int x, int y, int row, int col)
 		{
-			Point old_location = items_location [index];
+			Point old_location = items_location[index];
 
 			if (old_location.X == x && old_location.Y == y)
 				return;
 
-			items_location [index] = new Point (x, y);
-			items_matrix_location [index] = new ItemMatrixLocation (row, col);
+			items_location[index] = new Point(x, y);
+			items_matrix_location[index] = new ItemMatrixLocation(row, col);
 			//
 			// Initial position matches item's position in ListViewItemCollection
 			//
-			reordered_items_indices [index] = index;
+			reordered_items_indices[index] = index;
 		}
 
 
-		void ShiftItemsPositions (int from, int to, bool forward)
+		void ShiftItemsPositions(int from, int to, bool forward)
 		{
 			if (forward)
 			{
 				for (int i = to + 1; i > from; i--)
 				{
-					reordered_items_indices [i] = reordered_items_indices [i - 1];
-					ListViewItem item = items [reordered_items_indices [i]];
-					item.Invalidate ();
+					reordered_items_indices[i] = reordered_items_indices[i - 1];
+					ListViewItem item = items[reordered_items_indices[i]];
+					item.Invalidate();
 					item.DisplayIndex = i;
-					item.Invalidate ();
+					item.Invalidate();
 				}
 			}
 			else
 			{
 				for (int i = from - 1; i < to; i++)
 				{
-					reordered_items_indices [i] = reordered_items_indices [i + 1];
-					ListViewItem item = items [reordered_items_indices [i]];
-					item.Invalidate ();
+					reordered_items_indices[i] = reordered_items_indices[i + 1];
+					ListViewItem item = items[reordered_items_indices[i]];
+					item.Invalidate();
 					item.DisplayIndex = i;
-					item.Invalidate ();
+					item.Invalidate();
 				}
 			}
 		}
 
-		internal void ChangeItemLocation (int display_index, Point new_pos)
+		internal void ChangeItemLocation(int display_index, Point new_pos)
 		{
-			int new_display_index = GetDisplayIndexFromLocation (new_pos);
+			int new_display_index = GetDisplayIndexFromLocation(new_pos);
 
 			if (new_display_index == display_index)
 				return;
 
-			int item_index = reordered_items_indices [display_index];
-			ListViewItem item = items [item_index];
+			int item_index = reordered_items_indices[display_index];
+			ListViewItem item = items[item_index];
 			bool forward = new_display_index < display_index;
 			int index_from, index_to;
 
@@ -1853,14 +1851,14 @@ namespace System.Windows.Forms
 				index_to = new_display_index;
 			}
 
-			ShiftItemsPositions (index_from, index_to, forward);
-			reordered_items_indices [new_display_index] = item_index;
-			item.Invalidate ();
+			ShiftItemsPositions(index_from, index_to, forward);
+			reordered_items_indices[new_display_index] = item_index;
+			item.Invalidate();
 			item.DisplayIndex = new_display_index;
-			item.Invalidate ();
+			item.Invalidate();
 		}
 
-		int GetDisplayIndexFromLocation (Point loc)
+		int GetDisplayIndexFromLocation(Point loc)
 		{
 			int display_index = -1;
 			Rectangle item_area;
@@ -1877,11 +1875,11 @@ namespace System.Windows.Forms
 
 			for (int i = 0; i < items.Count; i++)
 			{
-				item_area = new Rectangle (GetItemLocation (i), item_size);
-				item_area.Inflate (ThemeEngine.Current.ListViewHorizontalSpacing,
-								   ThemeEngine.Current.ListViewVerticalSpacing);
+				item_area = new Rectangle(GetItemLocation(i), item_size);
+				item_area.Inflate(ThemeEngine.Current.ListViewHorizontalSpacing,
+								  ThemeEngine.Current.ListViewVerticalSpacing);
 
-				if (item_area.Contains (loc))
+				if (item_area.Contains(loc))
 				{
 					display_index = i;
 					break;
@@ -1897,7 +1895,7 @@ namespace System.Windows.Forms
 
 		// When using groups, the items with no group assigned
 		// belong to the DefaultGroup
-		int GetDefaultGroupItems ()
+		int GetDefaultGroupItems()
 		{
 			int count = 0;
 
@@ -1915,12 +1913,12 @@ namespace System.Windows.Forms
 		int cols;
 		int[,] item_index_matrix;
 
-		void CalculateRowsAndCols (Size item_size, bool left_aligned, int x_spacing, int y_spacing)
+		void CalculateRowsAndCols(Size item_size, bool left_aligned, int x_spacing, int y_spacing)
 		{
 			Rectangle area = ClientRectangle;
 
 			if (UseCustomColumnWidth)
-				CalculateCustomColumnWidth ();
+				CalculateCustomColumnWidth();
 
 			if (UsingGroups)
 			{
@@ -1928,27 +1926,27 @@ namespace System.Windows.Forms
 				rows = 0;
 				cols = 0;
 				int items = 0;
-				groups.DefaultGroup.ItemCount = GetDefaultGroupItems ();
+				groups.DefaultGroup.ItemCount = GetDefaultGroupItems();
 
 				for (int i = 0; i < groups.InternalCount; i++)
 				{
-					ListViewGroup group = groups.GetInternalGroup (i);
-					int items_in_group = group.GetActualItemCount ();
+					ListViewGroup group = groups.GetInternalGroup(i);
+					int items_in_group = group.GetActualItemCount();
 
 					if (items_in_group == 0)
 						continue;
 
-					int group_cols = (int) Math.Floor ((double)(area.Width - v_scroll.Width + x_spacing) / (double)(item_size.Width + x_spacing));
+					int group_cols = (int)Math.Floor((double)(area.Width - v_scroll.Width + x_spacing) / (double)(item_size.Width + x_spacing));
 
 					if (group_cols <= 0)
 						group_cols = 1;
 
-					int group_rows = (int) Math.Ceiling ((double)items_in_group / (double)group_cols);
+					int group_rows = (int)Math.Ceiling((double)items_in_group / (double)group_cols);
 					group.starting_row = rows;
 					group.rows = group_rows;
 					group.starting_item = items;
 					group.current_item = 0; // Reset layout
-					cols = Math.Max (group_cols, cols);
+					cols = Math.Max(group_cols, cols);
 					rows += group_rows;
 					items += items_in_group;
 				}
@@ -1958,39 +1956,39 @@ namespace System.Windows.Forms
 				// Simple matrix if no groups are used
 				if (left_aligned)
 				{
-					rows = (int) Math.Floor ((double)(area.Height - h_scroll.Height + y_spacing) / (double)(item_size.Height + y_spacing));
+					rows = (int)Math.Floor((double)(area.Height - h_scroll.Height + y_spacing) / (double)(item_size.Height + y_spacing));
 
 					if (rows <= 0)
 						rows = 1;
 
-					cols = (int) Math.Ceiling ((double)items.Count / (double)rows);
+					cols = (int)Math.Ceiling((double)items.Count / (double)rows);
 				}
 				else
 				{
 					if (UseCustomColumnWidth)
-						cols = (int) Math.Floor ((double)(area.Width - v_scroll.Width) / (double)(custom_column_width));
+						cols = (int)Math.Floor((double)(area.Width - v_scroll.Width) / (double)(custom_column_width));
 					else
-						cols = (int) Math.Floor ((double)(area.Width - v_scroll.Width + x_spacing) / (double)(item_size.Width + x_spacing));
+						cols = (int)Math.Floor((double)(area.Width - v_scroll.Width + x_spacing) / (double)(item_size.Width + x_spacing));
 
 					if (cols < 1)
 						cols = 1;
 
-					rows = (int) Math.Ceiling ((double)items.Count / (double)cols);
+					rows = (int)Math.Ceiling((double)items.Count / (double)cols);
 				}
 			}
 
-			item_index_matrix = new int [rows, cols];
+			item_index_matrix = new int[rows, cols];
 		}
 
 		// When using custom column width, we look for the minimum one
-		void CalculateCustomColumnWidth ()
+		void CalculateCustomColumnWidth()
 		{
 			int min_width = Int32.MaxValue;
 			int col_index_of_min = -1;
 
 			for (int i = 0; i < columns.Count; i++)
 			{
-				int col_width = columns [i].Width;
+				int col_width = columns[i].Width;
 
 				if (col_width < min_width)
 				{
@@ -2007,7 +2005,7 @@ namespace System.Windows.Forms
 				custom_column_width = 0;
 		}
 
-		void LayoutIcons (Size item_size, bool left_aligned, int x_spacing, int y_spacing)
+		void LayoutIcons(Size item_size, bool left_aligned, int x_spacing, int y_spacing)
 		{
 			header_control.Visible = false;
 			header_control.Size = Size.Empty;
@@ -2021,20 +2019,20 @@ namespace System.Windows.Forms
 				return;
 
 			Size sz = item_size;
-			CalculateRowsAndCols (sz, left_aligned, x_spacing, y_spacing);
+			CalculateRowsAndCols(sz, left_aligned, x_spacing, y_spacing);
 			layout_wd = UseCustomColumnWidth ? cols * custom_column_width : cols * (sz.Width + x_spacing) - x_spacing;
 			layout_ht = rows * (sz.Height + y_spacing) - y_spacing;
 
 			if (virtual_mode)   // no actual assignment is needed on items for virtual mode
 			{
-				item_control.Size = new Size (layout_wd, layout_ht);
+				item_control.Size = new Size(layout_wd, layout_ht);
 				return;
 			}
 
 			bool using_groups = UsingGroups;
 
 			if (using_groups) // the groups layout will override layout_ht
-				CalculateGroupsLayout (sz, y_spacing, 0);
+				CalculateGroupsLayout(sz, y_spacing, 0);
 
 			int row = 0, col = 0;
 			int x = 0, y = 0;
@@ -2042,7 +2040,7 @@ namespace System.Windows.Forms
 
 			for (int i = 0; i < items.Count; i++)
 			{
-				ListViewItem item = items [i];
+				ListViewItem item = items[i];
 
 				if (using_groups)
 				{
@@ -2059,17 +2057,17 @@ namespace System.Windows.Forms
 					col = current_item % cols;
 					x = UseCustomColumnWidth ? col * custom_column_width : col * (item_size.Width + x_spacing);
 					y = row * (item_size.Height + y_spacing) + group_items_loc.Y;
-					SetItemLocation (display_index, x, y, row + starting_row, col);
-					SetItemAtDisplayIndex (display_index, i);
-					item_index_matrix [row + starting_row, col] = i;
+					SetItemLocation(display_index, x, y, row + starting_row, col);
+					SetItemAtDisplayIndex(display_index, i);
+					item_index_matrix[row + starting_row, col] = i;
 				}
 				else
 				{
 					x = UseCustomColumnWidth ? col * custom_column_width : col * (item_size.Width + x_spacing);
 					y = row * (item_size.Height + y_spacing);
 					display_index = i; // Same as item index in Items
-					SetItemLocation (i, x, y, row, col);
-					item_index_matrix [row, col] = i;
+					SetItemLocation(i, x, y, row, col);
+					item_index_matrix[row, col] = i;
 
 					if (left_aligned)
 					{
@@ -2091,51 +2089,51 @@ namespace System.Windows.Forms
 					}
 				}
 
-				item.Layout ();
+				item.Layout();
 				item.DisplayIndex = display_index;
-				item.SetPosition (new Point (x, y));
+				item.SetPosition(new Point(x, y));
 			}
 
-			item_control.Size = new Size (layout_wd, layout_ht);
+			item_control.Size = new Size(layout_wd, layout_ht);
 		}
 
-		void CalculateGroupsLayout (Size item_size, int y_spacing, int y_origin)
+		void CalculateGroupsLayout(Size item_size, int y_spacing, int y_origin)
 		{
 			int y = y_origin;
 			bool details = view == View.Details;
 
 			for (int i = 0; i < groups.InternalCount; i++)
 			{
-				ListViewGroup group = groups.GetInternalGroup (i);
+				ListViewGroup group = groups.GetInternalGroup(i);
 
 				if (group.ItemCount == 0)
 					continue;
 
-				y += LayoutGroupHeader (group, y, item_size.Height, y_spacing, details ? group.ItemCount : group.rows);
+				y += LayoutGroupHeader(group, y, item_size.Height, y_spacing, details ? group.ItemCount : group.rows);
 			}
 
 			layout_ht = y; // Update height taking into account Groups' headers heights
 		}
 
-		int LayoutGroupHeader (ListViewGroup group, int y_origin, int item_height, int y_spacing, int rows)
+		int LayoutGroupHeader(ListViewGroup group, int y_origin, int item_height, int y_spacing, int rows)
 		{
 			Rectangle client_area = ClientRectangle;
 			int header_height = Font.Height + 15; // one line height + some padding
-			group.HeaderBounds = new Rectangle (0, y_origin, client_area.Width - v_scroll.Width, header_height);
-			group.items_area_location = new Point (0, y_origin + header_height);
+			group.HeaderBounds = new Rectangle(0, y_origin, client_area.Width - v_scroll.Width, header_height);
+			group.items_area_location = new Point(0, y_origin + header_height);
 			int items_area_height = ((item_height + y_spacing) * rows);
 			return header_height + items_area_height + 10; // Add a small bottom margin
 		}
 
-		void CalculateDetailsGroupItemsCount ()
+		void CalculateDetailsGroupItemsCount()
 		{
 			int items = 0;
-			groups.DefaultGroup.ItemCount = GetDefaultGroupItems ();
+			groups.DefaultGroup.ItemCount = GetDefaultGroupItems();
 
 			for (int i = 0; i < groups.InternalCount; i++)
 			{
-				ListViewGroup group = groups.GetInternalGroup (i);
-				int items_in_group = group.GetActualItemCount ();
+				ListViewGroup group = groups.GetInternalGroup(i);
+				int items_in_group = group.GetActualItemCount();
 
 				if (items_in_group == 0)
 					continue;
@@ -2146,16 +2144,16 @@ namespace System.Windows.Forms
 			}
 		}
 
-		void LayoutHeader ()
+		void LayoutHeader()
 		{
 			int x = 0;
 
 			for (int i = 0; i < Columns.Count; i++)
 			{
-				ColumnHeader col = GetReorderedColumn (i);
+				ColumnHeader col = GetReorderedColumn(i);
 				col.X = x;
 				col.Y = 0;
-				col.CalcColumnHeader ();
+				col.CalcColumnHeader();
 				x += col.Wd;
 			}
 
@@ -2173,14 +2171,14 @@ namespace System.Windows.Forms
 			else
 			{
 				header_control.Width = x;
-				header_control.Height = columns.Count > 0 ? columns [0].Ht : ThemeEngine.Current.ListViewGetHeaderHeight (this, Font);
+				header_control.Height = columns.Count > 0 ? columns[0].Ht : ThemeEngine.Current.ListViewGetHeaderHeight(this, Font);
 				header_control.Visible = true;
 			}
 		}
 
-		void LayoutDetails ()
+		void LayoutDetails()
 		{
-			LayoutHeader ();
+			LayoutHeader();
 
 			if (columns.Count == 0)
 			{
@@ -2193,9 +2191,9 @@ namespace System.Windows.Forms
 			item_control.Visible = true;
 			item_control.Location = Point.Empty;
 			item_control.Width = ClientRectangle.Width;
-			AdjustChildrenZOrder ();
-			int item_height = GetDetailsItemHeight ();
-			ItemSize = new Size (0, item_height); // We only cache Height for details view
+			AdjustChildrenZOrder();
+			int item_height = GetDetailsItemHeight();
+			ItemSize = new Size(0, item_height); // We only cache Height for details view
 			int y = header_control.Height;
 			layout_ht = y + (item_height * items.Count);
 
@@ -2207,8 +2205,8 @@ namespace System.Windows.Forms
 			if (using_groups)
 			{
 				// Observe that this routines will override our layout_ht value
-				CalculateDetailsGroupItemsCount ();
-				CalculateGroupsLayout (ItemSize, 2, y);
+				CalculateDetailsGroupItemsCount();
+				CalculateGroupsLayout(ItemSize, 2, y);
 			}
 
 			if (virtual_mode) // no assgination on items is needed
@@ -2216,7 +2214,7 @@ namespace System.Windows.Forms
 
 			for (int i = 0; i < items.Count; i++)
 			{
-				ListViewItem item = items [i];
+				ListViewItem item = items[i];
 				int display_index;
 				int item_y;
 
@@ -2231,37 +2229,37 @@ namespace System.Windows.Forms
 					Point group_items_loc = group.items_area_location;
 					display_index = group.starting_item + current_item;
 					y = item_y = current_item * (item_height + 2) + group_items_loc.Y;
-					SetItemLocation (display_index, 0, item_y, 0, 0);
-					SetItemAtDisplayIndex (display_index, i);
+					SetItemLocation(display_index, 0, item_y, 0, 0);
+					SetItemAtDisplayIndex(display_index, i);
 				}
 				else
 				{
 					display_index = i;
 					item_y = y;
-					SetItemLocation (i, 0, item_y, 0, 0);
+					SetItemLocation(i, 0, item_y, 0, 0);
 					y += item_height;
 				}
 
-				item.Layout ();
+				item.Layout();
 				item.DisplayIndex = display_index;
-				item.SetPosition (new Point (0, item_y));
+				item.SetPosition(new Point(0, item_y));
 			}
 		}
 
 		// Need to make sure HeaderControl is on top, and we can't simply use BringToFront since
 		// these controls are implicit, so we need to re-populate our collection.
-		void AdjustChildrenZOrder ()
+		void AdjustChildrenZOrder()
 		{
-			SuspendLayout ();
-			Controls.ClearImplicit ();
-			Controls.AddImplicit (header_control);
-			Controls.AddImplicit (item_control);
-			Controls.AddImplicit (h_scroll);
-			Controls.AddImplicit (v_scroll);
-			ResumeLayout ();
+			SuspendLayout();
+			Controls.ClearImplicit();
+			Controls.AddImplicit(header_control);
+			Controls.AddImplicit(item_control);
+			Controls.AddImplicit(h_scroll);
+			Controls.AddImplicit(v_scroll);
+			ResumeLayout();
 		}
 
-		private void AdjustItemsPositionArray (int count)
+		private void AdjustItemsPositionArray(int count)
 		{
 			// In virtual mode we compute the positions on the fly.
 			if (virtual_mode)
@@ -2271,66 +2269,66 @@ namespace System.Windows.Forms
 				return;
 
 			// items_location, items_matrix_location and reordered_items_indices must keep the same length
-			count = Math.Max (count, items_location.Length * 2);
-			items_location = new Point [count];
-			items_matrix_location = new ItemMatrixLocation [count];
-			reordered_items_indices = new int [count];
+			count = Math.Max(count, items_location.Length * 2);
+			items_location = new Point[count];
+			items_matrix_location = new ItemMatrixLocation[count];
+			reordered_items_indices = new int[count];
 		}
 
-		private void CalculateListView (ListViewAlignment align)
+		private void CalculateListView(ListViewAlignment align)
 		{
-			CalcTextSize ();
-			AdjustItemsPositionArray (items.Count);
+			CalcTextSize();
+			AdjustItemsPositionArray(items.Count);
 
 			switch (view)
 			{
 				case View.Details:
-					LayoutDetails ();
+					LayoutDetails();
 					break;
 
 				case View.SmallIcon:
-					LayoutIcons (SmallIconItemSize, alignment == ListViewAlignment.Left,
-								 ThemeEngine.Current.ListViewHorizontalSpacing, 2);
+					LayoutIcons(SmallIconItemSize, alignment == ListViewAlignment.Left,
+								ThemeEngine.Current.ListViewHorizontalSpacing, 2);
 					break;
 
 				case View.LargeIcon:
-					LayoutIcons (LargeIconItemSize, alignment == ListViewAlignment.Left,
-								 ThemeEngine.Current.ListViewHorizontalSpacing,
-								 ThemeEngine.Current.ListViewVerticalSpacing);
+					LayoutIcons(LargeIconItemSize, alignment == ListViewAlignment.Left,
+								ThemeEngine.Current.ListViewHorizontalSpacing,
+								ThemeEngine.Current.ListViewVerticalSpacing);
 					break;
 
 				case View.List:
-					LayoutIcons (SmallIconItemSize, true,
-								 ThemeEngine.Current.ListViewHorizontalSpacing, 2);
+					LayoutIcons(SmallIconItemSize, true,
+								ThemeEngine.Current.ListViewHorizontalSpacing, 2);
 					break;
 
 				case View.Tile:
 					if (!Application.VisualStylesEnabled)
 					goto case View.LargeIcon;
-					LayoutIcons (TileItemSize, alignment == ListViewAlignment.Left,
-								 ThemeEngine.Current.ListViewHorizontalSpacing,
-								 ThemeEngine.Current.ListViewVerticalSpacing);
+					LayoutIcons(TileItemSize, alignment == ListViewAlignment.Left,
+								ThemeEngine.Current.ListViewHorizontalSpacing,
+								ThemeEngine.Current.ListViewVerticalSpacing);
 					break;
 			}
 
-			CalculateScrollBars ();
+			CalculateScrollBars();
 		}
 
-		internal Point GetItemLocation (int index)
+		internal Point GetItemLocation(int index)
 		{
 			Point loc = Point.Empty;
 
 			if (virtual_mode)
-				loc = GetFixedItemLocation (index);
+				loc = GetFixedItemLocation(index);
 			else
-				loc = items_location [index];
+				loc = items_location[index];
 
 			loc.X -= h_marker; // Adjust to scroll
 			loc.Y -= v_marker;
 			return loc;
 		}
 
-		Point GetFixedItemLocation (int index)
+		Point GetFixedItemLocation(int index)
 		{
 			Point loc = Point.Empty;
 
@@ -2355,29 +2353,29 @@ namespace System.Windows.Forms
 			return loc;
 		}
 
-		internal int GetItemIndex (int display_index)
+		internal int GetItemIndex(int display_index)
 		{
 			if (virtual_mode)
 				return display_index; // no reordering in virtual mode.
 
-			return reordered_items_indices [display_index];
+			return reordered_items_indices[display_index];
 		}
 
-		internal ListViewItem GetItemAtDisplayIndex (int display_index)
+		internal ListViewItem GetItemAtDisplayIndex(int display_index)
 		{
 			// in virtual mode there's no reordering at all.
 			if (virtual_mode)
-				return items [display_index];
+				return items[display_index];
 
-			return items [reordered_items_indices [display_index]];
+			return items[reordered_items_indices[display_index]];
 		}
 
-		internal void SetItemAtDisplayIndex (int display_index, int index)
+		internal void SetItemAtDisplayIndex(int display_index, int index)
 		{
-			reordered_items_indices [display_index] = index;
+			reordered_items_indices[display_index] = index;
 		}
 
-		private bool KeySearchString (KeyEventArgs ke)
+		private bool KeySearchString(KeyEventArgs ke)
 		{
 			int current_tickcnt = Environment.TickCount;
 
@@ -2386,37 +2384,37 @@ namespace System.Windows.Forms
 				keysearch_text = string.Empty;
 			}
 
-			if (!Char.IsLetterOrDigit ((char)ke.KeyCode))
+			if (!Char.IsLetterOrDigit((char)ke.KeyCode))
 				return false;
 
 			keysearch_text += (char)ke.KeyCode;
 			keysearch_tickcnt = current_tickcnt;
 			int prev_focused = FocusedItem == null ? 0 : FocusedItem.DisplayIndex;
 			int start = prev_focused + 1 < Items.Count ? prev_focused + 1 : 0;
-			ListViewItem item = FindItemWithText (keysearch_text, false, start, true, true);
+			ListViewItem item = FindItemWithText(keysearch_text, false, start, true, true);
 
 			if (item != null && prev_focused != item.DisplayIndex)
 			{
-				selected_indices.Clear ();
-				SetFocusedItem (item.DisplayIndex);
+				selected_indices.Clear();
+				SetFocusedItem(item.DisplayIndex);
 				item.Selected = true;
-				EnsureVisible (GetItemIndex (item.DisplayIndex));
+				EnsureVisible(GetItemIndex(item.DisplayIndex));
 			}
 
 			return true;
 		}
 
-		private void OnItemsChanged ()
+		private void OnItemsChanged()
 		{
-			ResetSearchString ();
+			ResetSearchString();
 		}
 
-		private void ResetSearchString ()
+		private void ResetSearchString()
 		{
 			keysearch_text = String.Empty;
 		}
 
-		int GetAdjustedIndex (Keys key)
+		int GetAdjustedIndex(Keys key)
 		{
 			int result = -1;
 
@@ -2438,7 +2436,7 @@ namespace System.Windows.Forms
 
 					case Keys.PageDown:
 						int last_index = LastVisibleIndex;
-						Rectangle item_rect = new Rectangle (GetItemLocation (last_index), ItemSize);
+						Rectangle item_rect = new Rectangle(GetItemLocation(last_index), ItemSize);
 
 						if (item_rect.Bottom > item_control.ClientRectangle.Bottom)
 							last_index--;
@@ -2462,7 +2460,7 @@ namespace System.Windows.Forms
 					case Keys.PageUp:
 						int first_index = FirstVisibleIndex;
 
-						if (GetItemLocation (first_index).Y < 0)
+						if (GetItemLocation(first_index).Y < 0)
 							first_index++;
 
 						if (FocusedItem.DisplayIndex == first_index)
@@ -2486,9 +2484,9 @@ namespace System.Windows.Forms
 			}
 
 			if (virtual_mode)
-				return GetFixedAdjustedIndex (key);
+				return GetFixedAdjustedIndex(key);
 
-			ItemMatrixLocation item_matrix_location = items_matrix_location [FocusedItem.DisplayIndex];
+			ItemMatrixLocation item_matrix_location = items_matrix_location[FocusedItem.DisplayIndex];
 			int row = item_matrix_location.Row;
 			int col = item_matrix_location.Col;
 			int adjusted_index = -1;
@@ -2499,14 +2497,14 @@ namespace System.Windows.Forms
 					if (col == 0)
 						return -1;
 
-					adjusted_index = item_index_matrix [row, col - 1];
+					adjusted_index = item_index_matrix[row, col - 1];
 					break;
 
 				case Keys.Right:
 					if (col == (cols - 1))
 						return -1;
 
-					while (item_index_matrix [row, col + 1] == 0)
+					while (item_index_matrix[row, col + 1] == 0)
 					{
 						row--;
 
@@ -2514,14 +2512,14 @@ namespace System.Windows.Forms
 							return -1;
 					}
 
-					adjusted_index = item_index_matrix [row, col + 1];
+					adjusted_index = item_index_matrix[row, col + 1];
 					break;
 
 				case Keys.Up:
 					if (row == 0)
 						return -1;
 
-					while (item_index_matrix [row - 1, col] == 0 && row != 1)
+					while (item_index_matrix[row - 1, col] == 0 && row != 1)
 					{
 						col--;
 
@@ -2529,14 +2527,14 @@ namespace System.Windows.Forms
 							return -1;
 					}
 
-					adjusted_index = item_index_matrix [row - 1, col];
+					adjusted_index = item_index_matrix[row - 1, col];
 					break;
 
 				case Keys.Down:
 					if (row == (rows - 1) || row == Items.Count - 1)
 						return -1;
 
-					while (item_index_matrix [row + 1, col] == 0)
+					while (item_index_matrix[row + 1, col] == 0)
 					{
 						col--;
 
@@ -2544,18 +2542,18 @@ namespace System.Windows.Forms
 							return -1;
 					}
 
-					adjusted_index = item_index_matrix [row + 1, col];
+					adjusted_index = item_index_matrix[row + 1, col];
 					break;
 
 				default:
 					return -1;
 			}
 
-			return items [adjusted_index].DisplayIndex;
+			return items[adjusted_index].DisplayIndex;
 		}
 
 		// Used for virtual mode, where items *cannot* be re-arranged
-		int GetFixedAdjustedIndex (Keys key)
+		int GetFixedAdjustedIndex(Keys key)
 		{
 			int result;
 
@@ -2605,12 +2603,12 @@ namespace System.Windows.Forms
 
 		ListViewItem selection_start;
 
-		private bool SelectItems (ArrayList sel_items)
+		private bool SelectItems(ArrayList sel_items)
 		{
 			bool changed = false;
 
 			foreach (ListViewItem item in SelectedItems)
-				if (!sel_items.Contains (item))
+				if (!sel_items.Contains(item))
 				{
 					item.Selected = false;
 					changed = true;
@@ -2626,44 +2624,44 @@ namespace System.Windows.Forms
 			return changed;
 		}
 
-		private void UpdateMultiSelection (int index, bool reselect)
+		private void UpdateMultiSelection(int index, bool reselect)
 		{
 			bool shift_pressed = (XplatUI.State.ModifierKeys & Keys.Shift) != 0;
 			bool ctrl_pressed = (XplatUI.State.ModifierKeys & Keys.Control) != 0;
-			ListViewItem item = GetItemAtDisplayIndex (index);
+			ListViewItem item = GetItemAtDisplayIndex(index);
 
 			if (shift_pressed && selection_start != null)
 			{
-				ArrayList list = new ArrayList ();
+				ArrayList list = new ArrayList();
 				int start_index = selection_start.DisplayIndex;
-				int start = Math.Min (start_index, index);
-				int end = Math.Max (start_index, index);
+				int start = Math.Min(start_index, index);
+				int end = Math.Max(start_index, index);
 
 				if (View == View.Details)
 				{
 					for (int i = start; i <= end; i++)
-						list.Add (GetItemAtDisplayIndex (i));
+						list.Add(GetItemAtDisplayIndex(i));
 				}
 				else
 				{
-					ItemMatrixLocation start_item_matrix_location = items_matrix_location [start];
-					ItemMatrixLocation end_item_matrix_location = items_matrix_location [end];
-					int left = Math.Min (start_item_matrix_location.Col, end_item_matrix_location.Col);
-					int right = Math.Max (start_item_matrix_location.Col, end_item_matrix_location.Col);
-					int top = Math.Min (start_item_matrix_location.Row, end_item_matrix_location.Row);
-					int bottom = Math.Max (start_item_matrix_location.Row, end_item_matrix_location.Row);
+					ItemMatrixLocation start_item_matrix_location = items_matrix_location[start];
+					ItemMatrixLocation end_item_matrix_location = items_matrix_location[end];
+					int left = Math.Min(start_item_matrix_location.Col, end_item_matrix_location.Col);
+					int right = Math.Max(start_item_matrix_location.Col, end_item_matrix_location.Col);
+					int top = Math.Min(start_item_matrix_location.Row, end_item_matrix_location.Row);
+					int bottom = Math.Max(start_item_matrix_location.Row, end_item_matrix_location.Row);
 
 					for (int i = 0; i < items.Count; i++)
 					{
-						ItemMatrixLocation item_matrix_loc = items_matrix_location [i];
+						ItemMatrixLocation item_matrix_loc = items_matrix_location[i];
 
 						if (item_matrix_loc.Row >= top && item_matrix_loc.Row <= bottom &&
 								item_matrix_loc.Col >= left && item_matrix_loc.Col <= right)
-							list.Add (GetItemAtDisplayIndex (i));
+							list.Add(GetItemAtDisplayIndex(i));
 					}
 				}
 
-				SelectItems (list);
+				SelectItems(list);
 			}
 			else if (ctrl_pressed)
 			{
@@ -2680,12 +2678,12 @@ namespace System.Windows.Forms
 						if (index == itemIndex)
 							continue;
 
-						items [itemIndex].Selected = false;
+						items[itemIndex].Selected = false;
 					}
 				}
 				else
 				{
-					SelectedItems.Clear ();
+					SelectedItems.Clear();
 					item.Selected = true;
 				}
 
@@ -2693,33 +2691,33 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal override bool InternalPreProcessMessage (ref Message msg)
+		internal override bool InternalPreProcessMessage(ref Message msg)
 		{
 			if (msg.Msg == (int)Msg.WM_KEYDOWN)
 			{
 				Keys key_data = (Keys)msg.WParam.ToInt32();
-				HandleNavKeys (key_data);
+				HandleNavKeys(key_data);
 			}
 
-			return base.InternalPreProcessMessage (ref msg);
+			return base.InternalPreProcessMessage(ref msg);
 		}
 
-		bool HandleNavKeys (Keys key_data)
+		bool HandleNavKeys(Keys key_data)
 		{
 			if (Items.Count == 0 || !item_control.Visible)
 				return false;
 
 			if (FocusedItem == null)
-				SetFocusedItem (0);
+				SetFocusedItem(0);
 
 			switch (key_data)
 			{
 				case Keys.End:
-					SelectIndex (Items.Count - 1);
+					SelectIndex(Items.Count - 1);
 					break;
 
 				case Keys.Home:
-					SelectIndex (0);
+					SelectIndex(0);
 					break;
 
 				case Keys.Left:
@@ -2728,17 +2726,17 @@ namespace System.Windows.Forms
 				case Keys.Down:
 				case Keys.PageUp:
 				case Keys.PageDown:
-					SelectIndex (GetAdjustedIndex (key_data));
+					SelectIndex(GetAdjustedIndex(key_data));
 					break;
 
 				case Keys.Space:
-					SelectIndex (focused_item_index);
-					ToggleItemsCheckState ();
+					SelectIndex(focused_item_index);
+					ToggleItemsCheckState();
 					break;
 
 				case Keys.Enter:
 					if (selected_indices.Count > 0)
-						OnItemActivate (EventArgs.Empty);
+						OnItemActivate(EventArgs.Empty);
 
 					break;
 
@@ -2749,7 +2747,7 @@ namespace System.Windows.Forms
 			return true;
 		}
 
-		void ToggleItemsCheckState ()
+		void ToggleItemsCheckState()
 		{
 			if (!CheckBoxes)
 				return;
@@ -2762,7 +2760,7 @@ namespace System.Windows.Forms
 			{
 				for (int i = 0; i < SelectedIndices.Count; i++)
 				{
-					ListViewItem item = Items [SelectedIndices [i]];
+					ListViewItem item = Items[SelectedIndices[i]];
 					item.Checked = !item.Checked;
 				}
 
@@ -2772,25 +2770,25 @@ namespace System.Windows.Forms
 			if (FocusedItem != null)
 			{
 				FocusedItem.Checked = !FocusedItem.Checked;
-				SelectIndex (FocusedItem.Index);
+				SelectIndex(FocusedItem.Index);
 			}
 		}
 
-		void SelectIndex (int display_index)
+		void SelectIndex(int display_index)
 		{
 			if (display_index == -1)
 				return;
 
 			if (MultiSelect)
-				UpdateMultiSelection (display_index, true);
-			else if (!GetItemAtDisplayIndex (display_index).Selected)
-				GetItemAtDisplayIndex (display_index).Selected = true;
+				UpdateMultiSelection(display_index, true);
+			else if (!GetItemAtDisplayIndex(display_index).Selected)
+				GetItemAtDisplayIndex(display_index).Selected = true;
 
-			SetFocusedItem (display_index);
-			EnsureVisible (GetItemIndex (display_index)); // Index in Items collection, not display index
+			SetFocusedItem(display_index);
+			EnsureVisible(GetItemIndex(display_index)); // Index in Items collection, not display index
 		}
 
-		private void ListView_KeyDown (object sender, KeyEventArgs ke)
+		private void ListView_KeyDown(object sender, KeyEventArgs ke)
 		{
 			if (ke.Handled || Items.Count == 0 || !item_control.Visible)
 				return;
@@ -2798,13 +2796,13 @@ namespace System.Windows.Forms
 			if (ke.Alt || ke.Control)
 				return;
 
-			ke.Handled = KeySearchString (ke);
+			ke.Handled = KeySearchString(ke);
 		}
 
-		private MouseEventArgs TranslateMouseEventArgs (MouseEventArgs args)
+		private MouseEventArgs TranslateMouseEventArgs(MouseEventArgs args)
 		{
-			Point loc = PointToClient (Control.MousePosition);
-			return new MouseEventArgs (args.Button, args.Clicks, loc.X, loc.Y, args.Delta);
+			Point loc = PointToClient(Control.MousePosition);
+			return new MouseEventArgs(args.Button, args.Clicks, loc.X, loc.Y, args.Delta);
 		}
 
 		internal class ItemControl : Control
@@ -2818,17 +2816,17 @@ namespace System.Windows.Forms
 			ListViewItem prev_hovered_item;
 			ListViewItem prev_tooltip_item;
 			int clicks;
-			Point drag_begin = new Point (-1, -1);
+			Point drag_begin = new Point(-1, -1);
 			internal int dragged_item_index = -1;
 
 			ListViewLabelEditTextBox edit_text_box;
 			internal ListViewItem edit_item;
 			LabelEditEventArgs edit_args;
 
-			public ItemControl (ListView owner)
+			public ItemControl(ListView owner)
 			{
 				this.owner = owner;
-				this.SetStyle (ControlStyles.DoubleBuffer, true);
+				this.SetStyle(ControlStyles.DoubleBuffer, true);
 				DoubleClick += new EventHandler(ItemsDoubleClick);
 				MouseDown += new MouseEventHandler(ItemsMouseDown);
 				MouseMove += new MouseEventHandler(ItemsMouseMove);
@@ -2836,10 +2834,10 @@ namespace System.Windows.Forms
 				MouseUp += new MouseEventHandler(ItemsMouseUp);
 			}
 
-			void ItemsDoubleClick (object sender, EventArgs e)
+			void ItemsDoubleClick(object sender, EventArgs e)
 			{
 				if (owner.activation == ItemActivation.Standard)
-					owner.OnItemActivate (EventArgs.Empty);
+					owner.OnItemActivate(EventArgs.Empty);
 			}
 
 			enum BoxSelect
@@ -2863,13 +2861,13 @@ namespace System.Windows.Forms
 					if (box_select_rect == value)
 						return;
 
-					InvalidateBoxSelectRect ();
+					InvalidateBoxSelectRect();
 					box_select_rect = value;
-					InvalidateBoxSelectRect ();
+					InvalidateBoxSelectRect();
 				}
 			}
 
-			void InvalidateBoxSelectRect ()
+			void InvalidateBoxSelectRect()
 			{
 				if (BoxSelectRectangle.Size.IsEmpty)
 					return;
@@ -2879,29 +2877,29 @@ namespace System.Windows.Forms
 				edge.Y -= 1;
 				edge.Width += 2;
 				edge.Height = 2;
-				Invalidate (edge);
+				Invalidate(edge);
 				edge.Y = BoxSelectRectangle.Bottom - 1;
-				Invalidate (edge);
+				Invalidate(edge);
 				edge.Y = BoxSelectRectangle.Y - 1;
 				edge.Width = 2;
 				edge.Height = BoxSelectRectangle.Height + 2;
-				Invalidate (edge);
+				Invalidate(edge);
 				edge.X = BoxSelectRectangle.Right - 1;
-				Invalidate (edge);
+				Invalidate(edge);
 			}
 
-			private Rectangle CalculateBoxSelectRectangle (Point pt)
+			private Rectangle CalculateBoxSelectRectangle(Point pt)
 			{
-				int left = Math.Min (box_select_start.X, pt.X);
-				int right = Math.Max (box_select_start.X, pt.X);
-				int top = Math.Min (box_select_start.Y, pt.Y);
-				int bottom = Math.Max (box_select_start.Y, pt.Y);
-				return Rectangle.FromLTRB (left, top, right, bottom);
+				int left = Math.Min(box_select_start.X, pt.X);
+				int right = Math.Max(box_select_start.X, pt.X);
+				int top = Math.Min(box_select_start.Y, pt.Y);
+				int bottom = Math.Max(box_select_start.Y, pt.Y);
+				return Rectangle.FromLTRB(left, top, right, bottom);
 			}
 
-			bool BoxIntersectsItem (int index)
+			bool BoxIntersectsItem(int index)
 			{
-				Rectangle r = new Rectangle (owner.GetItemLocation (index), owner.ItemSize);
+				Rectangle r = new Rectangle(owner.GetItemLocation(index), owner.ItemSize);
 
 				if (owner.View != View.Details)
 				{
@@ -2911,20 +2909,20 @@ namespace System.Windows.Forms
 					r.Height /= 2;
 				}
 
-				return BoxSelectRectangle.IntersectsWith (r);
+				return BoxSelectRectangle.IntersectsWith(r);
 			}
 
-			bool BoxIntersectsText (int index)
+			bool BoxIntersectsText(int index)
 			{
-				Rectangle r = owner.GetItemAtDisplayIndex (index).TextBounds;
-				return BoxSelectRectangle.IntersectsWith (r);
+				Rectangle r = owner.GetItemAtDisplayIndex(index).TextBounds;
+				return BoxSelectRectangle.IntersectsWith(r);
 			}
 
 			ArrayList BoxSelectedItems
 			{
 				get
 				{
-					ArrayList result = new ArrayList ();
+					ArrayList result = new ArrayList();
 
 					for (int i = 0; i < owner.Items.Count; i++)
 					{
@@ -2932,24 +2930,24 @@ namespace System.Windows.Forms
 
 						// Can't iterate over specific items properties in virtualmode
 						if (owner.View == View.Details && !owner.FullRowSelect && !owner.VirtualMode)
-							intersects = BoxIntersectsText (i);
+							intersects = BoxIntersectsText(i);
 						else
-							intersects = BoxIntersectsItem (i);
+							intersects = BoxIntersectsItem(i);
 
 						if (intersects)
-							result.Add (owner.GetItemAtDisplayIndex (i));
+							result.Add(owner.GetItemAtDisplayIndex(i));
 					}
 
 					return result;
 				}
 			}
 
-			private bool PerformBoxSelection (Point pt)
+			private bool PerformBoxSelection(Point pt)
 			{
 				if (box_select_mode == BoxSelect.None)
 					return false;
 
-				BoxSelectRectangle = CalculateBoxSelectRectangle (pt);
+				BoxSelectRectangle = CalculateBoxSelectRectangle(pt);
 				ArrayList box_items = BoxSelectedItems;
 				ArrayList items;
 
@@ -2960,15 +2958,15 @@ namespace System.Windows.Forms
 						break;
 
 					case BoxSelect.Control:
-						items = new ArrayList ();
+						items = new ArrayList();
 
 						foreach (int index in prev_selection)
-							if (!box_items.Contains (owner.Items [index]))
-								items.Add (owner.Items [index]);
+							if (!box_items.Contains(owner.Items[index]))
+								items.Add(owner.Items[index]);
 
 						foreach (ListViewItem item in box_items)
-							if (!prev_selection.Contains (item.Index))
-								items.Add (item);
+							if (!prev_selection.Contains(item.Index))
+								items.Add(item);
 
 						break;
 
@@ -2976,45 +2974,45 @@ namespace System.Windows.Forms
 						items = box_items;
 
 						foreach (ListViewItem item in box_items)
-							prev_selection.Remove (item.Index);
+							prev_selection.Remove(item.Index);
 
 						foreach (int index in prev_selection)
-							items.Add (owner.Items [index]);
+							items.Add(owner.Items[index]);
 
 						break;
 
 					default:
-						throw new Exception ("Unexpected Selection mode: " + box_select_mode);
+						throw new Exception("Unexpected Selection mode: " + box_select_mode);
 				}
 
-				SuspendLayout ();
-				owner.SelectItems (items);
-				ResumeLayout ();
+				SuspendLayout();
+				owner.SelectItems(items);
+				ResumeLayout();
 				return true;
 			}
 
-			private void ItemsMouseDown (object sender, MouseEventArgs me)
+			private void ItemsMouseDown(object sender, MouseEventArgs me)
 			{
-				owner.OnMouseDown (owner.TranslateMouseEventArgs (me));
+				owner.OnMouseDown(owner.TranslateMouseEventArgs(me));
 
 				if (owner.items.Count == 0)
 					return;
 
 				bool box_selecting = false;
 				Size item_size = owner.ItemSize;
-				Point pt = new Point (me.X, me.Y);
+				Point pt = new Point(me.X, me.Y);
 
 				for (int i = 0; i < owner.items.Count; i++)
 				{
-					Rectangle item_rect = new Rectangle (owner.GetItemLocation (i), item_size);
+					Rectangle item_rect = new Rectangle(owner.GetItemLocation(i), item_size);
 
-					if (!item_rect.Contains (pt))
+					if (!item_rect.Contains(pt))
 						continue;
 
 					// Actual item in 'i' position
-					ListViewItem item = owner.GetItemAtDisplayIndex (i);
+					ListViewItem item = owner.GetItemAtDisplayIndex(i);
 
-					if (item.CheckRectReal.Contains (pt))
+					if (item.CheckRectReal.Contains(pt))
 					{
 						// Don't modify check state if we have only one image
 						// and if we are in 1.1 profile only take into account
@@ -3035,7 +3033,7 @@ namespace System.Windows.Forms
 
 					if (owner.View == View.Details)
 					{
-						bool over_text = item.TextBounds.Contains (pt);
+						bool over_text = item.TextBounds.Contains(pt);
 
 						if (owner.FullRowSelect)
 						{
@@ -3048,7 +3046,7 @@ namespace System.Windows.Forms
 						else if (over_text)
 							clicked_item = item;
 						else
-							owner.SetFocusedItem (i);
+							owner.SetFocusedItem(i);
 					}
 					else
 						clicked_item = item;
@@ -3061,14 +3059,14 @@ namespace System.Windows.Forms
 					bool changed = !clicked_item.Selected;
 
 					if (me.Button == MouseButtons.Left || (XplatUI.State.ModifierKeys == Keys.None && changed))
-						owner.SetFocusedItem (clicked_item.DisplayIndex);
+						owner.SetFocusedItem(clicked_item.DisplayIndex);
 
 					if (owner.MultiSelect)
 					{
 						bool reselect = (!owner.LabelEdit || changed);
 
 						if (me.Button == MouseButtons.Left || (XplatUI.State.ModifierKeys == Keys.None && changed))
-							owner.UpdateMultiSelection (clicked_item.DisplayIndex, reselect);
+							owner.UpdateMultiSelection(clicked_item.DisplayIndex, reselect);
 					}
 					else
 					{
@@ -3085,8 +3083,8 @@ namespace System.Windows.Forms
 					{
 						// Broken event - It's not fired from Item.Selected also
 						ListViewVirtualItemsSelectionRangeChangedEventArgs args =
-							new ListViewVirtualItemsSelectionRangeChangedEventArgs (0, owner.items.Count - 1, false);
-						owner.OnVirtualItemsSelectionRangeChanged (args);
+							new ListViewVirtualItemsSelectionRangeChangedEventArgs(0, owner.items.Count - 1, false);
+						owner.OnVirtualItemsSelectionRangeChanged(args);
 					}
 
 					// Report clicks only if the item was clicked. On MS the
@@ -3101,7 +3099,7 @@ namespace System.Windows.Forms
 					else if (me.Clicks == 1)
 					{
 						if (owner.LabelEdit && !changed)
-							BeginEdit (clicked_item); // this is probably not the correct place to execute BeginEdit
+							BeginEdit(clicked_item); // this is probably not the correct place to execute BeginEdit
 					}
 
 					drag_begin = me.Location;
@@ -3112,7 +3110,7 @@ namespace System.Windows.Forms
 					if (owner.MultiSelect)
 						box_selecting = true;
 					else if (owner.SelectedItems.Count > 0)
-						owner.SelectedItems.Clear ();
+						owner.SelectedItems.Clear();
 				}
 
 				if (box_selecting)
@@ -3127,14 +3125,14 @@ namespace System.Windows.Forms
 						box_select_mode = BoxSelect.Normal;
 
 					box_select_start = pt;
-					prev_selection = owner.SelectedIndices.List.Clone () as IList;
+					prev_selection = owner.SelectedIndices.List.Clone() as IList;
 				}
 			}
 
-			private void ItemsMouseMove (object sender, MouseEventArgs me)
+			private void ItemsMouseMove(object sender, MouseEventArgs me)
 			{
-				bool done = PerformBoxSelection (new Point (me.X, me.Y));
-				owner.OnMouseMove (owner.TranslateMouseEventArgs (me));
+				bool done = PerformBoxSelection(new Point(me.X, me.Y));
+				owner.OnMouseMove(owner.TranslateMouseEventArgs(me));
 
 				if (done)
 					return;
@@ -3145,13 +3143,13 @@ namespace System.Windows.Forms
 				   )
 					return;
 
-				Point pt = PointToClient (Control.MousePosition);
-				ListViewItem item = owner.GetItemAt (pt.X, pt.Y);
+				Point pt = PointToClient(Control.MousePosition);
+				ListViewItem item = owner.GetItemAt(pt.X, pt.Y);
 
 				if (hover_processed && item != null && item != prev_hovered_item)
 				{
 					hover_processed = false;
-					XplatUI.ResetMouseHover (Handle);
+					XplatUI.ResetMouseHover(Handle);
 				}
 
 				// Need to invalidate the item in HotTracking to show/hide the underline style
@@ -3160,7 +3158,7 @@ namespace System.Windows.Forms
 					if (item == null && owner.HotItemIndex != -1)
 					{
 						if (owner.HotTracking)
-							Invalidate (owner.Items [owner.HotItemIndex].Bounds); // Previous one
+							Invalidate(owner.Items[owner.HotItemIndex].Bounds); // Previous one
 
 						Cursor = Cursors.Default;
 						owner.HotItemIndex = -1;
@@ -3168,7 +3166,7 @@ namespace System.Windows.Forms
 					else if (item != null && owner.HotItemIndex == -1)
 					{
 						if (owner.HotTracking)
-							Invalidate (item.Bounds);
+							Invalidate(item.Bounds);
 
 						Cursor = Cursors.Hand;
 						owner.HotItemIndex = item.Index;
@@ -3177,15 +3175,15 @@ namespace System.Windows.Forms
 
 				if (me.Button == MouseButtons.Left || me.Button == MouseButtons.Right)
 				{
-					if (drag_begin != new Point (-1, -1))
+					if (drag_begin != new Point(-1, -1))
 					{
-						Rectangle r = new Rectangle (drag_begin, SystemInformation.DragSize);
+						Rectangle r = new Rectangle(drag_begin, SystemInformation.DragSize);
 
-						if (!r.Contains (me.X, me.Y))
+						if (!r.Contains(me.X, me.Y))
 						{
-							ListViewItem dragged_item  = owner.items [dragged_item_index];
-							owner.OnItemDrag (new ItemDragEventArgs (me.Button, dragged_item));
-							drag_begin = new Point (-1, -1);
+							ListViewItem dragged_item = owner.items[dragged_item_index];
+							owner.OnItemDrag(new ItemDragEventArgs(me.Button, dragged_item));
+							drag_begin = new Point(-1, -1);
 							dragged_item_index = -1;
 						}
 					}
@@ -3201,17 +3199,17 @@ namespace System.Windows.Forms
 					else if (item != prev_tooltip_item && item.ToolTipText.Length > 0)
 					{
 						owner.item_tooltip.Active = true;
-						owner.item_tooltip.SetToolTip (owner, item.ToolTipText);
+						owner.item_tooltip.SetToolTip(owner, item.ToolTipText);
 						prev_tooltip_item = item;
 					}
 				}
 			}
 
-			private void ItemsMouseHover (object sender, EventArgs e)
+			private void ItemsMouseHover(object sender, EventArgs e)
 			{
 				if (owner.hover_pending)
 				{
-					owner.OnMouseHover (e);
+					owner.OnMouseHover(e);
 					owner.hover_pending = false;
 				}
 
@@ -3219,8 +3217,8 @@ namespace System.Windows.Forms
 					return;
 
 				hover_processed = true;
-				Point pt = PointToClient (Control.MousePosition);
-				ListViewItem item = owner.GetItemAt (pt.X, pt.Y);
+				Point pt = PointToClient(Control.MousePosition);
+				ListViewItem item = owner.GetItemAt(pt.X, pt.Y);
 
 				if (item == null)
 					return;
@@ -3230,70 +3228,70 @@ namespace System.Windows.Forms
 				if (owner.HoverSelection)
 				{
 					if (owner.MultiSelect)
-						owner.UpdateMultiSelection (item.Index, true);
+						owner.UpdateMultiSelection(item.Index, true);
 					else
 						item.Selected = true;
 
-					owner.SetFocusedItem (item.DisplayIndex);
-					Select (); // Make sure we have the focus, since MouseHover doesn't give it to us
+					owner.SetFocusedItem(item.DisplayIndex);
+					Select(); // Make sure we have the focus, since MouseHover doesn't give it to us
 				}
 
-				owner.OnItemMouseHover (new ListViewItemMouseHoverEventArgs (item));
+				owner.OnItemMouseHover(new ListViewItemMouseHoverEventArgs(item));
 			}
 
-			void HandleClicks (MouseEventArgs me)
+			void HandleClicks(MouseEventArgs me)
 			{
 				// if the click is not on an item,
 				// clicks remains as 0
 				if (clicks > 1)
 				{
-					owner.OnDoubleClick (EventArgs.Empty);
-					owner.OnMouseDoubleClick (me);
+					owner.OnDoubleClick(EventArgs.Empty);
+					owner.OnMouseDoubleClick(me);
 				}
 				else if (clicks == 1)
 				{
-					owner.OnClick (EventArgs.Empty);
-					owner.OnMouseClick (me);
+					owner.OnClick(EventArgs.Empty);
+					owner.OnMouseClick(me);
 				}
 
 				clicks = 0;
 			}
 
-			private void ItemsMouseUp (object sender, MouseEventArgs me)
+			private void ItemsMouseUp(object sender, MouseEventArgs me)
 			{
-				MouseEventArgs owner_me = owner.TranslateMouseEventArgs (me);
-				HandleClicks (owner_me);
+				MouseEventArgs owner_me = owner.TranslateMouseEventArgs(me);
+				HandleClicks(owner_me);
 				Capture = false;
 
 				if (owner.Items.Count == 0)
 				{
-					ResetMouseState ();
-					owner.OnMouseUp (owner_me);
+					ResetMouseState();
+					owner.OnMouseUp(owner_me);
 					return;
 				}
 
-				Point pt = new Point (me.X, me.Y);
+				Point pt = new Point(me.X, me.Y);
 				Rectangle rect = Rectangle.Empty;
 
 				if (clicked_item != null)
 				{
 					if (owner.view == View.Details && !owner.full_row_select)
-						rect = clicked_item.GetBounds (ItemBoundsPortion.Label);
+						rect = clicked_item.GetBounds(ItemBoundsPortion.Label);
 					else
 						rect = clicked_item.Bounds;
 
-					if (rect.Contains (pt))
+					if (rect.Contains(pt))
 					{
 						switch (owner.activation)
 						{
 							case ItemActivation.OneClick:
-								owner.OnItemActivate (EventArgs.Empty);
+								owner.OnItemActivate(EventArgs.Empty);
 								break;
 
 							case ItemActivation.TwoClick:
 								if (last_clicked_item == clicked_item)
 								{
-									owner.OnItemActivate (EventArgs.Empty);
+									owner.OnItemActivate(EventArgs.Empty);
 									last_clicked_item = null;
 								}
 								else
@@ -3310,14 +3308,14 @@ namespace System.Windows.Forms
 				else if (!checking && owner.SelectedItems.Count > 0 && BoxSelectRectangle.Size.IsEmpty)
 				{
 					// Need this to clean up background clicks
-					owner.SelectedItems.Clear ();
+					owner.SelectedItems.Clear();
 				}
 
-				ResetMouseState ();
-				owner.OnMouseUp (owner_me);
+				ResetMouseState();
+				owner.OnMouseUp(owner_me);
 			}
 
-			private void ResetMouseState ()
+			private void ResetMouseState()
 			{
 				clicked_item = null;
 				box_select_start = Point.Empty;
@@ -3328,44 +3326,44 @@ namespace System.Windows.Forms
 				// Clean these bits in case the mouse buttons were
 				// released before firing ItemDrag
 				dragged_item_index = -1;
-				drag_begin = new Point (-1, -1);
+				drag_begin = new Point(-1, -1);
 			}
 
-			private void LabelEditFinished (object sender, EventArgs e)
+			private void LabelEditFinished(object sender, EventArgs e)
 			{
-				EndEdit (edit_item);
+				EndEdit(edit_item);
 			}
 
-			private void LabelEditCancelled (object sender, EventArgs e)
+			private void LabelEditCancelled(object sender, EventArgs e)
 			{
-				edit_args.SetLabel (null);
-				EndEdit (edit_item);
+				edit_args.SetLabel(null);
+				EndEdit(edit_item);
 			}
 
-			private void LabelTextChanged (object sender, EventArgs e)
+			private void LabelTextChanged(object sender, EventArgs e)
 			{
 				if (edit_args != null)
-					edit_args.SetLabel (edit_text_box.Text);
+					edit_args.SetLabel(edit_text_box.Text);
 			}
 
-			internal void BeginEdit (ListViewItem item)
+			internal void BeginEdit(ListViewItem item)
 			{
 				if (edit_item != null)
-					EndEdit (edit_item);
+					EndEdit(edit_item);
 
 				if (edit_text_box == null)
 				{
-					edit_text_box = new ListViewLabelEditTextBox ();
+					edit_text_box = new ListViewLabelEditTextBox();
 					edit_text_box.BorderStyle = BorderStyle.FixedSingle;
-					edit_text_box.EditingCancelled += new EventHandler (LabelEditCancelled);
-					edit_text_box.EditingFinished += new EventHandler (LabelEditFinished);
-					edit_text_box.TextChanged += new EventHandler (LabelTextChanged);
+					edit_text_box.EditingCancelled += new EventHandler(LabelEditCancelled);
+					edit_text_box.EditingFinished += new EventHandler(LabelEditFinished);
+					edit_text_box.TextChanged += new EventHandler(LabelTextChanged);
 					edit_text_box.Visible = false;
-					Controls.Add (edit_text_box);
+					Controls.Add(edit_text_box);
 				}
 
 				item.EnsureVisible();
-				edit_text_box.Reset ();
+				edit_text_box.Reset();
 
 				switch (owner.view)
 				{
@@ -3373,8 +3371,8 @@ namespace System.Windows.Forms
 					case View.SmallIcon:
 					case View.Details:
 						edit_text_box.TextAlign = HorizontalAlignment.Left;
-						edit_text_box.Bounds = item.GetBounds (ItemBoundsPortion.Label);
-						SizeF sizef = TextRenderer.MeasureString (item.Text, item.Font);
+						edit_text_box.Bounds = item.GetBounds(ItemBoundsPortion.Label);
+						SizeF sizef = TextRenderer.MeasureString(item.Text, item.Font);
 						edit_text_box.Width = (int)sizef.Width + 4;
 						edit_text_box.MaxWidth = owner.ClientRectangle.Width - edit_text_box.Bounds.X;
 						edit_text_box.WordWrap = false;
@@ -3383,8 +3381,8 @@ namespace System.Windows.Forms
 
 					case View.LargeIcon:
 						edit_text_box.TextAlign = HorizontalAlignment.Center;
-						edit_text_box.Bounds = item.GetBounds (ItemBoundsPortion.Label);
-						sizef = TextRenderer.MeasureString (item.Text, item.Font);
+						edit_text_box.Bounds = item.GetBounds(ItemBoundsPortion.Label);
+						sizef = TextRenderer.MeasureString(item.Text, item.Font);
 						edit_text_box.Width = (int)sizef.Width + 4;
 						edit_text_box.MaxWidth = item.GetBounds(ItemBoundsPortion.Entire).Width;
 						edit_text_box.MaxHeight = owner.ClientRectangle.Height - edit_text_box.Bounds.Y;
@@ -3397,27 +3395,27 @@ namespace System.Windows.Forms
 				edit_text_box.Text = item.Text;
 				edit_text_box.Font = item.Font;
 				edit_text_box.Visible = true;
-				edit_text_box.Focus ();
-				edit_text_box.SelectAll ();
-				edit_args = new LabelEditEventArgs (owner.Items.IndexOf (edit_item));
-				owner.OnBeforeLabelEdit (edit_args);
+				edit_text_box.Focus();
+				edit_text_box.SelectAll();
+				edit_args = new LabelEditEventArgs(owner.Items.IndexOf(edit_item));
+				owner.OnBeforeLabelEdit(edit_args);
 
 				if (edit_args.CancelEdit)
-					EndEdit (item);
+					EndEdit(item);
 			}
 
-			internal void CancelEdit (ListViewItem item)
+			internal void CancelEdit(ListViewItem item)
 			{
 				// do nothing if there's no item being edited, or if the
 				// item being edited is not the one passed in
 				if (edit_item == null || edit_item != item)
 					return;
 
-				edit_args.SetLabel (null);
-				EndEdit (item);
+				edit_args.SetLabel(null);
+				EndEdit(item);
 			}
 
-			internal void EndEdit (ListViewItem item)
+			internal void EndEdit(ListViewItem item)
 			{
 				// do nothing if there's no item being edited, or if the
 				// item being edited is not the one passed in
@@ -3430,49 +3428,49 @@ namespace System.Windows.Forms
 						edit_text_box.Visible = false;
 
 					// ensure listview gets focus
-					owner.Focus ();
+					owner.Focus();
 				}
 
 				// Same as TreeView.EndEdit: need to have focus in synch
-				Application.DoEvents ();
+				Application.DoEvents();
 				//
 				// Create a new instance, since we could get a call to BeginEdit
 				// from the handler and have fields out of synch
 				//
-				LabelEditEventArgs args = new LabelEditEventArgs (item.Index, edit_args.Label);
+				LabelEditEventArgs args = new LabelEditEventArgs(item.Index, edit_args.Label);
 				edit_item = null;
-				owner.OnAfterLabelEdit (args);
+				owner.OnAfterLabelEdit(args);
 
 				if (!args.CancelEdit && args.Label != null)
 					item.Text = args.Label;
 			}
 
-			internal override void OnPaintInternal (PaintEventArgs pe)
+			internal override void OnPaintInternal(PaintEventArgs pe)
 			{
-				ThemeEngine.Current.DrawListViewItems (pe.Graphics, pe.ClipRectangle, owner);
+				ThemeEngine.Current.DrawListViewItems(pe.Graphics, pe.ClipRectangle, owner);
 			}
 
-			protected override void WndProc (ref Message m)
+			protected override void WndProc(ref Message m)
 			{
 				switch ((Msg)m.Msg)
 				{
 					case Msg.WM_KILLFOCUS:
-						owner.Select (false, true);
+						owner.Select(false, true);
 						break;
 
 					case Msg.WM_SETFOCUS:
-						owner.Select (false, true);
+						owner.Select(false, true);
 						break;
 
 					case Msg.WM_LBUTTONDOWN:
 						if (!Focused)
-							owner.Select (false, true);
+							owner.Select(false, true);
 
 						break;
 
 					case Msg.WM_RBUTTONDOWN:
 						if (!Focused)
-							owner.Select (false, true);
+							owner.Select(false, true);
 
 						break;
 
@@ -3484,7 +3482,7 @@ namespace System.Windows.Forms
 						break;
 				}
 
-				base.WndProc (ref m);
+				base.WndProc(ref m);
 			}
 		}
 
@@ -3500,10 +3498,10 @@ namespace System.Windows.Forms
 
 			SizeF text_size_one_char;
 
-			public ListViewLabelEditTextBox ()
+			public ListViewLabelEditTextBox()
 			{
 				min_height = DefaultSize.Height;
-				text_size_one_char = TextRenderer.MeasureString ("B", Font);
+				text_size_one_char = TextRenderer.MeasureString("B", Font);
 			}
 
 			public int MaxWidth
@@ -3550,21 +3548,21 @@ namespace System.Windows.Forms
 				set
 				{
 					base.Font = value;
-					text_size_one_char = TextRenderer.MeasureString ("B", Font);
+					text_size_one_char = TextRenderer.MeasureString("B", Font);
 				}
 			}
 
-			protected override void OnTextChanged (EventArgs e)
+			protected override void OnTextChanged(EventArgs e)
 			{
-				SizeF text_size = TextRenderer.MeasureString (Text, Font);
+				SizeF text_size = TextRenderer.MeasureString(Text, Font);
 				int new_width = (int)text_size.Width + 8;
 
 				if (!Multiline)
-					ResizeTextBoxWidth (new_width);
+					ResizeTextBoxWidth(new_width);
 				else
 				{
 					if (Width != max_width)
-						ResizeTextBoxWidth (new_width);
+						ResizeTextBoxWidth(new_width);
 
 					int number_lines = Lines.Length;
 
@@ -3572,14 +3570,14 @@ namespace System.Windows.Forms
 					{
 						int new_height = number_lines * (int)text_size_one_char.Height + 4;
 						old_number_lines = number_lines;
-						ResizeTextBoxHeight (new_height);
+						ResizeTextBoxHeight(new_height);
 					}
 				}
 
-				base.OnTextChanged (e);
+				base.OnTextChanged(e);
 			}
 
-			protected override bool IsInputKey (Keys key_data)
+			protected override bool IsInputKey(Keys key_data)
 			{
 				if ((key_data & Keys.Alt) == 0)
 				{
@@ -3593,10 +3591,10 @@ namespace System.Windows.Forms
 					}
 				}
 
-				return base.IsInputKey (key_data);
+				return base.IsInputKey(key_data);
 			}
 
-			protected override void OnKeyDown (KeyEventArgs e)
+			protected override void OnKeyDown(KeyEventArgs e)
 			{
 				if (!Visible)
 					return;
@@ -3606,42 +3604,42 @@ namespace System.Windows.Forms
 					case Keys.Return:
 						Visible = false;
 						e.Handled = true;
-						OnEditingFinished (e);
+						OnEditingFinished(e);
 						break;
 
 					case Keys.Escape:
 						Visible = false;
 						e.Handled = true;
-						OnEditingCancelled (e);
+						OnEditingCancelled(e);
 						break;
 				}
 			}
 
-			protected override void OnLostFocus (EventArgs e)
+			protected override void OnLostFocus(EventArgs e)
 			{
 				if (Visible)
 				{
-					OnEditingFinished (e);
+					OnEditingFinished(e);
 				}
 			}
 
-			protected void OnEditingCancelled (EventArgs e)
+			protected void OnEditingCancelled(EventArgs e)
 			{
-				EventHandler eh = (EventHandler)(Events [EditingCancelledEvent]);
+				EventHandler eh = (EventHandler)(Events[EditingCancelledEvent]);
 
 				if (eh != null)
-					eh (this, e);
+					eh(this, e);
 			}
 
-			protected void OnEditingFinished (EventArgs e)
+			protected void OnEditingFinished(EventArgs e)
 			{
-				EventHandler eh = (EventHandler)(Events [EditingFinishedEvent]);
+				EventHandler eh = (EventHandler)(Events[EditingFinishedEvent]);
 
 				if (eh != null)
-					eh (this, e);
+					eh(this, e);
 			}
 
-			private void ResizeTextBoxWidth (int new_width)
+			private void ResizeTextBoxWidth(int new_width)
 			{
 				if (new_width > max_width)
 					base.Width = max_width;
@@ -3651,7 +3649,7 @@ namespace System.Windows.Forms
 					base.Width = min_width;
 			}
 
-			private void ResizeTextBoxHeight (int new_height)
+			private void ResizeTextBoxHeight(int new_height)
 			{
 				if (new_height > max_height)
 					base.Height = max_height;
@@ -3661,7 +3659,7 @@ namespace System.Windows.Forms
 					base.Height = min_height;
 			}
 
-			public void Reset ()
+			public void Reset()
 			{
 				max_width = -1;
 				min_width = -1;
@@ -3671,61 +3669,61 @@ namespace System.Windows.Forms
 				Size = DefaultSize;
 			}
 
-			static object EditingCancelledEvent = new object ();
+			static object EditingCancelledEvent = new object();
 			public event EventHandler EditingCancelled
 			{
-				add { Events.AddHandler (EditingCancelledEvent, value); }
-				remove { Events.RemoveHandler (EditingCancelledEvent, value); }
+				add { Events.AddHandler(EditingCancelledEvent, value); }
+				remove { Events.RemoveHandler(EditingCancelledEvent, value); }
 			}
 
-			static object EditingFinishedEvent = new object ();
+			static object EditingFinishedEvent = new object();
 			public event EventHandler EditingFinished
 			{
-				add { Events.AddHandler (EditingFinishedEvent, value); }
-				remove { Events.RemoveHandler (EditingFinishedEvent, value); }
+				add { Events.AddHandler(EditingFinishedEvent, value); }
+				remove { Events.RemoveHandler(EditingFinishedEvent, value); }
 			}
 		}
 
-		internal override void OnPaintInternal (PaintEventArgs pe)
+		internal override void OnPaintInternal(PaintEventArgs pe)
 		{
 			if (updating)
 				return;
 
-			CalculateScrollBars ();
+			CalculateScrollBars();
 		}
 
-		void FocusChanged (object o, EventArgs args)
+		void FocusChanged(object o, EventArgs args)
 		{
 			if (Items.Count == 0)
 				return;
 
 			if (FocusedItem == null)
-				SetFocusedItem (0);
+				SetFocusedItem(0);
 
 			ListViewItem focused_item = FocusedItem;
 
 			if (focused_item.ListView != null)
 			{
-				focused_item.Invalidate ();
-				focused_item.Layout ();
-				focused_item.Invalidate ();
+				focused_item.Invalidate();
+				focused_item.Layout();
+				focused_item.Invalidate();
 			}
 		}
 
-		private void ListView_Invalidated (object sender, InvalidateEventArgs e)
+		private void ListView_Invalidated(object sender, InvalidateEventArgs e)
 		{
 			// When the ListView is invalidated, we need to invalidate
 			// the child controls.
-			header_control.Invalidate ();
-			item_control.Invalidate ();
+			header_control.Invalidate();
+			item_control.Invalidate();
 		}
 
-		private void ListView_MouseEnter (object sender, EventArgs args)
+		private void ListView_MouseEnter(object sender, EventArgs args)
 		{
 			hover_pending = true; // Need a hover event for every Enter/Leave cycle
 		}
 
-		private void ListView_MouseWheel (object sender, MouseEventArgs me)
+		private void ListView_MouseWheel(object sender, MouseEventArgs me)
 		{
 			if (Items.Count == 0)
 				return;
@@ -3739,49 +3737,49 @@ namespace System.Windows.Forms
 			{
 				case View.Details:
 				case View.SmallIcon:
-					Scroll (v_scroll, -ItemSize.Height * SystemInformation.MouseWheelScrollLines * lines);
+					Scroll(v_scroll, -ItemSize.Height * SystemInformation.MouseWheelScrollLines * lines);
 					break;
 
 				case View.LargeIcon:
-					Scroll (v_scroll, -(ItemSize.Height + ThemeEngine.Current.ListViewVerticalSpacing)  * lines);
+					Scroll(v_scroll, -(ItemSize.Height + ThemeEngine.Current.ListViewVerticalSpacing)  * lines);
 					break;
 
 				case View.List:
-					Scroll (h_scroll, -ItemSize.Width * lines);
+					Scroll(h_scroll, -ItemSize.Width * lines);
 					break;
 
 				case View.Tile:
 					if (!Application.VisualStylesEnabled)
 					goto case View.LargeIcon;
-					Scroll (v_scroll, -(ItemSize.Height + ThemeEngine.Current.ListViewVerticalSpacing) * 2 * lines);
+					Scroll(v_scroll, -(ItemSize.Height + ThemeEngine.Current.ListViewVerticalSpacing) * 2 * lines);
 					break;
 			}
 		}
 
-		private void ListView_SizeChanged (object sender, EventArgs e)
+		private void ListView_SizeChanged(object sender, EventArgs e)
 		{
-			Redraw (true);
+			Redraw(true);
 		}
 
-		private void SetFocusedItem (int display_index)
+		private void SetFocusedItem(int display_index)
 		{
 			if (display_index != -1)
-				GetItemAtDisplayIndex (display_index).Focused = true;
+				GetItemAtDisplayIndex(display_index).Focused = true;
 			else if (focused_item_index != -1 && focused_item_index < items.Count) // Previous focused item
-				GetItemAtDisplayIndex (focused_item_index).Focused = false;
+				GetItemAtDisplayIndex(focused_item_index).Focused = false;
 
 			focused_item_index = display_index;
 
 			if (display_index == -1)
-				OnUIAFocusedItemChanged ();
+				OnUIAFocusedItemChanged();
 
 			// otherwise the event will have been fired
 			// when the ListViewItem's Focused was set
 		}
 
-		private void HorizontalScroller (object sender, EventArgs e)
+		private void HorizontalScroller(object sender, EventArgs e)
 		{
-			item_control.EndEdit (item_control.edit_item);
+			item_control.EndEdit(item_control.edit_item);
 
 			// Avoid unnecessary flickering, when button is
 			// kept pressed at the end
@@ -3791,15 +3789,15 @@ namespace System.Windows.Forms
 				h_marker = h_scroll.Value;
 
 				if (header_control.Visible)
-					XplatUI.ScrollWindow (header_control.Handle, pixels, 0, false);
+					XplatUI.ScrollWindow(header_control.Handle, pixels, 0, false);
 
-				XplatUI.ScrollWindow (item_control.Handle, pixels, 0, false);
+				XplatUI.ScrollWindow(item_control.Handle, pixels, 0, false);
 			}
 		}
 
-		private void VerticalScroller (object sender, EventArgs e)
+		private void VerticalScroller(object sender, EventArgs e)
 		{
-			item_control.EndEdit (item_control.edit_item);
+			item_control.EndEdit(item_control.edit_item);
 
 			// Avoid unnecessary flickering, when button is
 			// kept pressed at the end
@@ -3815,27 +3813,35 @@ namespace System.Windows.Forms
 				}
 
 				v_marker = v_scroll.Value;
-				XplatUI.ScrollWindow (item_control.Handle, area, 0, pixels, false);
+				XplatUI.ScrollWindow(item_control.Handle, area, 0, pixels, false);
 			}
 		}
 
-		internal override bool IsInputCharInternal (char charCode)
+		internal override bool IsInputCharInternal(char charCode)
 		{
 			return true;
 		}
 		#endregion  // Internal Methods Properties
 
 		#region Protected Methods
-		protected override void CreateHandle ()
+
+		protected void RedrawDetails()//Keysharp
 		{
-			base.CreateHandle ();
+			LayoutDetails();
+			header_control.Invalidate();
+			item_control.Invalidate();
+		}
+
+		protected override void CreateHandle()
+		{
+			base.CreateHandle();
 			is_selection_available = true;
 
 			for (int i = 0; i < SelectedItems.Count; i++)
-				OnSelectedIndexChanged (EventArgs.Empty);
+				OnSelectedIndexChanged(EventArgs.Empty);
 		}
 
-		protected override void Dispose (bool disposing)
+		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
 			{
@@ -3844,7 +3850,7 @@ namespace System.Windows.Forms
 				state_image_list = null;
 
 				foreach (ColumnHeader col in columns)
-					col.SetListView (null);
+					col.SetListView(null);
 
 				if (!virtual_mode) // In virtual mode we don't save the items
 					foreach (ListViewItem item in items)
@@ -3854,10 +3860,10 @@ namespace System.Windows.Forms
 					item_tooltip.Dispose();
 			}
 
-			base.Dispose (disposing);
+			base.Dispose(disposing);
 		}
 
-		protected override bool IsInputKey (Keys keyData)
+		protected override bool IsInputKey(Keys keyData)
 		{
 			switch (keyData)
 			{
@@ -3875,37 +3881,37 @@ namespace System.Windows.Forms
 					break;
 			}
 
-			return base.IsInputKey (keyData);
+			return base.IsInputKey(keyData);
 		}
 
-		protected virtual void OnAfterLabelEdit (LabelEditEventArgs e)
+		protected virtual void OnAfterLabelEdit(LabelEditEventArgs e)
 		{
-			LabelEditEventHandler eh = (LabelEditEventHandler)(Events [AfterLabelEditEvent]);
+			LabelEditEventHandler eh = (LabelEditEventHandler)(Events[AfterLabelEditEvent]);
 
 			if (eh != null)
-				eh (this, e);
+				eh(this, e);
 		}
 
-		protected override void OnBackgroundImageChanged (EventArgs e)
+		protected override void OnBackgroundImageChanged(EventArgs e)
 		{
 			item_control.BackgroundImage = BackgroundImage;
-			base.OnBackgroundImageChanged (e);
+			base.OnBackgroundImageChanged(e);
 		}
 
-		protected virtual void OnBeforeLabelEdit (LabelEditEventArgs e)
+		protected virtual void OnBeforeLabelEdit(LabelEditEventArgs e)
 		{
-			LabelEditEventHandler eh = (LabelEditEventHandler)(Events [BeforeLabelEditEvent]);
+			LabelEditEventHandler eh = (LabelEditEventHandler)(Events[BeforeLabelEditEvent]);
 
 			if (eh != null)
-				eh (this, e);
+				eh(this, e);
 		}
 
-		protected internal virtual void OnColumnClick (ColumnClickEventArgs e)
+		protected internal virtual void OnColumnClick(ColumnClickEventArgs e)
 		{
-			ColumnClickEventHandler eh = (ColumnClickEventHandler)(Events [ColumnClickEvent]);
+			ColumnClickEventHandler eh = (ColumnClickEventHandler)(Events[ColumnClickEvent]);
 
 			if (eh != null)
-				eh (this, e);
+				eh(this, e);
 		}
 
 		protected internal virtual void OnDrawColumnHeader(DrawListViewColumnHeaderEventArgs e)
@@ -3932,158 +3938,158 @@ namespace System.Windows.Forms
 				eh(this, e);
 		}
 
-		protected override void OnFontChanged (EventArgs e)
+		protected override void OnFontChanged(EventArgs e)
 		{
-			base.OnFontChanged (e);
-			Redraw (true);
+			base.OnFontChanged(e);
+			Redraw(true);
 		}
 
-		protected override void OnHandleCreated (EventArgs e)
+		protected override void OnHandleCreated(EventArgs e)
 		{
-			base.OnHandleCreated (e);
-			CalculateListView (alignment);
+			base.OnHandleCreated(e);
+			CalculateListView(alignment);
 
 			if (!virtual_mode) // Sorting is not allowed in virtual mode
-				Sort ();
+				Sort();
 		}
 
-		protected override void OnHandleDestroyed (EventArgs e)
+		protected override void OnHandleDestroyed(EventArgs e)
 		{
-			base.OnHandleDestroyed (e);
+			base.OnHandleDestroyed(e);
 		}
 
-		protected virtual void OnItemActivate (EventArgs e)
+		protected virtual void OnItemActivate(EventArgs e)
 		{
-			EventHandler eh = (EventHandler)(Events [ItemActivateEvent]);
+			EventHandler eh = (EventHandler)(Events[ItemActivateEvent]);
 
 			if (eh != null)
-				eh (this, e);
+				eh(this, e);
 		}
 
-		protected internal virtual void OnItemCheck (ItemCheckEventArgs ice)
+		protected internal virtual void OnItemCheck(ItemCheckEventArgs ice)
 		{
-			ItemCheckEventHandler eh = (ItemCheckEventHandler)(Events [ItemCheckEvent]);
+			ItemCheckEventHandler eh = (ItemCheckEventHandler)(Events[ItemCheckEvent]);
 
 			if (eh != null)
-				eh (this, ice);
+				eh(this, ice);
 		}
 
-		protected internal virtual void OnItemChecked (ItemCheckedEventArgs e)
+		protected internal virtual void OnItemChecked(ItemCheckedEventArgs e)
 		{
-			ItemCheckedEventHandler eh = (ItemCheckedEventHandler)(Events [ItemCheckedEvent]);
+			ItemCheckedEventHandler eh = (ItemCheckedEventHandler)(Events[ItemCheckedEvent]);
 
 			if (eh != null)
-				eh (this, e);
+				eh(this, e);
 		}
 
-		protected virtual void OnItemDrag (ItemDragEventArgs e)
+		protected virtual void OnItemDrag(ItemDragEventArgs e)
 		{
-			ItemDragEventHandler eh = (ItemDragEventHandler)(Events [ItemDragEvent]);
+			ItemDragEventHandler eh = (ItemDragEventHandler)(Events[ItemDragEvent]);
 
 			if (eh != null)
-				eh (this, e);
+				eh(this, e);
 		}
 
-		protected virtual void OnItemMouseHover (ListViewItemMouseHoverEventArgs e)
+		protected virtual void OnItemMouseHover(ListViewItemMouseHoverEventArgs e)
 		{
-			ListViewItemMouseHoverEventHandler eh = (ListViewItemMouseHoverEventHandler)(Events [ItemMouseHoverEvent]);
+			ListViewItemMouseHoverEventHandler eh = (ListViewItemMouseHoverEventHandler)(Events[ItemMouseHoverEvent]);
 
 			if (eh != null)
-				eh (this, e);
+				eh(this, e);
 		}
 
-		protected internal virtual void OnItemSelectionChanged (ListViewItemSelectionChangedEventArgs e)
+		protected internal virtual void OnItemSelectionChanged(ListViewItemSelectionChangedEventArgs e)
 		{
 			ListViewItemSelectionChangedEventHandler eh =
-				(ListViewItemSelectionChangedEventHandler) Events [ItemSelectionChangedEvent];
+				(ListViewItemSelectionChangedEventHandler)Events[ItemSelectionChangedEvent];
 
 			if (eh != null)
-				eh (this, e);
+				eh(this, e);
 		}
 
-		protected override void OnMouseHover (EventArgs e)
+		protected override void OnMouseHover(EventArgs e)
 		{
-			base.OnMouseHover (e);
+			base.OnMouseHover(e);
 		}
 
-		protected override void OnParentChanged (EventArgs e)
+		protected override void OnParentChanged(EventArgs e)
 		{
-			base.OnParentChanged (e);
+			base.OnParentChanged(e);
 		}
 
-		protected virtual void OnSelectedIndexChanged (EventArgs e)
+		protected virtual void OnSelectedIndexChanged(EventArgs e)
 		{
-			EventHandler eh = (EventHandler)(Events [SelectedIndexChangedEvent]);
+			EventHandler eh = (EventHandler)(Events[SelectedIndexChangedEvent]);
 
 			if (eh != null)
-				eh (this, e);
+				eh(this, e);
 		}
 
-		protected override void OnSystemColorsChanged (EventArgs e)
+		protected override void OnSystemColorsChanged(EventArgs e)
 		{
-			base.OnSystemColorsChanged (e);
+			base.OnSystemColorsChanged(e);
 		}
 
-		protected internal virtual void OnCacheVirtualItems (CacheVirtualItemsEventArgs e)
+		protected internal virtual void OnCacheVirtualItems(CacheVirtualItemsEventArgs e)
 		{
-			CacheVirtualItemsEventHandler eh = (CacheVirtualItemsEventHandler)Events [CacheVirtualItemsEvent];
+			CacheVirtualItemsEventHandler eh = (CacheVirtualItemsEventHandler)Events[CacheVirtualItemsEvent];
 
 			if (eh != null)
-				eh (this, e);
+				eh(this, e);
 		}
 
-		protected virtual void OnRetrieveVirtualItem (RetrieveVirtualItemEventArgs e)
+		protected virtual void OnRetrieveVirtualItem(RetrieveVirtualItemEventArgs e)
 		{
-			RetrieveVirtualItemEventHandler eh = (RetrieveVirtualItemEventHandler)Events [RetrieveVirtualItemEvent];
+			RetrieveVirtualItemEventHandler eh = (RetrieveVirtualItemEventHandler)Events[RetrieveVirtualItemEvent];
 
 			if (eh != null)
-				eh (this, e);
+				eh(this, e);
 		}
 
-		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		protected virtual void OnRightToLeftLayoutChanged (EventArgs e)
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		protected virtual void OnRightToLeftLayoutChanged(EventArgs e)
 		{
 			EventHandler eh = (EventHandler)Events[RightToLeftLayoutChangedEvent];
 
 			if (eh != null)
-				eh (this, e);
+				eh(this, e);
 		}
 
-		protected virtual void OnSearchForVirtualItem (SearchForVirtualItemEventArgs e)
+		protected virtual void OnSearchForVirtualItem(SearchForVirtualItemEventArgs e)
 		{
-			SearchForVirtualItemEventHandler eh = (SearchForVirtualItemEventHandler) Events [SearchForVirtualItemEvent];
+			SearchForVirtualItemEventHandler eh = (SearchForVirtualItemEventHandler)Events[SearchForVirtualItemEvent];
 
 			if (eh != null)
-				eh (this, e);
+				eh(this, e);
 		}
 
-		protected virtual void OnVirtualItemsSelectionRangeChanged (ListViewVirtualItemsSelectionRangeChangedEventArgs e)
+		protected virtual void OnVirtualItemsSelectionRangeChanged(ListViewVirtualItemsSelectionRangeChangedEventArgs e)
 		{
 			ListViewVirtualItemsSelectionRangeChangedEventHandler eh =
-				(ListViewVirtualItemsSelectionRangeChangedEventHandler) Events [VirtualItemsSelectionRangeChangedEvent];
+				(ListViewVirtualItemsSelectionRangeChangedEventHandler)Events[VirtualItemsSelectionRangeChangedEvent];
 
 			if (eh != null)
-				eh (this, e);
+				eh(this, e);
 		}
 
-		protected void RealizeProperties ()
+		protected void RealizeProperties()
 		{
 			// FIXME: TODO
 		}
 
-		protected void UpdateExtendedStyles ()
+		protected void UpdateExtendedStyles()
 		{
 			// FIXME: TODO
 		}
 
 		bool refocusing = false;
 
-		protected override void WndProc (ref Message m)
+		protected override void WndProc(ref Message m)
 		{
 			switch ((Msg)m.Msg)
 			{
 				case Msg.WM_KILLFOCUS:
-					Control receiver = Control.FromHandle (m.WParam);
+					Control receiver = Control.FromHandle(m.WParam);
 
 					if (receiver == item_control)
 					{
@@ -4108,69 +4114,69 @@ namespace System.Windows.Forms
 					break;
 			}
 
-			base.WndProc (ref m);
+			base.WndProc(ref m);
 		}
 		#endregion // Protected Methods
 
 		#region Public Instance Methods
-		public void ArrangeIcons ()
+		public void ArrangeIcons()
 		{
-			ArrangeIcons (this.alignment);
+			ArrangeIcons(this.alignment);
 		}
 
-		public void ArrangeIcons (ListViewAlignment value)
+		public void ArrangeIcons(ListViewAlignment value)
 		{
 			// Icons are arranged only if view is set to LargeIcon or SmallIcon
 			if (view == View.LargeIcon || view == View.SmallIcon)
-				Redraw (true);
+				Redraw(true);
 		}
 
-		public void AutoResizeColumn (int columnIndex, ColumnHeaderAutoResizeStyle headerAutoResize)
+		public void AutoResizeColumn(int columnIndex, ColumnHeaderAutoResizeStyle headerAutoResize)
 		{
 			if (columnIndex < 0 || columnIndex >= columns.Count)
-				throw new ArgumentOutOfRangeException ("columnIndex");
+				throw new ArgumentOutOfRangeException("columnIndex");
 
-			columns [columnIndex].AutoResize (headerAutoResize);
+			columns[columnIndex].AutoResize(headerAutoResize);
 		}
 
-		public void AutoResizeColumns (ColumnHeaderAutoResizeStyle headerAutoResize)
+		public void AutoResizeColumns(ColumnHeaderAutoResizeStyle headerAutoResize)
 		{
-			BeginUpdate ();
+			BeginUpdate();
 
 			foreach (ColumnHeader col in columns)
-				col.AutoResize (headerAutoResize);
+				col.AutoResize(headerAutoResize);
 
-			EndUpdate ();
+			EndUpdate();
 		}
 
-		public void BeginUpdate ()
+		public void BeginUpdate()
 		{
 			// flag to avoid painting
 			updating = true;
 		}
 
-		public void Clear ()
+		public void Clear()
 		{
-			columns.Clear ();
-			items.Clear (); // Redraw (true) called here
+			columns.Clear();
+			items.Clear(); // Redraw (true) called here
 		}
 
-		public void EndUpdate ()
+		public void EndUpdate()
 		{
 			// flag to avoid painting
 			updating = false;
 			// probably, now we need a redraw with recalculations
-			this.Redraw (true);
+			this.Redraw(true);
 		}
 
-		public void EnsureVisible (int index)
+		public void EnsureVisible(int index)
 		{
 			if (index < 0 || index >= items.Count || scrollable == false || updating)
 				return;
 
 			Rectangle view_rect = item_control.ClientRectangle;
 			// Avoid direct access to items in virtual mode, and use item bounds otherwise, since we could have reordered items
-			Rectangle bounds = virtual_mode ? new Rectangle (GetItemLocation (index), ItemSize) : items [index].Bounds;
+			Rectangle bounds = virtual_mode ? new Rectangle(GetItemLocation(index), ItemSize) : items[index].Bounds;
 
 			if (view == View.Details && header_style != ColumnHeaderStyle.None)
 			{
@@ -4178,7 +4184,7 @@ namespace System.Windows.Forms
 				view_rect.Height -= header_control.Height;
 			}
 
-			if (view_rect.Contains (bounds))
+			if (view_rect.Contains(bounds))
 				return;
 
 			if (View != View.Details)
@@ -4196,42 +4202,42 @@ namespace System.Windows.Forms
 				v_scroll.Value += (bounds.Bottom - view_rect.Bottom);
 		}
 
-		public ListViewItem FindItemWithText (string text)
+		public ListViewItem FindItemWithText(string text)
 		{
 			if (items.Count == 0)
 				return null;
 
-			return FindItemWithText (text, true, 0, true);
+			return FindItemWithText(text, true, 0, true);
 		}
 
-		public ListViewItem FindItemWithText (string text, bool includeSubItemsInSearch, int startIndex)
+		public ListViewItem FindItemWithText(string text, bool includeSubItemsInSearch, int startIndex)
 		{
-			return FindItemWithText (text, includeSubItemsInSearch, startIndex, true, false);
+			return FindItemWithText(text, includeSubItemsInSearch, startIndex, true, false);
 		}
 
-		public ListViewItem FindItemWithText (string text, bool includeSubItemsInSearch, int startIndex, bool isPrefixSearch)
+		public ListViewItem FindItemWithText(string text, bool includeSubItemsInSearch, int startIndex, bool isPrefixSearch)
 		{
-			return FindItemWithText (text, includeSubItemsInSearch, startIndex, isPrefixSearch, false);
+			return FindItemWithText(text, includeSubItemsInSearch, startIndex, isPrefixSearch, false);
 		}
 
-		internal ListViewItem FindItemWithText (string text, bool includeSubItemsInSearch, int startIndex, bool isPrefixSearch, bool roundtrip)
+		internal ListViewItem FindItemWithText(string text, bool includeSubItemsInSearch, int startIndex, bool isPrefixSearch, bool roundtrip)
 		{
 			if (startIndex < 0 || startIndex >= items.Count)
-				throw new ArgumentOutOfRangeException ("startIndex");
+				throw new ArgumentOutOfRangeException("startIndex");
 
 			if (text == null)
-				throw new ArgumentNullException ("text");
+				throw new ArgumentNullException("text");
 
 			if (virtual_mode)
 			{
-				SearchForVirtualItemEventArgs args = new SearchForVirtualItemEventArgs (true,
+				SearchForVirtualItemEventArgs args = new SearchForVirtualItemEventArgs(true,
 						isPrefixSearch, includeSubItemsInSearch, text, Point.Empty,
 						SearchDirectionHint.Down, startIndex);
-				OnSearchForVirtualItem (args);
+				OnSearchForVirtualItem(args);
 				int idx = args.Index;
 
 				if (idx >= 0 && idx < virtual_list_size)
-					return items [idx];
+					return items[idx];
 
 				return null;
 			}
@@ -4240,14 +4246,14 @@ namespace System.Windows.Forms
 
 			while (true)
 			{
-				ListViewItem lvi = items [i];
+				ListViewItem lvi = items[i];
 
 				if (isPrefixSearch)   // prefix search
 				{
-					if (CultureInfo.CurrentCulture.CompareInfo.IsPrefix (lvi.Text, text, CompareOptions.IgnoreCase))
+					if (CultureInfo.CurrentCulture.CompareInfo.IsPrefix(lvi.Text, text, CompareOptions.IgnoreCase))
 						return lvi;
 				}
-				else if (String.Compare (lvi.Text, text, true) == 0)   // match
+				else if (String.Compare(lvi.Text, text, true) == 0)   // match
 					return lvi;
 
 				if (i + 1 >= items.Count)
@@ -4270,16 +4276,16 @@ namespace System.Windows.Forms
 			{
 				for (i = startIndex; i < items.Count; i++)
 				{
-					ListViewItem lvi = items [i];
+					ListViewItem lvi = items[i];
 
 					foreach (ListViewItem.ListViewSubItem sub_item in lvi.SubItems)
 						if (isPrefixSearch)
 						{
-							if (CultureInfo.CurrentCulture.CompareInfo.IsPrefix (sub_item.Text,
+							if (CultureInfo.CurrentCulture.CompareInfo.IsPrefix(sub_item.Text,
 									text, CompareOptions.IgnoreCase))
 								return lvi;
 						}
-						else if (String.Compare (sub_item.Text, text, true) == 0)
+						else if (String.Compare(sub_item.Text, text, true) == 0)
 							return lvi;
 				}
 			}
@@ -4287,29 +4293,29 @@ namespace System.Windows.Forms
 			return null;
 		}
 
-		public ListViewItem FindNearestItem (SearchDirectionHint searchDirection, int x, int y)
+		public ListViewItem FindNearestItem(SearchDirectionHint searchDirection, int x, int y)
 		{
-			return FindNearestItem (searchDirection, new Point (x, y));
+			return FindNearestItem(searchDirection, new Point(x, y));
 		}
 
-		public ListViewItem FindNearestItem (SearchDirectionHint dir, Point point)
+		public ListViewItem FindNearestItem(SearchDirectionHint dir, Point point)
 		{
 			if (dir < SearchDirectionHint.Left || dir > SearchDirectionHint.Down)
-				throw new ArgumentOutOfRangeException ("searchDirection");
+				throw new ArgumentOutOfRangeException("searchDirection");
 
 			if (view != View.LargeIcon && view != View.SmallIcon)
-				throw new InvalidOperationException ();
+				throw new InvalidOperationException();
 
 			if (virtual_mode)
 			{
-				SearchForVirtualItemEventArgs args = new SearchForVirtualItemEventArgs (false,
+				SearchForVirtualItemEventArgs args = new SearchForVirtualItemEventArgs(false,
 						false, false, String.Empty, point,
 						dir, 0);
-				OnSearchForVirtualItem (args);
+				OnSearchForVirtualItem(args);
 				int idx = args.Index;
 
 				if (idx >= 0 && idx < virtual_list_size)
-					return items [idx];
+					return items[idx];
 
 				return null;
 			}
@@ -4341,7 +4347,7 @@ namespace System.Windows.Forms
 
 			for (int i = 0; i < items.Count; i++)
 			{
-				Point item_loc = GetItemLocation (i);
+				Point item_loc = GetItemLocation(i);
 
 				if (dir == SearchDirectionHint.Up)
 				{
@@ -4370,7 +4376,7 @@ namespace System.Windows.Forms
 
 				if (dist < min_dist)
 				{
-					item = items [i];
+					item = items[i];
 					min_dist = dist;
 				}
 			}
@@ -4378,7 +4384,7 @@ namespace System.Windows.Forms
 			return item;
 		}
 
-		public ListViewItem GetItemAt (int x, int y)
+		public ListViewItem GetItemAt(int x, int y)
 		{
 			Size item_size = ItemSize;
 
@@ -4386,94 +4392,94 @@ namespace System.Windows.Forms
 			{
 				Rectangle item_rect = new Rectangle(GetItemLocation(i), item_size);
 
-				if (item_rect.Contains (x, y))
-					return items [i];
+				if (item_rect.Contains(x, y))
+					return items[i];
 			}
 
 			return null;
 		}
 
-		public Rectangle GetItemRect (int index)
+		public Rectangle GetItemRect(int index)
 		{
-			return GetItemRect (index, ItemBoundsPortion.Entire);
+			return GetItemRect(index, ItemBoundsPortion.Entire);
 		}
 
-		public Rectangle GetItemRect (int index, ItemBoundsPortion portion)
+		public Rectangle GetItemRect(int index, ItemBoundsPortion portion)
 		{
 			if (index < 0 || index >= items.Count)
-				throw new IndexOutOfRangeException ("index");
+				throw new IndexOutOfRangeException("index");
 
-			return items [index].GetBounds (portion);
+			return items[index].GetBounds(portion);
 		}
 
-		public ListViewHitTestInfo HitTest (Point point)
+		public ListViewHitTestInfo HitTest(Point point)
 		{
-			return HitTest (point.X, point.Y);
+			return HitTest(point.X, point.Y);
 		}
 
-		public ListViewHitTestInfo HitTest (int x, int y)
+		public ListViewHitTestInfo HitTest(int x, int y)
 		{
 			if (x < 0)
-				throw new ArgumentOutOfRangeException ("x");
+				throw new ArgumentOutOfRangeException("x");
 
 			if (y < 0)
-				throw new ArgumentOutOfRangeException ("y");
+				throw new ArgumentOutOfRangeException("y");
 
-			ListViewItem item = GetItemAt (x, y);
+			ListViewItem item = GetItemAt(x, y);
 
 			if (item == null)
-				return new ListViewHitTestInfo (null, null, ListViewHitTestLocations.None);
+				return new ListViewHitTestInfo(null, null, ListViewHitTestLocations.None);
 
 			ListViewHitTestLocations locations = 0;
 
-			if (item.GetBounds (ItemBoundsPortion.Label).Contains (x, y))
+			if (item.GetBounds(ItemBoundsPortion.Label).Contains(x, y))
 				locations |= ListViewHitTestLocations.Label;
-			else if (item.GetBounds (ItemBoundsPortion.Icon).Contains (x, y))
+			else if (item.GetBounds(ItemBoundsPortion.Icon).Contains(x, y))
 				locations |= ListViewHitTestLocations.Image;
-			else if (item.CheckRectReal.Contains (x, y))
+			else if (item.CheckRectReal.Contains(x, y))
 				locations |= ListViewHitTestLocations.StateImage;
 
 			ListViewItem.ListViewSubItem subitem = null;
 
 			if (view == View.Details)
 				foreach (ListViewItem.ListViewSubItem si in item.SubItems)
-					if (si.Bounds.Contains (x, y))
+					if (si.Bounds.Contains(x, y))
 					{
 						subitem = si;
 						break;
 					}
 
-			return new ListViewHitTestInfo (item, subitem, locations);
+			return new ListViewHitTestInfo(item, subitem, locations);
 		}
 
-		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		public void RedrawItems (int startIndex, int endIndex, bool invalidateOnly)
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		public void RedrawItems(int startIndex, int endIndex, bool invalidateOnly)
 		{
 			if (startIndex < 0 || startIndex >= items.Count)
-				throw new ArgumentOutOfRangeException ("startIndex");
+				throw new ArgumentOutOfRangeException("startIndex");
 
 			if (endIndex < 0 || endIndex >= items.Count)
-				throw new ArgumentOutOfRangeException ("endIndex");
+				throw new ArgumentOutOfRangeException("endIndex");
 
 			if (startIndex > endIndex)
-				throw new ArgumentException ("startIndex");
+				throw new ArgumentException("startIndex");
 
 			if (updating)
 				return;
 
 			for (int i = startIndex; i <= endIndex; i++)
-				items [i].Invalidate ();
+				items[i].Invalidate();
 
 			if (!invalidateOnly)
-				Update ();
+				Update();
 		}
 
-		public void Sort ()
+		public void Sort()
 		{
 			if (virtual_mode)
-				throw new InvalidOperationException ();
+				throw new InvalidOperationException();
 
-			Sort (true);
+			Sort(true);
 		}
 
 		// we need this overload to reuse the logic for sorting, while allowing
@@ -4485,27 +4491,27 @@ namespace System.Windows.Forms
 		// (they even want to redraw the listview if no sort is performed, as
 		// an item was added), while ListView.Sort () only wants to redraw if
 		// sorting was actually performed
-		private void Sort (bool redraw)
+		private void Sort(bool redraw)
 		{
 			if (!IsHandleCreated || item_sorter == null)
 			{
 				return;
 			}
 
-			items.Sort (item_sorter);
+			items.Sort(item_sorter);
 
 			if (redraw)
-				this.Redraw (true);
+				this.Redraw(true);
 		}
 
-		public override string ToString ()
+		public override string ToString()
 		{
 			int count = this.Items.Count;
 
 			if (count == 0 || VirtualMode)
-				return string.Format ("System.Windows.Forms.ListView, Items.Count: {0}", count);
+				return string.Format("System.Windows.Forms.ListView, Items.Count: {0}", count);
 			else
-				return string.Format ("System.Windows.Forms.ListView, Items.Count: {0}, Items[0]: {1}", count, this.Items [0].ToString ());
+				return string.Format("System.Windows.Forms.ListView, Items.Count: {0}, Items[0]: {1}", count, this.Items[0].ToString());
 		}
 		#endregion  // Public Instance Methods
 
@@ -4524,14 +4530,14 @@ namespace System.Windows.Forms
 			int drag_to_index = -1;
 			ColumnHeader entered_column_header;
 
-			public HeaderControl (ListView owner)
+			public HeaderControl(ListView owner)
 			{
 				this.owner = owner;
-				this.SetStyle (ControlStyles.DoubleBuffer, true);
-				MouseDown += new MouseEventHandler (HeaderMouseDown);
-				MouseMove += new MouseEventHandler (HeaderMouseMove);
-				MouseUp += new MouseEventHandler (HeaderMouseUp);
-				MouseLeave += new EventHandler (OnMouseLeave);
+				this.SetStyle(ControlStyles.DoubleBuffer, true);
+				MouseDown += new MouseEventHandler(HeaderMouseDown);
+				MouseMove += new MouseEventHandler(HeaderMouseMove);
+				MouseUp += new MouseEventHandler(HeaderMouseUp);
+				MouseLeave += new EventHandler(OnMouseLeave);
 			}
 
 			internal ColumnHeader EnteredColumnHeader
@@ -4545,38 +4551,38 @@ namespace System.Windows.Forms
 
 					if (ThemeEngine.Current.ListViewHasHotHeaderStyle)
 					{
-						Region region_to_invalidate = new Region ();
-						region_to_invalidate.MakeEmpty ();
+						Region region_to_invalidate = new Region();
+						region_to_invalidate.MakeEmpty();
 
 						if (entered_column_header != null)
-							region_to_invalidate.Union (GetColumnHeaderInvalidateArea (entered_column_header));
+							region_to_invalidate.Union(GetColumnHeaderInvalidateArea(entered_column_header));
 
 						entered_column_header = value;
 
 						if (entered_column_header != null)
-							region_to_invalidate.Union (GetColumnHeaderInvalidateArea (entered_column_header));
+							region_to_invalidate.Union(GetColumnHeaderInvalidateArea(entered_column_header));
 
-						Invalidate (region_to_invalidate);
-						region_to_invalidate.Dispose ();
+						Invalidate(region_to_invalidate);
+						region_to_invalidate.Dispose();
 					}
 					else
 						entered_column_header = value;
 				}
 			}
 
-			void OnMouseLeave (object sender, EventArgs e)
+			void OnMouseLeave(object sender, EventArgs e)
 			{
 				EnteredColumnHeader = null;
 			}
 
-			private ColumnHeader ColumnAtX (int x)
+			private ColumnHeader ColumnAtX(int x)
 			{
-				Point pt = new Point (x, 0);
+				Point pt = new Point(x, 0);
 				ColumnHeader result = null;
 
 				foreach (ColumnHeader col in owner.Columns)
 				{
-					if (col.Rect.Contains (pt))
+					if (col.Rect.Contains(pt))
 					{
 						result = col;
 						break;
@@ -4586,19 +4592,19 @@ namespace System.Windows.Forms
 				return result;
 			}
 
-			private int GetReorderedIndex (ColumnHeader col)
+			private int GetReorderedIndex(ColumnHeader col)
 			{
 				if (owner.reordered_column_indices == null)
 					return col.Index;
 				else
 					for (int i = 0; i < owner.Columns.Count; i++)
-						if (owner.reordered_column_indices [i] == col.Index)
+						if (owner.reordered_column_indices[i] == col.Index)
 							return i;
 
-				throw new Exception ("Column index missing from reordered array");
+				throw new Exception("Column index missing from reordered array");
 			}
 
-			private void HeaderMouseDown (object sender, MouseEventArgs me)
+			private void HeaderMouseDown(object sender, MouseEventArgs me)
 			{
 				if (resize_column != null)
 				{
@@ -4607,7 +4613,7 @@ namespace System.Windows.Forms
 					return;
 				}
 
-				clicked_column = ColumnAtX (me.X + owner.h_marker);
+				clicked_column = ColumnAtX(me.X + owner.h_marker);
 
 				if (clicked_column != null)
 				{
@@ -4616,30 +4622,30 @@ namespace System.Windows.Forms
 					if (owner.AllowColumnReorder)
 					{
 						drag_x = me.X;
-						drag_column = (ColumnHeader) (clicked_column as ICloneable).Clone ();
+						drag_column = (ColumnHeader)(clicked_column as ICloneable).Clone();
 						drag_column.Rect = clicked_column.Rect;
-						drag_to_index = GetReorderedIndex (clicked_column);
+						drag_to_index = GetReorderedIndex(clicked_column);
 					}
 
 					clicked_column.Pressed = true;
-					Invalidate (clicked_column);
+					Invalidate(clicked_column);
 					return;
 				}
 			}
 
-			void Invalidate (ColumnHeader columnHeader)
+			void Invalidate(ColumnHeader columnHeader)
 			{
-				Invalidate (GetColumnHeaderInvalidateArea (columnHeader));
+				Invalidate(GetColumnHeaderInvalidateArea(columnHeader));
 			}
 
-			Rectangle GetColumnHeaderInvalidateArea (ColumnHeader columnHeader)
+			Rectangle GetColumnHeaderInvalidateArea(ColumnHeader columnHeader)
 			{
 				Rectangle bounds = columnHeader.Rect;
 				bounds.X -= owner.h_marker;
 				return bounds;
 			}
 
-			void StopResize ()
+			void StopResize()
 			{
 				column_resize_active = false;
 				resize_column = null;
@@ -4647,9 +4653,9 @@ namespace System.Windows.Forms
 				Cursor = Cursors.Default;
 			}
 
-			private void HeaderMouseMove (object sender, MouseEventArgs me)
+			private void HeaderMouseMove(object sender, MouseEventArgs me)
 			{
-				Point pt = new Point (me.X + owner.h_marker, me.Y);
+				Point pt = new Point(me.X + owner.h_marker, me.Y);
 
 				if (column_resize_active)
 				{
@@ -4658,9 +4664,9 @@ namespace System.Windows.Forms
 					if (width < 0)
 						width = 0;
 
-					if (!owner.CanProceedWithResize (resize_column, width))
+					if (!owner.CanProceedWithResize(resize_column, width))
 					{
-						StopResize ();
+						StopResize();
 						return;
 					}
 
@@ -4679,25 +4685,25 @@ namespace System.Windows.Forms
 						r.X = clicked_column.Rect.X + me.X - drag_x;
 						drag_column.Rect = r;
 						int x = me.X + owner.h_marker;
-						ColumnHeader over = ColumnAtX (x);
+						ColumnHeader over = ColumnAtX(x);
 
 						if (over == null)
 							drag_to_index = owner.Columns.Count;
 						else if (x < over.X + over.Width / 2)
-							drag_to_index = GetReorderedIndex (over);
+							drag_to_index = GetReorderedIndex(over);
 						else
-							drag_to_index = GetReorderedIndex (over) + 1;
+							drag_to_index = GetReorderedIndex(over) + 1;
 
-						Invalidate ();
+						Invalidate();
 					}
 					else
 					{
-						ColumnHeader over = ColumnAtX (me.X + owner.h_marker);
+						ColumnHeader over = ColumnAtX(me.X + owner.h_marker);
 						bool pressed = clicked_column.Pressed;
 						clicked_column.Pressed = over == clicked_column;
 
 						if (clicked_column.Pressed ^ pressed)
-							Invalidate (clicked_column);
+							Invalidate(clicked_column);
 					}
 
 					return;
@@ -4705,20 +4711,20 @@ namespace System.Windows.Forms
 
 				for (int i = 0; i < owner.Columns.Count; i++)
 				{
-					Rectangle zone = owner.Columns [i].Rect;
+					Rectangle zone = owner.Columns[i].Rect;
 
-					if (zone.Contains (pt))
-						EnteredColumnHeader = owner.Columns [i];
+					if (zone.Contains(pt))
+						EnteredColumnHeader = owner.Columns[i];
 
 					zone.X = zone.Right - 5;
 					zone.Width = 10;
 
-					if (zone.Contains (pt))
+					if (zone.Contains(pt))
 					{
-						if (i < owner.Columns.Count - 1 && owner.Columns [i + 1].Width == 0)
+						if (i < owner.Columns.Count - 1 && owner.Columns[i + 1].Width == 0)
 							i++;
 
-						resize_column = owner.Columns [i];
+						resize_column = owner.Columns[i];
 						break;
 					}
 				}
@@ -4729,49 +4735,49 @@ namespace System.Windows.Forms
 					Cursor = Cursors.VSplit;
 			}
 
-			void HeaderMouseUp (object sender, MouseEventArgs me)
+			void HeaderMouseUp(object sender, MouseEventArgs me)
 			{
 				Capture = false;
 
 				if (column_resize_active)
 				{
 					int column_idx = resize_column.Index;
-					StopResize ();
-					owner.RaiseColumnWidthChanged (column_idx);
+					StopResize();
+					owner.RaiseColumnWidthChanged(column_idx);
 					return;
 				}
 
 				if (clicked_column != null && clicked_column.Pressed)
 				{
 					clicked_column.Pressed = false;
-					Invalidate (clicked_column);
-					owner.OnColumnClick (new ColumnClickEventArgs (clicked_column.Index));
+					Invalidate(clicked_column);
+					owner.OnColumnClick(new ColumnClickEventArgs(clicked_column.Index));
 				}
 
 				if (drag_column != null && owner.AllowColumnReorder)
 				{
 					drag_column = null;
 
-					if (drag_to_index > GetReorderedIndex (clicked_column))
+					if (drag_to_index > GetReorderedIndex(clicked_column))
 						drag_to_index--;
 
-					if (owner.GetReorderedColumn (drag_to_index) != clicked_column)
-						owner.ReorderColumn (clicked_column, drag_to_index, true);
+					if (owner.GetReorderedColumn(drag_to_index) != clicked_column)
+						owner.ReorderColumn(clicked_column, drag_to_index, true);
 
 					drag_to_index = -1;
-					Invalidate ();
+					Invalidate();
 				}
 
 				clicked_column = null;
 			}
 
-			internal override void OnPaintInternal (PaintEventArgs pe)
+			internal override void OnPaintInternal(PaintEventArgs pe)
 			{
 				if (owner.updating)
 					return;
 
 				Theme theme = ThemeEngine.Current;
-				theme.DrawListViewHeader (pe.Graphics, pe.ClipRectangle, this.owner);
+				theme.DrawListViewHeader(pe.Graphics, pe.ClipRectangle, this.owner);
 
 				if (drag_column == null)
 					return;
@@ -4779,23 +4785,23 @@ namespace System.Windows.Forms
 				int target_x;
 
 				if (drag_to_index == owner.Columns.Count)
-					target_x = owner.GetReorderedColumn (drag_to_index - 1).Rect.Right - owner.h_marker;
+					target_x = owner.GetReorderedColumn(drag_to_index - 1).Rect.Right - owner.h_marker;
 				else
-					target_x = owner.GetReorderedColumn (drag_to_index).Rect.X - owner.h_marker;
+					target_x = owner.GetReorderedColumn(drag_to_index).Rect.X - owner.h_marker;
 
-				theme.DrawListViewHeaderDragDetails (pe.Graphics, owner, drag_column, target_x);
+				theme.DrawListViewHeaderDragDetails(pe.Graphics, owner, drag_column, target_x);
 			}
 
-			protected override void WndProc (ref Message m)
+			protected override void WndProc(ref Message m)
 			{
 				switch ((Msg)m.Msg)
 				{
 					case Msg.WM_SETFOCUS:
-						owner.Focus ();
+						owner.Focus();
 						break;
 
 					default:
-						base.WndProc (ref m);
+						base.WndProc(ref m);
 						break;
 				}
 			}
@@ -4805,37 +4811,37 @@ namespace System.Windows.Forms
 		{
 			readonly SortOrder sort_order;
 
-			public ItemComparer (SortOrder sortOrder)
+			public ItemComparer(SortOrder sortOrder)
 			{
 				sort_order = sortOrder;
 			}
 
-			public int Compare (object x, object y)
+			public int Compare(object x, object y)
 			{
 				ListViewItem item_x = x as ListViewItem;
 				ListViewItem item_y = y as ListViewItem;
 
 				if (sort_order == SortOrder.Ascending)
-					return String.Compare (item_x.Text, item_y.Text);
+					return String.Compare(item_x.Text, item_y.Text);
 				else
-					return String.Compare (item_y.Text, item_x.Text);
+					return String.Compare(item_y.Text, item_x.Text);
 			}
 		}
 
-		[ListBindable (false)]
+		[ListBindable(false)]
 		public class CheckedIndexCollection : IList, ICollection, IEnumerable
 		{
 			private readonly ListView owner;
 
 			#region Public Constructor
-			public CheckedIndexCollection (ListView owner)
+			public CheckedIndexCollection(ListView owner)
 			{
 				this.owner = owner;
 			}
 			#endregion  // Public Constructor
 
 			#region Public Properties
-			[Browsable (false)]
+			[Browsable(false)]
 			public int Count
 			{
 				get { return owner.CheckedItems.Count; }
@@ -4846,16 +4852,16 @@ namespace System.Windows.Forms
 				get { return true; }
 			}
 
-			public int this [int index]
+			public int this[int index]
 			{
 				get
 				{
-					int [] indices = GetIndices ();
+					int[] indices = GetIndices();
 
 					if (index < 0 || index >= indices.Length)
-						throw new ArgumentOutOfRangeException ("index");
+						throw new ArgumentOutOfRangeException("index");
 
-					return indices [index];
+					return indices[index];
 				}
 			}
 
@@ -4874,87 +4880,87 @@ namespace System.Windows.Forms
 				get { return true; }
 			}
 
-			object IList.this [int index]
+			object IList.this[int index]
 			{
-				get { return this [index]; }
-				set { throw new NotSupportedException ("SetItem operation is not supported."); }
+				get { return this[index]; }
+				set { throw new NotSupportedException("SetItem operation is not supported."); }
 			}
 			#endregion  // Public Properties
 
 			#region Public Methods
-			public bool Contains (int checkedIndex)
+			public bool Contains(int checkedIndex)
 			{
-				int [] indices = GetIndices ();
+				int[] indices = GetIndices();
 
 				for (int i = 0; i < indices.Length; i++)
 				{
-					if (indices [i] == checkedIndex)
+					if (indices[i] == checkedIndex)
 						return true;
 				}
 
 				return false;
 			}
 
-			public IEnumerator GetEnumerator ()
+			public IEnumerator GetEnumerator()
 			{
-				int [] indices = GetIndices ();
-				return indices.GetEnumerator ();
+				int[] indices = GetIndices();
+				return indices.GetEnumerator();
 			}
 
-			void ICollection.CopyTo (Array dest, int index)
+			void ICollection.CopyTo(Array dest, int index)
 			{
-				int [] indices = GetIndices ();
-				Array.Copy (indices, 0, dest, index, indices.Length);
+				int[] indices = GetIndices();
+				Array.Copy(indices, 0, dest, index, indices.Length);
 			}
 
-			int IList.Add (object value)
+			int IList.Add(object value)
 			{
-				throw new NotSupportedException ("Add operation is not supported.");
+				throw new NotSupportedException("Add operation is not supported.");
 			}
 
-			void IList.Clear ()
+			void IList.Clear()
 			{
-				throw new NotSupportedException ("Clear operation is not supported.");
+				throw new NotSupportedException("Clear operation is not supported.");
 			}
 
-			bool IList.Contains (object checkedIndex)
+			bool IList.Contains(object checkedIndex)
 			{
 				if (!(checkedIndex is int))
 					return false;
 
-				return Contains ((int) checkedIndex);
+				return Contains((int)checkedIndex);
 			}
 
-			int IList.IndexOf (object checkedIndex)
+			int IList.IndexOf(object checkedIndex)
 			{
 				if (!(checkedIndex is int))
 					return -1;
 
-				return IndexOf ((int) checkedIndex);
+				return IndexOf((int)checkedIndex);
 			}
 
-			void IList.Insert (int index, object value)
+			void IList.Insert(int index, object value)
 			{
-				throw new NotSupportedException ("Insert operation is not supported.");
+				throw new NotSupportedException("Insert operation is not supported.");
 			}
 
-			void IList.Remove (object value)
+			void IList.Remove(object value)
 			{
-				throw new NotSupportedException ("Remove operation is not supported.");
+				throw new NotSupportedException("Remove operation is not supported.");
 			}
 
-			void IList.RemoveAt (int index)
+			void IList.RemoveAt(int index)
 			{
-				throw new NotSupportedException ("RemoveAt operation is not supported.");
+				throw new NotSupportedException("RemoveAt operation is not supported.");
 			}
 
-			public int IndexOf (int checkedIndex)
+			public int IndexOf(int checkedIndex)
 			{
-				int [] indices = GetIndices ();
+				int[] indices = GetIndices();
 
 				for (int i = 0; i < indices.Length; i++)
 				{
-					if (indices [i] == checkedIndex)
+					if (indices[i] == checkedIndex)
 						return i;
 				}
 
@@ -4962,38 +4968,38 @@ namespace System.Windows.Forms
 			}
 			#endregion  // Public Methods
 
-			private int [] GetIndices ()
+			private int[] GetIndices()
 			{
 				ArrayList checked_items = owner.CheckedItems.List;
-				int [] indices = new int [checked_items.Count];
+				int[] indices = new int[checked_items.Count];
 
 				for (int i = 0; i < checked_items.Count; i++)
 				{
-					ListViewItem item = (ListViewItem) checked_items [i];
-					indices [i] = item.Index;
+					ListViewItem item = (ListViewItem)checked_items[i];
+					indices[i] = item.Index;
 				}
 
 				return indices;
 			}
 		}   // CheckedIndexCollection
 
-		[ListBindable (false)]
+		[ListBindable(false)]
 		public class CheckedListViewItemCollection : IList, ICollection, IEnumerable
 		{
 			private readonly ListView owner;
 			private ArrayList list;
 
 			#region Public Constructor
-			public CheckedListViewItemCollection (ListView owner)
+			public CheckedListViewItemCollection(ListView owner)
 			{
 				this.owner = owner;
-				this.owner.Items.Changed += new CollectionChangedHandler (
+				this.owner.Items.Changed += new CollectionChangedHandler(
 												ItemsCollection_Changed);
 			}
 			#endregion  // Public Constructor
 
 			#region Public Properties
-			[Browsable (false)]
+			[Browsable(false)]
 			public int Count
 			{
 				get
@@ -5010,28 +5016,28 @@ namespace System.Windows.Forms
 				get { return true; }
 			}
 
-			public ListViewItem this [int index]
+			public ListViewItem this[int index]
 			{
 				get
 				{
 					if (owner.VirtualMode)
-						throw new InvalidOperationException ();
+						throw new InvalidOperationException();
 
 					ArrayList checked_items = List;
 
 					if (index < 0 || index >= checked_items.Count)
-						throw new ArgumentOutOfRangeException ("index");
+						throw new ArgumentOutOfRangeException("index");
 
-					return (ListViewItem) checked_items [index];
+					return (ListViewItem)checked_items[index];
 				}
 			}
 
-			public virtual ListViewItem this [string key]
+			public virtual ListViewItem this[string key]
 			{
 				get
 				{
-					int idx = IndexOfKey (key);
-					return idx == -1 ? null : (ListViewItem) List [idx];
+					int idx = IndexOfKey(key);
+					return idx == -1 ? null : (ListViewItem)List[idx];
 				}
 			}
 
@@ -5050,105 +5056,105 @@ namespace System.Windows.Forms
 				get { return true; }
 			}
 
-			object IList.this [int index]
+			object IList.this[int index]
 			{
-				get { return this [index]; }
-				set { throw new NotSupportedException ("SetItem operation is not supported."); }
+				get { return this[index]; }
+				set { throw new NotSupportedException("SetItem operation is not supported."); }
 			}
 			#endregion  // Public Properties
 
 			#region Public Methods
-			public bool Contains (ListViewItem item)
+			public bool Contains(ListViewItem item)
 			{
 				if (!owner.CheckBoxes)
 					return false;
 
-				return List.Contains (item);
+				return List.Contains(item);
 			}
 
-			public virtual bool ContainsKey (string key)
+			public virtual bool ContainsKey(string key)
 			{
-				return IndexOfKey (key) != -1;
+				return IndexOfKey(key) != -1;
 			}
 
-			public void CopyTo (Array dest, int index)
+			public void CopyTo(Array dest, int index)
 			{
 				if (owner.VirtualMode)
-					throw new InvalidOperationException ();
+					throw new InvalidOperationException();
 
 				if (!owner.CheckBoxes)
 					return;
 
-				List.CopyTo (dest, index);
+				List.CopyTo(dest, index);
 			}
 
-			public IEnumerator GetEnumerator ()
+			public IEnumerator GetEnumerator()
 			{
 				if (owner.VirtualMode)
-					throw new InvalidOperationException ();
+					throw new InvalidOperationException();
 
 				if (!owner.CheckBoxes)
-					return (new ListViewItem [0]).GetEnumerator ();
+					return (new ListViewItem[0]).GetEnumerator();
 
-				return List.GetEnumerator ();
+				return List.GetEnumerator();
 			}
 
-			int IList.Add (object value)
+			int IList.Add(object value)
 			{
-				throw new NotSupportedException ("Add operation is not supported.");
+				throw new NotSupportedException("Add operation is not supported.");
 			}
 
-			void IList.Clear ()
+			void IList.Clear()
 			{
-				throw new NotSupportedException ("Clear operation is not supported.");
+				throw new NotSupportedException("Clear operation is not supported.");
 			}
 
-			bool IList.Contains (object item)
+			bool IList.Contains(object item)
 			{
 				if (!(item is ListViewItem))
 					return false;
 
-				return Contains ((ListViewItem) item);
+				return Contains((ListViewItem)item);
 			}
 
-			int IList.IndexOf (object item)
+			int IList.IndexOf(object item)
 			{
 				if (!(item is ListViewItem))
 					return -1;
 
-				return IndexOf ((ListViewItem) item);
+				return IndexOf((ListViewItem)item);
 			}
 
-			void IList.Insert (int index, object value)
+			void IList.Insert(int index, object value)
 			{
-				throw new NotSupportedException ("Insert operation is not supported.");
+				throw new NotSupportedException("Insert operation is not supported.");
 			}
 
-			void IList.Remove (object value)
+			void IList.Remove(object value)
 			{
-				throw new NotSupportedException ("Remove operation is not supported.");
+				throw new NotSupportedException("Remove operation is not supported.");
 			}
 
-			void IList.RemoveAt (int index)
+			void IList.RemoveAt(int index)
 			{
-				throw new NotSupportedException ("RemoveAt operation is not supported.");
+				throw new NotSupportedException("RemoveAt operation is not supported.");
 			}
 
-			public int IndexOf (ListViewItem item)
+			public int IndexOf(ListViewItem item)
 			{
 				if (owner.VirtualMode)
-					throw new InvalidOperationException ();
+					throw new InvalidOperationException();
 
 				if (!owner.CheckBoxes)
 					return -1;
 
-				return List.IndexOf (item);
+				return List.IndexOf(item);
 			}
 
-			public virtual int IndexOfKey (string key)
+			public virtual int IndexOfKey(string key)
 			{
 				if (owner.VirtualMode)
-					throw new InvalidOperationException ();
+					throw new InvalidOperationException();
 
 				if (key == null || key.Length == 0)
 					return -1;
@@ -5157,9 +5163,9 @@ namespace System.Windows.Forms
 
 				for (int i = 0; i < checked_items.Count; i++)
 				{
-					ListViewItem item = (ListViewItem) checked_items [i];
+					ListViewItem item = (ListViewItem)checked_items[i];
 
-					if (String.Compare (key, item.Name, true) == 0)
+					if (String.Compare(key, item.Name, true) == 0)
 						return i;
 				}
 
@@ -5173,12 +5179,12 @@ namespace System.Windows.Forms
 				{
 					if (list == null)
 					{
-						list = new ArrayList ();
+						list = new ArrayList();
 
 						foreach (ListViewItem item in owner.Items)
 						{
 							if (item.Checked)
-								list.Add (item);
+								list.Add(item);
 						}
 					}
 
@@ -5186,19 +5192,19 @@ namespace System.Windows.Forms
 				}
 			}
 
-			internal void Reset ()
+			internal void Reset()
 			{
 				// force re-population of list
 				list = null;
 			}
 
-			private void ItemsCollection_Changed ()
+			private void ItemsCollection_Changed()
 			{
-				Reset ();
+				Reset();
 			}
 		}   // CheckedListViewItemCollection
 
-		[ListBindable (false)]
+		[ListBindable(false)]
 		public class ColumnHeaderCollection : IList, ICollection, IEnumerable
 		{
 			internal ArrayList list;
@@ -5210,46 +5216,46 @@ namespace System.Windows.Forms
 			//  Class ListViewProvider uses the events when View is Details.
 			//
 			//Event used to generate UIA StructureChangedEvent
-			static object UIACollectionChangedEvent = new object ();
+			static object UIACollectionChangedEvent = new object();
 
 			internal event CollectionChangeEventHandler UIACollectionChanged
 			{
 				add
 				{
 					if (owner != null)
-						owner.Events.AddHandler (UIACollectionChangedEvent, value);
+						owner.Events.AddHandler(UIACollectionChangedEvent, value);
 				}
 				remove
 				{
 					if (owner != null)
-						owner.Events.RemoveHandler (UIACollectionChangedEvent, value);
+						owner.Events.RemoveHandler(UIACollectionChangedEvent, value);
 				}
 			}
 
-			internal void OnUIACollectionChangedEvent (CollectionChangeEventArgs args)
+			internal void OnUIACollectionChangedEvent(CollectionChangeEventArgs args)
 			{
 				if (owner == null)
 					return;
 
 				CollectionChangeEventHandler eh
-					= (CollectionChangeEventHandler) owner.Events [UIACollectionChangedEvent];
+					= (CollectionChangeEventHandler)owner.Events[UIACollectionChangedEvent];
 
 				if (eh != null)
-					eh (owner, args);
+					eh(owner, args);
 			}
 
 			#endregion UIA Framework Events
 
 			#region Public Constructor
-			public ColumnHeaderCollection (ListView owner)
+			public ColumnHeaderCollection(ListView owner)
 			{
-				list = new ArrayList ();
+				list = new ArrayList();
 				this.owner = owner;
 			}
 			#endregion  // Public Constructor
 
 			#region Public Properties
-			[Browsable (false)]
+			[Browsable(false)]
 			public int Count
 			{
 				get { return list.Count; }
@@ -5260,27 +5266,27 @@ namespace System.Windows.Forms
 				get { return false; }
 			}
 
-			public virtual ColumnHeader this [int index]
+			public virtual ColumnHeader this[int index]
 			{
 				get
 				{
 					if (index < 0 || index >= list.Count)
-						throw new ArgumentOutOfRangeException ("index");
+						throw new ArgumentOutOfRangeException("index");
 
-					return (ColumnHeader) list [index];
+					return (ColumnHeader)list[index];
 				}
 			}
 
-			public virtual ColumnHeader this [string key]
+			public virtual ColumnHeader this[string key]
 			{
 				get
 				{
-					int idx = IndexOfKey (key);
+					int idx = IndexOfKey(key);
 
 					if (idx == -1)
 						return null;
 
-					return (ColumnHeader) list [idx];
+					return (ColumnHeader)list[idx];
 				}
 			}
 
@@ -5299,295 +5305,295 @@ namespace System.Windows.Forms
 				get { return list.IsFixedSize; }
 			}
 
-			object IList.this [int index]
+			object IList.this[int index]
 			{
-				get { return this [index]; }
-				set { throw new NotSupportedException ("SetItem operation is not supported."); }
+				get { return this[index]; }
+				set { throw new NotSupportedException("SetItem operation is not supported."); }
 			}
 			#endregion  // Public Properties
 
 			#region Public Methods
-			public virtual int Add (ColumnHeader value)
+			public virtual int Add(ColumnHeader value)
 			{
-				int idx = list.Add (value);
-				owner.AddColumn (value, idx, true);
+				int idx = list.Add(value);
+				owner.AddColumn(value, idx, true);
 				//UIA Framework event: Item Added
-				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, value));
+				OnUIACollectionChangedEvent(new CollectionChangeEventArgs(CollectionChangeAction.Add, value));
 				return idx;
 			}
 
-			public virtual ColumnHeader Add (string text, int width, HorizontalAlignment textAlign)
+			public virtual ColumnHeader Add(string text, int width, HorizontalAlignment textAlign)
 			{
 				string str = text;
-				ColumnHeader colHeader = new ColumnHeader (this.owner, str, textAlign, width);
-				this.Add (colHeader);
+				ColumnHeader colHeader = new ColumnHeader(this.owner, str, textAlign, width);
+				this.Add(colHeader);
 				return colHeader;
 			}
 
-			public virtual ColumnHeader Add (string text)
+			public virtual ColumnHeader Add(string text)
 			{
-				return Add (String.Empty, text);
+				return Add(String.Empty, text);
 			}
 
-			public virtual ColumnHeader Add (string text, int width)
+			public virtual ColumnHeader Add(string text, int width)
 			{
-				return Add (String.Empty, text, width);
+				return Add(String.Empty, text, width);
 			}
 
-			public virtual ColumnHeader Add (string key, string text)
+			public virtual ColumnHeader Add(string key, string text)
 			{
-				ColumnHeader colHeader = new ColumnHeader ();
+				ColumnHeader colHeader = new ColumnHeader();
 				colHeader.Name = key;
 				colHeader.Text = text;
-				Add (colHeader);
+				Add(colHeader);
 				return colHeader;
 			}
 
-			public virtual ColumnHeader Add (string key, string text, int width)
+			public virtual ColumnHeader Add(string key, string text, int width)
 			{
-				return Add (key, text, width, HorizontalAlignment.Left, -1);
+				return Add(key, text, width, HorizontalAlignment.Left, -1);
 			}
 
-			public virtual ColumnHeader Add (string key, string text, int width, HorizontalAlignment textAlign, int imageIndex)
+			public virtual ColumnHeader Add(string key, string text, int width, HorizontalAlignment textAlign, int imageIndex)
 			{
-				ColumnHeader colHeader = new ColumnHeader (key, text, width, textAlign);
+				ColumnHeader colHeader = new ColumnHeader(key, text, width, textAlign);
 				colHeader.ImageIndex = imageIndex;
-				Add (colHeader);
+				Add(colHeader);
 				return colHeader;
 			}
 
-			public virtual ColumnHeader Add (string key, string text, int width, HorizontalAlignment textAlign, string imageKey)
+			public virtual ColumnHeader Add(string key, string text, int width, HorizontalAlignment textAlign, string imageKey)
 			{
-				ColumnHeader colHeader = new ColumnHeader (key, text, width, textAlign);
+				ColumnHeader colHeader = new ColumnHeader(key, text, width, textAlign);
 				colHeader.ImageKey = imageKey;
-				Add (colHeader);
+				Add(colHeader);
 				return colHeader;
 			}
 
-			public virtual void AddRange (ColumnHeader [] values)
+			public virtual void AddRange(ColumnHeader[] values)
 			{
 				foreach (ColumnHeader colHeader in values)
 				{
-					int idx = list.Add (colHeader);
-					owner.AddColumn (colHeader, idx, false);
+					int idx = list.Add(colHeader);
+					owner.AddColumn(colHeader, idx, false);
 				}
 
-				owner.Redraw (true);
+				owner.Redraw(true);
 			}
 
-			public virtual void Clear ()
+			public virtual void Clear()
 			{
 				foreach (ColumnHeader col in list)
-					col.SetListView (null);
+					col.SetListView(null);
 
-				list.Clear ();
-				owner.ReorderColumns (new int [0], true);
+				list.Clear();
+				owner.ReorderColumns(new int[0], true);
 				//UIA Framework event: Items cleared
-				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, null));
+				OnUIACollectionChangedEvent(new CollectionChangeEventArgs(CollectionChangeAction.Refresh, null));
 			}
 
-			public bool Contains (ColumnHeader value)
+			public bool Contains(ColumnHeader value)
 			{
-				return list.Contains (value);
+				return list.Contains(value);
 			}
 
-			public virtual bool ContainsKey (string key)
+			public virtual bool ContainsKey(string key)
 			{
-				return IndexOfKey (key) != -1;
+				return IndexOfKey(key) != -1;
 			}
 
-			public IEnumerator GetEnumerator ()
+			public IEnumerator GetEnumerator()
 			{
-				return list.GetEnumerator ();
+				return list.GetEnumerator();
 			}
 
-			void ICollection.CopyTo (Array dest, int index)
+			void ICollection.CopyTo(Array dest, int index)
 			{
-				list.CopyTo (dest, index);
+				list.CopyTo(dest, index);
 			}
 
-			int IList.Add (object value)
+			int IList.Add(object value)
 			{
-				if (! (value is ColumnHeader))
+				if (!(value is ColumnHeader))
 				{
-					throw new ArgumentException ("Not of type ColumnHeader", "value");
+					throw new ArgumentException("Not of type ColumnHeader", "value");
 				}
 
-				return this.Add ((ColumnHeader) value);
+				return this.Add((ColumnHeader)value);
 			}
 
-			bool IList.Contains (object value)
+			bool IList.Contains(object value)
 			{
-				if (! (value is ColumnHeader))
+				if (!(value is ColumnHeader))
 				{
-					throw new ArgumentException ("Not of type ColumnHeader", "value");
+					throw new ArgumentException("Not of type ColumnHeader", "value");
 				}
 
-				return this.Contains ((ColumnHeader) value);
+				return this.Contains((ColumnHeader)value);
 			}
 
-			int IList.IndexOf (object value)
+			int IList.IndexOf(object value)
 			{
-				if (! (value is ColumnHeader))
+				if (!(value is ColumnHeader))
 				{
-					throw new ArgumentException ("Not of type ColumnHeader", "value");
+					throw new ArgumentException("Not of type ColumnHeader", "value");
 				}
 
-				return this.IndexOf ((ColumnHeader) value);
+				return this.IndexOf((ColumnHeader)value);
 			}
 
-			void IList.Insert (int index, object value)
+			void IList.Insert(int index, object value)
 			{
-				if (! (value is ColumnHeader))
+				if (!(value is ColumnHeader))
 				{
-					throw new ArgumentException ("Not of type ColumnHeader", "value");
+					throw new ArgumentException("Not of type ColumnHeader", "value");
 				}
 
-				this.Insert (index, (ColumnHeader) value);
+				this.Insert(index, (ColumnHeader)value);
 			}
 
-			void IList.Remove (object value)
+			void IList.Remove(object value)
 			{
-				if (! (value is ColumnHeader))
+				if (!(value is ColumnHeader))
 				{
-					throw new ArgumentException ("Not of type ColumnHeader", "value");
+					throw new ArgumentException("Not of type ColumnHeader", "value");
 				}
 
-				this.Remove ((ColumnHeader) value);
+				this.Remove((ColumnHeader)value);
 			}
 
-			public int IndexOf (ColumnHeader value)
+			public int IndexOf(ColumnHeader value)
 			{
-				return list.IndexOf (value);
+				return list.IndexOf(value);
 			}
 
-			public virtual int IndexOfKey (string key)
+			public virtual int IndexOfKey(string key)
 			{
 				if (key == null || key.Length == 0)
 					return -1;
 
 				for (int i = 0; i < list.Count; i++)
 				{
-					ColumnHeader col = (ColumnHeader) list [i];
+					ColumnHeader col = (ColumnHeader)list[i];
 
-					if (String.Compare (key, col.Name, true) == 0)
+					if (String.Compare(key, col.Name, true) == 0)
 						return i;
 				}
 
 				return -1;
 			}
 
-			public void Insert (int index, ColumnHeader value)
+			public void Insert(int index, ColumnHeader value)
 			{
 				// LAMESPEC: MSDOCS say greater than or equal to the value of the Count property
 				// but it's really only greater.
 				if (index < 0 || index > list.Count)
-					throw new ArgumentOutOfRangeException ("index");
+					throw new ArgumentOutOfRangeException("index");
 
-				list.Insert (index, value);
-				owner.AddColumn (value, index, true);
+				list.Insert(index, value);
+				owner.AddColumn(value, index, true);
 				//UIA Framework event: Item added
-				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, value));
+				OnUIACollectionChangedEvent(new CollectionChangeEventArgs(CollectionChangeAction.Add, value));
 			}
 
-			public void Insert (int index, string text)
+			public void Insert(int index, string text)
 			{
-				Insert (index, String.Empty, text);
+				Insert(index, String.Empty, text);
 			}
 
-			public void Insert (int index, string text, int width)
+			public void Insert(int index, string text, int width)
 			{
-				Insert (index, String.Empty, text, width);
+				Insert(index, String.Empty, text, width);
 			}
 
-			public void Insert (int index, string key, string text)
+			public void Insert(int index, string key, string text)
 			{
-				ColumnHeader colHeader = new ColumnHeader ();
+				ColumnHeader colHeader = new ColumnHeader();
 				colHeader.Name = key;
 				colHeader.Text = text;
-				Insert (index, colHeader);
+				Insert(index, colHeader);
 			}
 
-			public void Insert (int index, string key, string text, int width)
+			public void Insert(int index, string key, string text, int width)
 			{
-				ColumnHeader colHeader = new ColumnHeader (key, text, width, HorizontalAlignment.Left);
-				Insert (index, colHeader);
+				ColumnHeader colHeader = new ColumnHeader(key, text, width, HorizontalAlignment.Left);
+				Insert(index, colHeader);
 			}
 
-			public void Insert (int index, string key, string text, int width, HorizontalAlignment textAlign, int imageIndex)
+			public void Insert(int index, string key, string text, int width, HorizontalAlignment textAlign, int imageIndex)
 			{
-				ColumnHeader colHeader = new ColumnHeader (key, text, width, textAlign);
+				ColumnHeader colHeader = new ColumnHeader(key, text, width, textAlign);
 				colHeader.ImageIndex = imageIndex;
-				Insert (index, colHeader);
+				Insert(index, colHeader);
 			}
 
-			public void Insert (int index, string key, string text, int width, HorizontalAlignment textAlign, string imageKey)
+			public void Insert(int index, string key, string text, int width, HorizontalAlignment textAlign, string imageKey)
 			{
-				ColumnHeader colHeader = new ColumnHeader (key, text, width, textAlign);
+				ColumnHeader colHeader = new ColumnHeader(key, text, width, textAlign);
 				colHeader.ImageKey = imageKey;
-				Insert (index, colHeader);
+				Insert(index, colHeader);
 			}
 
-			public void Insert (int index, string text, int width, HorizontalAlignment textAlign)
+			public void Insert(int index, string text, int width, HorizontalAlignment textAlign)
 			{
 				string str = text;
-				ColumnHeader colHeader = new ColumnHeader (this.owner, str, textAlign, width);
-				this.Insert (index, colHeader);
+				ColumnHeader colHeader = new ColumnHeader(this.owner, str, textAlign, width);
+				this.Insert(index, colHeader);
 			}
 
-			public virtual void Remove (ColumnHeader column)
+			public virtual void Remove(ColumnHeader column)
 			{
-				if (!Contains (column))
+				if (!Contains(column))
 					return;
 
-				list.Remove (column);
-				column.SetListView (null);
+				list.Remove(column);
+				column.SetListView(null);
 				int rem_display_index = column.InternalDisplayIndex;
-				int [] display_indices = new int [list.Count];
+				int[] display_indices = new int[list.Count];
 
 				for (int i = 0; i < display_indices.Length; i++)
 				{
-					ColumnHeader col = (ColumnHeader) list [i];
+					ColumnHeader col = (ColumnHeader)list[i];
 					int display_index = col.InternalDisplayIndex;
 
 					if (display_index < rem_display_index)
 					{
-						display_indices [i] = display_index;
+						display_indices[i] = display_index;
 					}
 					else
 					{
-						display_indices [i] = (display_index - 1);
+						display_indices[i] = (display_index - 1);
 					}
 				}
 
 				column.InternalDisplayIndex = -1;
-				owner.ReorderColumns (display_indices, true);
+				owner.ReorderColumns(display_indices, true);
 				//UIA Framework event: Item Removed
-				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, column));
+				OnUIACollectionChangedEvent(new CollectionChangeEventArgs(CollectionChangeAction.Remove, column));
 			}
 
-			public virtual void RemoveByKey (string key)
+			public virtual void RemoveByKey(string key)
 			{
-				int idx = IndexOfKey (key);
+				int idx = IndexOfKey(key);
 
 				if (idx != -1)
-					RemoveAt (idx);
+					RemoveAt(idx);
 			}
 
-			public virtual void RemoveAt (int index)
+			public virtual void RemoveAt(int index)
 			{
 				if (index < 0 || index >= list.Count)
-					throw new ArgumentOutOfRangeException ("index");
+					throw new ArgumentOutOfRangeException("index");
 
-				ColumnHeader col = (ColumnHeader) list [index];
-				Remove (col);
+				ColumnHeader col = (ColumnHeader)list[index];
+				Remove(col);
 			}
 			#endregion  // Public Methods
 
 
 		}   // ColumnHeaderCollection
 
-		[ListBindable (false)]
+		[ListBindable(false)]
 		public class ListViewItemCollection : IList, ICollection, IEnumerable
 		{
 			private readonly ArrayList list;
@@ -5600,32 +5606,32 @@ namespace System.Windows.Forms
 			//  Class ListViewProvider uses the events.
 			//
 			//Event used to generate UIA StructureChangedEvent
-			static object UIACollectionChangedEvent = new object ();
+			static object UIACollectionChangedEvent = new object();
 
 			internal event CollectionChangeEventHandler UIACollectionChanged
 			{
 				add
 				{
 					if (owner != null)
-						owner.Events.AddHandler (UIACollectionChangedEvent, value);
+						owner.Events.AddHandler(UIACollectionChangedEvent, value);
 				}
 				remove
 				{
 					if (owner != null)
-						owner.Events.RemoveHandler (UIACollectionChangedEvent, value);
+						owner.Events.RemoveHandler(UIACollectionChangedEvent, value);
 				}
 			}
 
-			internal void OnUIACollectionChangedEvent (CollectionChangeEventArgs args)
+			internal void OnUIACollectionChangedEvent(CollectionChangeEventArgs args)
 			{
 				if (owner == null)
 					return;
 
 				CollectionChangeEventHandler eh
-					= (CollectionChangeEventHandler) owner.Events [UIACollectionChangedEvent];
+					= (CollectionChangeEventHandler)owner.Events[UIACollectionChangedEvent];
 
 				if (eh != null)
-					eh (owner, args);
+					eh(owner, args);
 			}
 
 			#endregion UIA Framework Events
@@ -5635,21 +5641,21 @@ namespace System.Windows.Forms
 			private bool is_main_collection = true;
 
 			#region Public Constructor
-			public ListViewItemCollection (ListView owner)
+			public ListViewItemCollection(ListView owner)
 			{
-				list = new ArrayList (0);
+				list = new ArrayList(0);
 				this.owner = owner;
 			}
 			#endregion  // Public Constructor
 
-			internal ListViewItemCollection (ListView owner, ListViewGroup group) : this (owner)
+			internal ListViewItemCollection(ListView owner, ListViewGroup group) : this(owner)
 			{
 				this.group = group;
 				is_main_collection = false;
 			}
 
 			#region Public Properties
-			[Browsable (false)]
+			[Browsable(false)]
 			public int Count
 			{
 				get
@@ -5666,61 +5672,61 @@ namespace System.Windows.Forms
 				get { return false; }
 			}
 
-			public virtual ListViewItem this [int index]
+			public virtual ListViewItem this[int index]
 			{
 				get
 				{
 					if (index < 0 || index >= Count)
-						throw new ArgumentOutOfRangeException ("index");
+						throw new ArgumentOutOfRangeException("index");
 
 					if (owner != null && owner.VirtualMode)
-						return RetrieveVirtualItemFromOwner (index);
+						return RetrieveVirtualItemFromOwner(index);
 
-					return (ListViewItem) list [index];
+					return (ListViewItem)list[index];
 				}
 				set
 				{
 					if (index < 0 || index >= Count)
-						throw new ArgumentOutOfRangeException ("index");
+						throw new ArgumentOutOfRangeException("index");
 
 					if (owner != null && owner.VirtualMode)
-						throw new InvalidOperationException ();
+						throw new InvalidOperationException();
 
-					if (list.Contains (value))
-						throw new ArgumentException ("An item cannot be added more than once. To add an item again, you need to clone it.", "value");
+					if (list.Contains(value))
+						throw new ArgumentException("An item cannot be added more than once. To add an item again, you need to clone it.", "value");
 
 					if (value.ListView != null && value.ListView != owner)
-						throw new ArgumentException ("Cannot add or insert the item '" + value.Text + "' in more than one place. You must first remove it from its current location or clone it.", "value");
+						throw new ArgumentException("Cannot add or insert the item '" + value.Text + "' in more than one place. You must first remove it from its current location or clone it.", "value");
 
 					if (is_main_collection)
 						value.Owner = owner;
 					else
 					{
 						if (value.Group != null)
-							value.Group.Items.Remove (value);
+							value.Group.Items.Remove(value);
 
-						value.SetGroup (group);
+						value.SetGroup(group);
 					}
 
 					//UIA Framework event: Item Replaced
-					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, list [index]));
-					list [index] = value;
-					CollectionChanged (true);
+					OnUIACollectionChangedEvent(new CollectionChangeEventArgs(CollectionChangeAction.Remove, list[index]));
+					list[index] = value;
+					CollectionChanged(true);
 					//UIA Framework event: Item Replaced
-					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, value));
+					OnUIACollectionChangedEvent(new CollectionChangeEventArgs(CollectionChangeAction.Add, value));
 				}
 			}
 
-			public virtual ListViewItem this [string key]
+			public virtual ListViewItem this[string key]
 			{
 				get
 				{
-					int idx = IndexOfKey (key);
+					int idx = IndexOfKey(key);
 
 					if (idx == -1)
 						return null;
 
-					return this [idx];
+					return this[idx];
 				}
 			}
 
@@ -5739,136 +5745,136 @@ namespace System.Windows.Forms
 				get { return list.IsFixedSize; }
 			}
 
-			object IList.this [int index]
+			object IList.this[int index]
 			{
-				get { return this [index]; }
+				get { return this[index]; }
 				set
 				{
 					//UIA Framework event: Item Replaced
-					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, this [index]));
+					OnUIACollectionChangedEvent(new CollectionChangeEventArgs(CollectionChangeAction.Remove, this[index]));
 
 					if (value is ListViewItem)
-						this [index] = (ListViewItem) value;
+						this[index] = (ListViewItem)value;
 					else
-						this [index] = new ListViewItem (value.ToString ());
+						this[index] = new ListViewItem(value.ToString());
 
-					OnChange ();
+					OnChange();
 					//UIA Framework event: Item Replaced
-					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, value));
+					OnUIACollectionChangedEvent(new CollectionChangeEventArgs(CollectionChangeAction.Add, value));
 				}
 			}
 			#endregion  // Public Properties
 
 			#region Public Methods
-			public virtual ListViewItem Add (ListViewItem value)
+			public virtual ListViewItem Add(ListViewItem value)
 			{
 				if (owner != null && owner.VirtualMode)
-					throw new InvalidOperationException ();
+					throw new InvalidOperationException();
 
-				AddItem (value);
+				AddItem(value);
 
 				// Item is ignored until it has been added to the ListView
 				if (is_main_collection || value.ListView != null)
-					CollectionChanged (true);
+					CollectionChanged(true);
 
 				//UIA Framework event: Item Added
-				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, value));
+				OnUIACollectionChangedEvent(new CollectionChangeEventArgs(CollectionChangeAction.Add, value));
 				return value;
 			}
 
-			public virtual ListViewItem Add (string text)
+			public virtual ListViewItem Add(string text)
 			{
-				ListViewItem item = new ListViewItem (text);
-				return this.Add (item);
+				ListViewItem item = new ListViewItem(text);
+				return this.Add(item);
 			}
 
-			public virtual ListViewItem Add (string text, int imageIndex)
+			public virtual ListViewItem Add(string text, int imageIndex)
 			{
-				ListViewItem item = new ListViewItem (text, imageIndex);
-				return this.Add (item);
+				ListViewItem item = new ListViewItem(text, imageIndex);
+				return this.Add(item);
 			}
 
-			public virtual ListViewItem Add (string text, string imageKey)
+			public virtual ListViewItem Add(string text, string imageKey)
 			{
-				ListViewItem item = new ListViewItem (text, imageKey);
-				return this.Add (item);
+				ListViewItem item = new ListViewItem(text, imageKey);
+				return this.Add(item);
 			}
 
-			public virtual ListViewItem Add (string key, string text, int imageIndex)
+			public virtual ListViewItem Add(string key, string text, int imageIndex)
 			{
-				ListViewItem item = new ListViewItem (text, imageIndex);
+				ListViewItem item = new ListViewItem(text, imageIndex);
 				item.Name = key;
-				return this.Add (item);
+				return this.Add(item);
 			}
 
-			public virtual ListViewItem Add (string key, string text, string imageKey)
+			public virtual ListViewItem Add(string key, string text, string imageKey)
 			{
-				ListViewItem item = new ListViewItem (text, imageKey);
+				ListViewItem item = new ListViewItem(text, imageKey);
 				item.Name = key;
-				return this.Add (item);
+				return this.Add(item);
 			}
 
-			public void AddRange (ListViewItem [] items)
+			public void AddRange(ListViewItem[] items)
 			{
 				if (items == null)
-					throw new ArgumentNullException ("Argument cannot be null!", "items");
+					throw new ArgumentNullException("Argument cannot be null!", "items");
 
 				if (owner != null && owner.VirtualMode)
-					throw new InvalidOperationException ();
+					throw new InvalidOperationException();
 
-				owner.BeginUpdate ();
+				owner.BeginUpdate();
 
 				foreach (ListViewItem item in items)
 				{
-					AddItem (item);
+					AddItem(item);
 					//UIA Framework event: Item Added
-					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, item));
+					OnUIACollectionChangedEvent(new CollectionChangeEventArgs(CollectionChangeAction.Add, item));
 				}
 
-				owner.EndUpdate ();
-				CollectionChanged (true);
+				owner.EndUpdate();
+				CollectionChanged(true);
 			}
 
-			public void AddRange (ListViewItemCollection items)
+			public void AddRange(ListViewItemCollection items)
 			{
 				if (items == null)
-					throw new ArgumentNullException ("Argument cannot be null!", "items");
+					throw new ArgumentNullException("Argument cannot be null!", "items");
 
 				ListViewItem[] itemArray = new ListViewItem[items.Count];
-				items.CopyTo (itemArray, 0);
-				this.AddRange (itemArray);
+				items.CopyTo(itemArray, 0);
+				this.AddRange(itemArray);
 			}
 
-			public virtual void Clear ()
+			public virtual void Clear()
 			{
 				if (is_main_collection && owner != null)
 				{
-					owner.SetFocusedItem (-1);
+					owner.SetFocusedItem(-1);
 					owner.h_scroll.Value = owner.v_scroll.Value = 0;
 
 					// first remove any item in the groups that *are* part of this LV too
 					foreach (ListViewGroup group in owner.groups)
-						group.Items.ClearItemsWithSameListView ();
+						group.Items.ClearItemsWithSameListView();
 
 					foreach (ListViewItem item in list)
 					{
-						owner.item_control.CancelEdit (item);
+						owner.item_control.CancelEdit(item);
 						item.Owner = null;
 					}
 				}
 				else
 					foreach (ListViewItem item in list)
-						item.SetGroup (null);
+						item.SetGroup(null);
 
-				list.Clear ();
-				CollectionChanged (false);
+				list.Clear();
+				CollectionChanged(false);
 				//UIA Framework event: Items Removed
-				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, null));
+				OnUIACollectionChangedEvent(new CollectionChangeEventArgs(CollectionChangeAction.Refresh, null));
 			}
 
 			// This method is intended to be used from ListViewGroup.Items, not from ListView.Items,
 			// added for performance reasons (avoid calling manually Remove for every item on ListViewGroup.Items)
-			void ClearItemsWithSameListView ()
+			void ClearItemsWithSameListView()
 			{
 				if (is_main_collection)
 					return;
@@ -5877,237 +5883,237 @@ namespace System.Windows.Forms
 
 				while (counter >= 0)
 				{
-					ListViewItem item = list [counter] as ListViewItem;
+					ListViewItem item = list[counter] as ListViewItem;
 
 					// remove only if the items in group have being added to the ListView too
 					if (item.ListView == group.ListView)
 					{
-						list.RemoveAt (counter);
-						item.SetGroup (null);
+						list.RemoveAt(counter);
+						item.SetGroup(null);
 					}
 
 					counter--;
 				}
 			}
 
-			public bool Contains (ListViewItem item)
+			public bool Contains(ListViewItem item)
 			{
-				return IndexOf (item) != -1;
+				return IndexOf(item) != -1;
 			}
 
-			public virtual bool ContainsKey (string key)
+			public virtual bool ContainsKey(string key)
 			{
-				return IndexOfKey (key) != -1;
+				return IndexOfKey(key) != -1;
 			}
 
-			public void CopyTo (Array dest, int index)
+			public void CopyTo(Array dest, int index)
 			{
-				list.CopyTo (dest, index);
+				list.CopyTo(dest, index);
 			}
 
-			public ListViewItem [] Find (string key, bool searchAllSubItems)
+			public ListViewItem[] Find(string key, bool searchAllSubItems)
 			{
 				if (key == null)
-					return new ListViewItem [0];
+					return new ListViewItem[0];
 
-				List<ListViewItem> temp_list = new List<ListViewItem> ();
+				List<ListViewItem> temp_list = new List<ListViewItem>();
 
 				for (int i = 0; i < list.Count; i++)
 				{
-					ListViewItem lvi = (ListViewItem) list [i];
+					ListViewItem lvi = (ListViewItem)list[i];
 
-					if (String.Compare (key, lvi.Name, true) == 0)
-						temp_list.Add (lvi);
+					if (String.Compare(key, lvi.Name, true) == 0)
+						temp_list.Add(lvi);
 				}
 
-				ListViewItem [] retval = new ListViewItem [temp_list.Count];
-				temp_list.CopyTo (retval);
+				ListViewItem[] retval = new ListViewItem[temp_list.Count];
+				temp_list.CopyTo(retval);
 				return retval;
 			}
 
-			public IEnumerator GetEnumerator ()
+			public IEnumerator GetEnumerator()
 			{
 				if (owner != null && owner.VirtualMode)
-					throw new InvalidOperationException ();
+					throw new InvalidOperationException();
 
 				// This enumerator makes a copy of the collection so
 				// it can be deleted from in a foreach
-				return new Control.ControlCollection.ControlCollectionEnumerator (list);
+				return new Control.ControlCollection.ControlCollectionEnumerator(list);
 			}
 
-			int IList.Add (object item)
+			int IList.Add(object item)
 			{
 				int result;
 				ListViewItem li;
 
 				if (owner != null && owner.VirtualMode)
-					throw new InvalidOperationException ();
+					throw new InvalidOperationException();
 
 				if (item is ListViewItem)
 				{
-					li = (ListViewItem) item;
+					li = (ListViewItem)item;
 
-					if (list.Contains (li))
-						throw new ArgumentException ("An item cannot be added more than once. To add an item again, you need to clone it.", "item");
+					if (list.Contains(li))
+						throw new ArgumentException("An item cannot be added more than once. To add an item again, you need to clone it.", "item");
 
 					if (li.ListView != null && li.ListView != owner)
-						throw new ArgumentException ("Cannot add or insert the item '" + li.Text + "' in more than one place. You must first remove it from its current location or clone it.", "item");
+						throw new ArgumentException("Cannot add or insert the item '" + li.Text + "' in more than one place. You must first remove it from its current location or clone it.", "item");
 				}
 				else
-					li = new ListViewItem (item.ToString ());
+					li = new ListViewItem(item.ToString());
 
 				li.Owner = owner;
-				result = list.Add (li);
-				CollectionChanged (true);
+				result = list.Add(li);
+				CollectionChanged(true);
 				//UIA Framework event: Item Added
-				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, li));
+				OnUIACollectionChangedEvent(new CollectionChangeEventArgs(CollectionChangeAction.Add, li));
 				return result;
 			}
 
-			bool IList.Contains (object item)
+			bool IList.Contains(object item)
 			{
-				return Contains ((ListViewItem) item);
+				return Contains((ListViewItem)item);
 			}
 
-			int IList.IndexOf (object item)
+			int IList.IndexOf(object item)
 			{
-				return IndexOf ((ListViewItem) item);
+				return IndexOf((ListViewItem)item);
 			}
 
-			void IList.Insert (int index, object item)
+			void IList.Insert(int index, object item)
 			{
 				if (item is ListViewItem)
-					this.Insert (index, (ListViewItem) item);
+					this.Insert(index, (ListViewItem)item);
 				else
-					this.Insert (index, item.ToString ());
+					this.Insert(index, item.ToString());
 
 				//UIA Framework event: Item Added
-				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, this [index]));
+				OnUIACollectionChangedEvent(new CollectionChangeEventArgs(CollectionChangeAction.Add, this[index]));
 			}
 
-			void IList.Remove (object item)
+			void IList.Remove(object item)
 			{
-				Remove ((ListViewItem) item);
+				Remove((ListViewItem)item);
 			}
 
-			public int IndexOf (ListViewItem item)
+			public int IndexOf(ListViewItem item)
 			{
 				if (owner != null && owner.VirtualMode)
 				{
 					for (int i = 0; i < Count; i++)
-						if (RetrieveVirtualItemFromOwner (i) == item)
+						if (RetrieveVirtualItemFromOwner(i) == item)
 							return i;
 
 					return -1;
 				}
 
-				return list.IndexOf (item);
+				return list.IndexOf(item);
 			}
 
-			public virtual int IndexOfKey (string key)
+			public virtual int IndexOfKey(string key)
 			{
 				if (key == null || key.Length == 0)
 					return -1;
 
 				for (int i = 0; i < Count; i++)
 				{
-					ListViewItem lvi = this [i];
+					ListViewItem lvi = this[i];
 
-					if (String.Compare (key, lvi.Name, true) == 0)
+					if (String.Compare(key, lvi.Name, true) == 0)
 						return i;
 				}
 
 				return -1;
 			}
 
-			public ListViewItem Insert (int index, ListViewItem item)
+			public ListViewItem Insert(int index, ListViewItem item)
 			{
 				if (index < 0 || index > list.Count)
-					throw new ArgumentOutOfRangeException ("index");
+					throw new ArgumentOutOfRangeException("index");
 
 				if (owner != null && owner.VirtualMode)
-					throw new InvalidOperationException ();
+					throw new InvalidOperationException();
 
-				if (list.Contains (item))
-					throw new ArgumentException ("An item cannot be added more than once. To add an item again, you need to clone it.", "item");
+				if (list.Contains(item))
+					throw new ArgumentException("An item cannot be added more than once. To add an item again, you need to clone it.", "item");
 
 				if (item.ListView != null && item.ListView != owner)
-					throw new ArgumentException ("Cannot add or insert the item '" + item.Text + "' in more than one place. You must first remove it from its current location or clone it.", "item");
+					throw new ArgumentException("Cannot add or insert the item '" + item.Text + "' in more than one place. You must first remove it from its current location or clone it.", "item");
 
 				if (is_main_collection)
 					item.Owner = owner;
 				else
 				{
 					if (item.Group != null)
-						item.Group.Items.Remove (item);
+						item.Group.Items.Remove(item);
 
-					item.SetGroup (group);
+					item.SetGroup(group);
 				}
 
-				list.Insert (index, item);
+				list.Insert(index, item);
 
 				if (is_main_collection || item.ListView != null)
-					CollectionChanged (true);
+					CollectionChanged(true);
 
 				// force an update of the selected info if the new item is selected.
 				if (item.Selected)
-					item.SetSelectedCore (true);
+					item.SetSelectedCore(true);
 
 				//UIA Framework event: Item Added
-				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, item));
+				OnUIACollectionChangedEvent(new CollectionChangeEventArgs(CollectionChangeAction.Add, item));
 				return item;
 			}
 
-			public ListViewItem Insert (int index, string text)
+			public ListViewItem Insert(int index, string text)
 			{
-				return this.Insert (index, new ListViewItem (text));
+				return this.Insert(index, new ListViewItem(text));
 			}
 
-			public ListViewItem Insert (int index, string text, int imageIndex)
+			public ListViewItem Insert(int index, string text, int imageIndex)
 			{
-				return this.Insert (index, new ListViewItem (text, imageIndex));
+				return this.Insert(index, new ListViewItem(text, imageIndex));
 			}
 
-			public ListViewItem Insert (int index, string text, string imageKey)
+			public ListViewItem Insert(int index, string text, string imageKey)
 			{
-				ListViewItem lvi = new ListViewItem (text, imageKey);
-				return Insert (index, lvi);
+				ListViewItem lvi = new ListViewItem(text, imageKey);
+				return Insert(index, lvi);
 			}
 
-			public virtual ListViewItem Insert (int index, string key, string text, int imageIndex)
+			public virtual ListViewItem Insert(int index, string key, string text, int imageIndex)
 			{
-				ListViewItem lvi = new ListViewItem (text, imageIndex);
+				ListViewItem lvi = new ListViewItem(text, imageIndex);
 				lvi.Name = key;
-				return Insert (index, lvi);
+				return Insert(index, lvi);
 			}
 
-			public virtual ListViewItem Insert (int index, string key, string text, string imageKey)
+			public virtual ListViewItem Insert(int index, string key, string text, string imageKey)
 			{
-				ListViewItem lvi = new ListViewItem (text, imageKey);
+				ListViewItem lvi = new ListViewItem(text, imageKey);
 				lvi.Name = key;
-				return Insert (index, lvi);
+				return Insert(index, lvi);
 			}
 
-			public virtual void Remove (ListViewItem item)
+			public virtual void Remove(ListViewItem item)
 			{
 				if (owner != null && owner.VirtualMode)
-					throw new InvalidOperationException ();
+					throw new InvalidOperationException();
 
-				int idx = list.IndexOf (item);
+				int idx = list.IndexOf(item);
 
 				if (idx != -1)
-					RemoveAt (idx);
+					RemoveAt(idx);
 			}
 
-			public virtual void RemoveAt (int index)
+			public virtual void RemoveAt(int index)
 			{
 				if (index < 0 || index >= Count)
-					throw new ArgumentOutOfRangeException ("index");
+					throw new ArgumentOutOfRangeException("index");
 
 				if (owner != null && owner.VirtualMode)
-					throw new InvalidOperationException ();
+					throw new InvalidOperationException();
 
-				ListViewItem item = (ListViewItem) list [index];
+				ListViewItem item = (ListViewItem)list[index];
 				bool selection_changed = false;
 
 				if (is_main_collection && owner != null)
@@ -6119,40 +6125,40 @@ namespace System.Windows.Forms
 						int focused_item_index = focused_item.DisplayIndex;
 
 						if (focused_item_index + 1 >= Count) // Last item
-							owner.SetFocusedItem (Count - 2);
+							owner.SetFocusedItem(Count - 2);
 					}
 
-					selection_changed = owner.SelectedIndices.Contains (index);
-					owner.item_control.CancelEdit (item);
+					selection_changed = owner.SelectedIndices.Contains(index);
+					owner.item_control.CancelEdit(item);
 				}
 
-				list.RemoveAt (index);
+				list.RemoveAt(index);
 
 				if (is_main_collection)
 				{
 					item.Owner = null;
 
 					if (item.Group != null)
-						item.Group.Items.Remove (item);
+						item.Group.Items.Remove(item);
 				}
 				else
-					item.SetGroup (null);
+					item.SetGroup(null);
 
-				CollectionChanged (false);
+				CollectionChanged(false);
 
 				if (selection_changed && owner != null)
-					owner.OnSelectedIndexChanged (EventArgs.Empty);
+					owner.OnSelectedIndexChanged(EventArgs.Empty);
 
 				//UIA Framework event: Item Removed
-				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, item));
+				OnUIACollectionChangedEvent(new CollectionChangeEventArgs(CollectionChangeAction.Remove, item));
 			}
 
-			public virtual void RemoveByKey (string key)
+			public virtual void RemoveByKey(string key)
 			{
-				int idx = IndexOfKey (key);
+				int idx = IndexOfKey(key);
 
 				if (idx != -1)
-					RemoveAt (idx);
+					RemoveAt(idx);
 			}
 
 			#endregion  // Public Methods
@@ -6181,67 +6187,67 @@ namespace System.Windows.Forms
 				}
 			}
 
-			void AddItem (ListViewItem value)
+			void AddItem(ListViewItem value)
 			{
-				if (list.Contains (value))
-					throw new ArgumentException ("An item cannot be added more than once. To add an item again, you need to clone it.", "value");
+				if (list.Contains(value))
+					throw new ArgumentException("An item cannot be added more than once. To add an item again, you need to clone it.", "value");
 
 				if (value.ListView != null && value.ListView != owner)
-					throw new ArgumentException ("Cannot add or insert the item '" + value.Text + "' in more than one place. You must first remove it from its current location or clone it.", "value");
+					throw new ArgumentException("Cannot add or insert the item '" + value.Text + "' in more than one place. You must first remove it from its current location or clone it.", "value");
 
 				if (is_main_collection)
 					value.Owner = owner;
 				else
 				{
 					if (value.Group != null)
-						value.Group.Items.Remove (value);
+						value.Group.Items.Remove(value);
 
-					value.SetGroup (group);
+					value.SetGroup(group);
 				}
 
 				value.DisplayIndex = -1;
-				list.Add (value);
+				list.Add(value);
 
 				// force an update of the selected info if the new item is selected.
 				if (value.Selected)
-					value.SetSelectedCore (true);
+					value.SetSelectedCore(true);
 			}
 
-			void CollectionChanged (bool sort)
+			void CollectionChanged(bool sort)
 			{
 				if (owner != null)
 				{
 					if (sort)
-						owner.Sort (false);
+						owner.Sort(false);
 
-					OnChange ();
-					owner.Redraw (true);
+					OnChange();
+					owner.Redraw(true);
 				}
 			}
 
-			ListViewItem RetrieveVirtualItemFromOwner (int displayIndex)
+			ListViewItem RetrieveVirtualItemFromOwner(int displayIndex)
 			{
-				RetrieveVirtualItemEventArgs args = new RetrieveVirtualItemEventArgs (displayIndex);
-				owner.OnRetrieveVirtualItem (args);
+				RetrieveVirtualItemEventArgs args = new RetrieveVirtualItemEventArgs(displayIndex);
+				owner.OnRetrieveVirtualItem(args);
 				ListViewItem retval = args.Item;
 				retval.Owner = owner;
 				retval.DisplayIndex = displayIndex;
-				retval.Layout ();
+				retval.Layout();
 				return retval;
 			}
 
 			internal event CollectionChangedHandler Changed;
 
-			internal void Sort (IComparer comparer)
+			internal void Sort(IComparer comparer)
 			{
-				list.Sort (comparer);
-				OnChange ();
+				list.Sort(comparer);
+				OnChange();
 			}
 
-			internal void OnChange ()
+			internal void OnChange()
 			{
 				if (Changed != null)
-					Changed ();
+					Changed();
 			}
 		}   // ListViewItemCollection
 
@@ -6251,22 +6257,22 @@ namespace System.Windows.Forms
 		//
 		// In virtual mode, SelectedIndexCollection directly saves the selection
 		// information, instead of getting it from Items, making List read-and-write
-		[ListBindable (false)]
+		[ListBindable(false)]
 		public class SelectedIndexCollection : IList, ICollection, IEnumerable
 		{
 			private readonly ListView owner;
 			private ArrayList list;
 
 			#region Public Constructor
-			public SelectedIndexCollection (ListView owner)
+			public SelectedIndexCollection(ListView owner)
 			{
 				this.owner = owner;
-				owner.Items.Changed += new CollectionChangedHandler (ItemsCollection_Changed);
+				owner.Items.Changed += new CollectionChangedHandler(ItemsCollection_Changed);
 			}
 			#endregion  // Public Constructor
 
 			#region Public Properties
-			[Browsable (false)]
+			[Browsable(false)]
 			public int Count
 			{
 				get
@@ -6286,14 +6292,14 @@ namespace System.Windows.Forms
 				}
 			}
 
-			public int this [int index]
+			public int this[int index]
 			{
 				get
 				{
 					if (!owner.is_selection_available || index < 0 || index >= List.Count)
-						throw new ArgumentOutOfRangeException ("index");
+						throw new ArgumentOutOfRangeException("index");
 
-					return (int) List [index];
+					return (int)List[index];
 				}
 			}
 
@@ -6315,23 +6321,23 @@ namespace System.Windows.Forms
 				}
 			}
 
-			object IList.this [int index]
+			object IList.this[int index]
 			{
-				get { return this [index]; }
-				set { throw new NotSupportedException ("SetItem operation is not supported."); }
+				get { return this[index]; }
+				set { throw new NotSupportedException("SetItem operation is not supported."); }
 			}
 			#endregion  // Public Properties
 
 			#region Public Methods
-			public int Add (int itemIndex)
+			public int Add(int itemIndex)
 			{
 				if (itemIndex < 0 || itemIndex >= owner.Items.Count)
-					throw new ArgumentOutOfRangeException ("index");
+					throw new ArgumentOutOfRangeException("index");
 
 				if (owner.virtual_mode && !owner.is_selection_available)
 					return -1;
 
-				owner.Items [itemIndex].Selected = true;
+				owner.Items[itemIndex].Selected = true;
 
 				if (!owner.is_selection_available)
 					return 0;
@@ -6339,87 +6345,87 @@ namespace System.Windows.Forms
 				return List.Count;
 			}
 
-			public void Clear ()
+			public void Clear()
 			{
 				if (!owner.is_selection_available)
 					return;
 
-				int [] indexes = (int []) List.ToArray (typeof (int));
+				int[] indexes = (int[])List.ToArray(typeof(int));
 
 				foreach (int index in indexes)
-					owner.Items [index].Selected = false;
+					owner.Items[index].Selected = false;
 			}
 
-			public bool Contains (int selectedIndex)
+			public bool Contains(int selectedIndex)
 			{
-				return IndexOf (selectedIndex) != -1;
+				return IndexOf(selectedIndex) != -1;
 			}
 
-			public void CopyTo (Array dest, int index)
+			public void CopyTo(Array dest, int index)
 			{
-				List.CopyTo (dest, index);
+				List.CopyTo(dest, index);
 			}
 
-			public IEnumerator GetEnumerator ()
+			public IEnumerator GetEnumerator()
 			{
-				return List.GetEnumerator ();
+				return List.GetEnumerator();
 			}
 
-			int IList.Add (object value)
+			int IList.Add(object value)
 			{
-				throw new NotSupportedException ("Add operation is not supported.");
+				throw new NotSupportedException("Add operation is not supported.");
 			}
 
-			void IList.Clear ()
+			void IList.Clear()
 			{
-				Clear ();
+				Clear();
 			}
 
-			bool IList.Contains (object selectedIndex)
+			bool IList.Contains(object selectedIndex)
 			{
 				if (!(selectedIndex is int))
 					return false;
 
-				return Contains ((int) selectedIndex);
+				return Contains((int)selectedIndex);
 			}
 
-			int IList.IndexOf (object selectedIndex)
+			int IList.IndexOf(object selectedIndex)
 			{
 				if (!(selectedIndex is int))
 					return -1;
 
-				return IndexOf ((int) selectedIndex);
+				return IndexOf((int)selectedIndex);
 			}
 
-			void IList.Insert (int index, object value)
+			void IList.Insert(int index, object value)
 			{
-				throw new NotSupportedException ("Insert operation is not supported.");
+				throw new NotSupportedException("Insert operation is not supported.");
 			}
 
-			void IList.Remove (object value)
+			void IList.Remove(object value)
 			{
-				throw new NotSupportedException ("Remove operation is not supported.");
+				throw new NotSupportedException("Remove operation is not supported.");
 			}
 
-			void IList.RemoveAt (int index)
+			void IList.RemoveAt(int index)
 			{
-				throw new NotSupportedException ("RemoveAt operation is not supported.");
+				throw new NotSupportedException("RemoveAt operation is not supported.");
 			}
 
-			public int IndexOf (int selectedIndex)
+			public int IndexOf(int selectedIndex)
 			{
 				if (!owner.is_selection_available)
 					return -1;
 
-				return List.IndexOf (selectedIndex);
+				return List.IndexOf(selectedIndex);
 			}
 
-			public void Remove (int itemIndex)
+			public void Remove(int itemIndex)
 			{
 				if (itemIndex < 0 || itemIndex >= owner.Items.Count)
-					throw new ArgumentOutOfRangeException ("itemIndex");
+					throw new ArgumentOutOfRangeException("itemIndex");
 
-				owner.Items [itemIndex].Selected = false;
+				owner.Items[itemIndex].Selected = false;
 			}
 			#endregion  // Public Methods
 
@@ -6429,13 +6435,13 @@ namespace System.Windows.Forms
 				{
 					if (list == null)
 					{
-						list = new ArrayList ();
+						list = new ArrayList();
 
 						if (!owner.VirtualMode)
 							for (int i = 0; i < owner.Items.Count; i++)
 							{
-								if (owner.Items [i].Selected)
-									list.Add (i);
+								if (owner.Items[i].Selected)
+									list.Add(i);
 							}
 					}
 
@@ -6443,28 +6449,28 @@ namespace System.Windows.Forms
 				}
 			}
 
-			internal void Reset ()
+			internal void Reset()
 			{
 				// force re-population of list
 				list = null;
 			}
 
-			private void ItemsCollection_Changed ()
+			private void ItemsCollection_Changed()
 			{
-				Reset ();
+				Reset();
 			}
 
-			internal void RemoveIndex (int index)
+			internal void RemoveIndex(int index)
 			{
-				int idx = List.BinarySearch (index);
+				int idx = List.BinarySearch(index);
 
 				if (idx != -1)
-					List.RemoveAt (idx);
+					List.RemoveAt(idx);
 			}
 
 			// actually store index in the collection
 			// also, keep the collection sorted, as .Net does
-			internal void InsertIndex (int index)
+			internal void InsertIndex(int index)
 			{
 				int iMin = 0;
 				int iMax = List.Count - 1;
@@ -6472,7 +6478,7 @@ namespace System.Windows.Forms
 				while (iMin <= iMax)
 				{
 					int iMid = (iMin + iMax) / 2;
-					int current_index = (int) List [iMid];
+					int current_index = (int)List[iMid];
 
 					if (current_index == index)
 						return; // Already added
@@ -6483,25 +6489,25 @@ namespace System.Windows.Forms
 						iMin = iMid + 1;
 				}
 
-				List.Insert (iMin, index);
+				List.Insert(iMin, index);
 			}
 
 		}   // SelectedIndexCollection
 
-		[ListBindable (false)]
+		[ListBindable(false)]
 		public class SelectedListViewItemCollection : IList, ICollection, IEnumerable
 		{
 			private readonly ListView owner;
 
 			#region Public Constructor
-			public SelectedListViewItemCollection (ListView owner)
+			public SelectedListViewItemCollection(ListView owner)
 			{
 				this.owner = owner;
 			}
 			#endregion  // Public Constructor
 
 			#region Public Properties
-			[Browsable (false)]
+			[Browsable(false)]
 			public int Count
 			{
 				get
@@ -6515,28 +6521,28 @@ namespace System.Windows.Forms
 				get { return true; }
 			}
 
-			public ListViewItem this [int index]
+			public ListViewItem this[int index]
 			{
 				get
 				{
 					if (!owner.is_selection_available || index < 0 || index >= Count)
-						throw new ArgumentOutOfRangeException ("index");
+						throw new ArgumentOutOfRangeException("index");
 
-					int item_index = owner.SelectedIndices [index];
-					return owner.Items [item_index];
+					int item_index = owner.SelectedIndices[index];
+					return owner.Items[item_index];
 				}
 			}
 
-			public virtual ListViewItem this [string key]
+			public virtual ListViewItem this[string key]
 			{
 				get
 				{
-					int idx = IndexOfKey (key);
+					int idx = IndexOfKey(key);
 
 					if (idx == -1)
 						return null;
 
-					return this [idx];
+					return this[idx];
 				}
 			}
 
@@ -6555,112 +6561,112 @@ namespace System.Windows.Forms
 				get { return true; }
 			}
 
-			object IList.this [int index]
+			object IList.this[int index]
 			{
-				get { return this [index]; }
-				set { throw new NotSupportedException ("SetItem operation is not supported."); }
+				get { return this[index]; }
+				set { throw new NotSupportedException("SetItem operation is not supported."); }
 			}
 			#endregion  // Public Properties
 
 			#region Public Methods
-			public void Clear ()
+			public void Clear()
 			{
-				owner.SelectedIndices.Clear ();
+				owner.SelectedIndices.Clear();
 			}
 
-			public bool Contains (ListViewItem item)
+			public bool Contains(ListViewItem item)
 			{
-				return IndexOf (item) != -1;
+				return IndexOf(item) != -1;
 			}
 
-			public virtual bool ContainsKey (string key)
+			public virtual bool ContainsKey(string key)
 			{
-				return IndexOfKey (key) != -1;
+				return IndexOfKey(key) != -1;
 			}
 
-			public void CopyTo (Array dest, int index)
+			public void CopyTo(Array dest, int index)
 			{
 				if (!owner.is_selection_available)
 					return;
 
 				if (index > Count) // Throws ArgumentException instead of IOOR exception
-					throw new ArgumentException ("index");
+					throw new ArgumentException("index");
 
 				for (int i = 0; i < Count; i++)
-					dest.SetValue (this [i], index++);
+					dest.SetValue(this[i], index++);
 			}
 
-			public IEnumerator GetEnumerator ()
+			public IEnumerator GetEnumerator()
 			{
 				if (!owner.is_selection_available)
-					return (new ListViewItem [0]).GetEnumerator ();
+					return (new ListViewItem[0]).GetEnumerator();
 
-				ListViewItem [] items = new ListViewItem [Count];
+				ListViewItem[] items = new ListViewItem[Count];
 
 				for (int i = 0; i < Count; i++)
-					items [i] = this [i];
+					items[i] = this[i];
 
-				return items.GetEnumerator ();
+				return items.GetEnumerator();
 			}
 
-			int IList.Add (object value)
+			int IList.Add(object value)
 			{
-				throw new NotSupportedException ("Add operation is not supported.");
+				throw new NotSupportedException("Add operation is not supported.");
 			}
 
-			bool IList.Contains (object item)
+			bool IList.Contains(object item)
 			{
 				if (!(item is ListViewItem))
 					return false;
 
-				return Contains ((ListViewItem) item);
+				return Contains((ListViewItem)item);
 			}
 
-			int IList.IndexOf (object item)
+			int IList.IndexOf(object item)
 			{
 				if (!(item is ListViewItem))
 					return -1;
 
-				return IndexOf ((ListViewItem) item);
+				return IndexOf((ListViewItem)item);
 			}
 
-			void IList.Insert (int index, object value)
+			void IList.Insert(int index, object value)
 			{
-				throw new NotSupportedException ("Insert operation is not supported.");
+				throw new NotSupportedException("Insert operation is not supported.");
 			}
 
-			void IList.Remove (object value)
+			void IList.Remove(object value)
 			{
-				throw new NotSupportedException ("Remove operation is not supported.");
+				throw new NotSupportedException("Remove operation is not supported.");
 			}
 
-			void IList.RemoveAt (int index)
+			void IList.RemoveAt(int index)
 			{
-				throw new NotSupportedException ("RemoveAt operation is not supported.");
+				throw new NotSupportedException("RemoveAt operation is not supported.");
 			}
 
-			public int IndexOf (ListViewItem item)
+			public int IndexOf(ListViewItem item)
 			{
 				if (!owner.is_selection_available)
 					return -1;
 
 				for (int i = 0; i < Count; i++)
-					if (this [i] == item)
+					if (this[i] == item)
 						return i;
 
 				return -1;
 			}
 
-			public virtual int IndexOfKey (string key)
+			public virtual int IndexOfKey(string key)
 			{
 				if (!owner.is_selection_available || key == null || key.Length == 0)
 					return -1;
 
 				for (int i = 0; i < Count; i++)
 				{
-					ListViewItem item = this [i];
+					ListViewItem item = this[i];
 
-					if (String.Compare (item.Name, key, true) == 0)
+					if (String.Compare(item.Name, key, true) == 0)
 						return i;
 				}
 
@@ -6670,14 +6676,14 @@ namespace System.Windows.Forms
 
 		}   // SelectedListViewItemCollection
 
-		internal delegate void CollectionChangedHandler ();
+		internal delegate void CollectionChangedHandler();
 
 		struct ItemMatrixLocation
 		{
 			int row;
 			int col;
 
-			public ItemMatrixLocation (int row, int col)
+			public ItemMatrixLocation(int row, int col)
 			{
 				this.row = row;
 				this.col = col;
@@ -6710,106 +6716,106 @@ namespace System.Windows.Forms
 		}
 
 		#endregion // Subclasses
-		protected override void OnResize (EventArgs e)
+		protected override void OnResize(EventArgs e)
 		{
-			base.OnResize (e);
+			base.OnResize(e);
 		}
 
-		protected override void OnMouseLeave (EventArgs e)
+		protected override void OnMouseLeave(EventArgs e)
 		{
-			base.OnMouseLeave (e);
+			base.OnMouseLeave(e);
 		}
 
 		//
 		// ColumnReorder event
 		//
-		static object ColumnReorderedEvent = new object ();
+		static object ColumnReorderedEvent = new object();
 		public event ColumnReorderedEventHandler ColumnReordered
 		{
-			add { Events.AddHandler (ColumnReorderedEvent, value); }
-			remove { Events.RemoveHandler (ColumnReorderedEvent, value); }
+			add { Events.AddHandler(ColumnReorderedEvent, value); }
+			remove { Events.RemoveHandler(ColumnReorderedEvent, value); }
 		}
 
-		protected virtual void OnColumnReordered (ColumnReorderedEventArgs e)
+		protected virtual void OnColumnReordered(ColumnReorderedEventArgs e)
 		{
-			ColumnReorderedEventHandler creh = (ColumnReorderedEventHandler) (Events [ColumnReorderedEvent]);
+			ColumnReorderedEventHandler creh = (ColumnReorderedEventHandler)(Events[ColumnReorderedEvent]);
 
 			if (creh != null)
-				creh (this, e);
+				creh(this, e);
 		}
 
 		//
 		// ColumnWidthChanged
 		//
-		static object ColumnWidthChangedEvent = new object ();
+		static object ColumnWidthChangedEvent = new object();
 		public event ColumnWidthChangedEventHandler ColumnWidthChanged
 		{
-			add { Events.AddHandler (ColumnWidthChangedEvent, value); }
-			remove { Events.RemoveHandler (ColumnWidthChangedEvent, value); }
+			add { Events.AddHandler(ColumnWidthChangedEvent, value); }
+			remove { Events.RemoveHandler(ColumnWidthChangedEvent, value); }
 		}
 
-		protected virtual void OnColumnWidthChanged (ColumnWidthChangedEventArgs e)
+		protected virtual void OnColumnWidthChanged(ColumnWidthChangedEventArgs e)
 		{
-			ColumnWidthChangedEventHandler eh = (ColumnWidthChangedEventHandler) (Events[ColumnWidthChangedEvent]);
+			ColumnWidthChangedEventHandler eh = (ColumnWidthChangedEventHandler)(Events[ColumnWidthChangedEvent]);
 
 			if (eh != null)
-				eh (this, e);
+				eh(this, e);
 		}
 
-		void RaiseColumnWidthChanged (int resize_column)
+		void RaiseColumnWidthChanged(int resize_column)
 		{
-			ColumnWidthChangedEventArgs n = new ColumnWidthChangedEventArgs (resize_column);
-			OnColumnWidthChanged (n);
+			ColumnWidthChangedEventArgs n = new ColumnWidthChangedEventArgs(resize_column);
+			OnColumnWidthChanged(n);
 		}
 
 		//
 		// ColumnWidthChanging
 		//
-		static object ColumnWidthChangingEvent = new object ();
+		static object ColumnWidthChangingEvent = new object();
 		public event ColumnWidthChangingEventHandler ColumnWidthChanging
 		{
-			add { Events.AddHandler (ColumnWidthChangingEvent, value); }
-			remove { Events.RemoveHandler (ColumnWidthChangingEvent, value); }
+			add { Events.AddHandler(ColumnWidthChangingEvent, value); }
+			remove { Events.RemoveHandler(ColumnWidthChangingEvent, value); }
 		}
 
-		protected virtual void OnColumnWidthChanging (ColumnWidthChangingEventArgs e)
+		protected virtual void OnColumnWidthChanging(ColumnWidthChangingEventArgs e)
 		{
-			ColumnWidthChangingEventHandler cwceh = (ColumnWidthChangingEventHandler) (Events[ColumnWidthChangingEvent]);
+			ColumnWidthChangingEventHandler cwceh = (ColumnWidthChangingEventHandler)(Events[ColumnWidthChangingEvent]);
 
 			if (cwceh != null)
-				cwceh (this, e);
+				cwceh(this, e);
 		}
 
 		//
 		// 2.0 profile based implementation
 		//
-		bool CanProceedWithResize (ColumnHeader col, int width)
+		bool CanProceedWithResize(ColumnHeader col, int width)
 		{
-			ColumnWidthChangingEventHandler cwceh = (ColumnWidthChangingEventHandler) (Events[ColumnWidthChangingEvent]);
+			ColumnWidthChangingEventHandler cwceh = (ColumnWidthChangingEventHandler)(Events[ColumnWidthChangingEvent]);
 
 			if (cwceh == null)
 				return true;
 
-			ColumnWidthChangingEventArgs changing = new ColumnWidthChangingEventArgs (col.Index, width);
-			cwceh (this, changing);
+			ColumnWidthChangingEventArgs changing = new ColumnWidthChangingEventArgs(col.Index, width);
+			cwceh(this, changing);
 			return !changing.Cancel;
 		}
 
-		internal void RaiseColumnWidthChanged (ColumnHeader column)
+		internal void RaiseColumnWidthChanged(ColumnHeader column)
 		{
-			int index = Columns.IndexOf (column);
-			RaiseColumnWidthChanged (index);
+			int index = Columns.IndexOf(column);
+			RaiseColumnWidthChanged(index);
 		}
 
 
 		#region UIA Framework: Methods, Properties and Events
 
-		static object UIALabelEditChangedEvent = new object ();
-		static object UIAShowGroupsChangedEvent = new object ();
-		static object UIAMultiSelectChangedEvent = new object ();
-		static object UIAViewChangedEvent = new object ();
-		static object UIACheckBoxesChangedEvent = new object ();
-		static object UIAFocusedItemChangedEvent = new object ();
+		static object UIALabelEditChangedEvent = new object();
+		static object UIAShowGroupsChangedEvent = new object();
+		static object UIAMultiSelectChangedEvent = new object();
+		static object UIAViewChangedEvent = new object();
+		static object UIACheckBoxesChangedEvent = new object();
+		static object UIAFocusedItemChangedEvent = new object();
 
 		internal Rectangle UIAHeaderControl
 		{
@@ -6843,41 +6849,41 @@ namespace System.Windows.Forms
 
 		internal event EventHandler UIAShowGroupsChanged
 		{
-			add { Events.AddHandler (UIAShowGroupsChangedEvent, value); }
-			remove { Events.RemoveHandler (UIAShowGroupsChangedEvent, value); }
+			add { Events.AddHandler(UIAShowGroupsChangedEvent, value); }
+			remove { Events.RemoveHandler(UIAShowGroupsChangedEvent, value); }
 		}
 
 		internal event EventHandler UIACheckBoxesChanged
 		{
-			add { Events.AddHandler (UIACheckBoxesChangedEvent, value); }
-			remove { Events.RemoveHandler (UIACheckBoxesChangedEvent, value); }
+			add { Events.AddHandler(UIACheckBoxesChangedEvent, value); }
+			remove { Events.RemoveHandler(UIACheckBoxesChangedEvent, value); }
 		}
 
 		internal event EventHandler UIAMultiSelectChanged
 		{
-			add { Events.AddHandler (UIAMultiSelectChangedEvent, value); }
-			remove { Events.RemoveHandler (UIAMultiSelectChangedEvent, value); }
+			add { Events.AddHandler(UIAMultiSelectChangedEvent, value); }
+			remove { Events.RemoveHandler(UIAMultiSelectChangedEvent, value); }
 		}
 
 		internal event EventHandler UIALabelEditChanged
 		{
-			add { Events.AddHandler (UIALabelEditChangedEvent, value); }
-			remove { Events.RemoveHandler (UIALabelEditChangedEvent, value); }
+			add { Events.AddHandler(UIALabelEditChangedEvent, value); }
+			remove { Events.RemoveHandler(UIALabelEditChangedEvent, value); }
 		}
 
 		internal event EventHandler UIAViewChanged
 		{
-			add { Events.AddHandler (UIAViewChangedEvent, value); }
-			remove { Events.RemoveHandler (UIAViewChangedEvent, value); }
+			add { Events.AddHandler(UIAViewChangedEvent, value); }
+			remove { Events.RemoveHandler(UIAViewChangedEvent, value); }
 		}
 
 		internal event EventHandler UIAFocusedItemChanged
 		{
-			add { Events.AddHandler (UIAFocusedItemChangedEvent, value); }
-			remove { Events.RemoveHandler (UIAFocusedItemChangedEvent, value); }
+			add { Events.AddHandler(UIAFocusedItemChangedEvent, value); }
+			remove { Events.RemoveHandler(UIAFocusedItemChangedEvent, value); }
 		}
 
-		internal Rectangle UIAGetHeaderBounds (ListViewGroup group)
+		internal Rectangle UIAGetHeaderBounds(ListViewGroup group)
 		{
 			return group.HeaderBounds;
 		}
@@ -6887,52 +6893,52 @@ namespace System.Windows.Forms
 			get { return items_location.Length; }
 		}
 
-		private void OnUIACheckBoxesChanged ()
+		private void OnUIACheckBoxesChanged()
 		{
-			EventHandler eh = (EventHandler) Events [UIACheckBoxesChangedEvent];
+			EventHandler eh = (EventHandler)Events[UIACheckBoxesChangedEvent];
 
 			if (eh != null)
-				eh (this, EventArgs.Empty);
+				eh(this, EventArgs.Empty);
 		}
 
-		private void OnUIAShowGroupsChanged ()
+		private void OnUIAShowGroupsChanged()
 		{
-			EventHandler eh = (EventHandler) Events [UIAShowGroupsChangedEvent];
+			EventHandler eh = (EventHandler)Events[UIAShowGroupsChangedEvent];
 
 			if (eh != null)
-				eh (this, EventArgs.Empty);
+				eh(this, EventArgs.Empty);
 		}
 
-		private void OnUIAMultiSelectChanged ()
+		private void OnUIAMultiSelectChanged()
 		{
-			EventHandler eh = (EventHandler) Events [UIAMultiSelectChangedEvent];
+			EventHandler eh = (EventHandler)Events[UIAMultiSelectChangedEvent];
 
 			if (eh != null)
-				eh (this, EventArgs.Empty);
+				eh(this, EventArgs.Empty);
 		}
 
-		private void OnUIALabelEditChanged ()
+		private void OnUIALabelEditChanged()
 		{
-			EventHandler eh = (EventHandler) Events [UIALabelEditChangedEvent];
+			EventHandler eh = (EventHandler)Events[UIALabelEditChangedEvent];
 
 			if (eh != null)
-				eh (this, EventArgs.Empty);
+				eh(this, EventArgs.Empty);
 		}
 
-		private void OnUIAViewChanged ()
+		private void OnUIAViewChanged()
 		{
-			EventHandler eh = (EventHandler) Events [UIAViewChangedEvent];
+			EventHandler eh = (EventHandler)Events[UIAViewChangedEvent];
 
 			if (eh != null)
-				eh (this, EventArgs.Empty);
+				eh(this, EventArgs.Empty);
 		}
 
-		internal void OnUIAFocusedItemChanged ()
+		internal void OnUIAFocusedItemChanged()
 		{
-			EventHandler eh = (EventHandler) Events [UIAFocusedItemChangedEvent];
+			EventHandler eh = (EventHandler)Events[UIAFocusedItemChangedEvent];
 
 			if (eh != null)
-				eh (this, EventArgs.Empty);
+				eh(this, EventArgs.Empty);
 		}
 
 		#endregion // UIA Framework: Methods, Properties and Events

@@ -1893,7 +1893,7 @@ namespace System.Windows.Forms
 				if (hwnd == null)
 					continue;
 
-				DebugHelper.WriteLine("UpdateMessageQueue got Event: " + xevent.ToString());
+				DriverDebug("UpdateMessageQueue got Event: " + xevent.ToString());
 
 				switch (xevent.type)
 				{
@@ -2020,7 +2020,7 @@ namespace System.Windows.Forms
 							{
 								ActiveWindow = Hwnd.GetHandleFromWindow((IntPtr)Marshal.ReadInt32(prop));
 								XFree(prop);
-								DebugHelper.WriteLine("PropertyNotify: _NET_ACTIVE_WINDOW: previous = 0x{0:x}, new = 0x{1:x}", prev_active.ToInt32(), ActiveWindow.ToInt32());
+								DriverDebug("PropertyNotify: _NET_ACTIVE_WINDOW: previous = 0x{0:x}, new = 0x{1:x}", prev_active.ToInt32(), ActiveWindow.ToInt32());
 
 								if (prev_active != ActiveWindow)
 								{
@@ -5035,7 +5035,7 @@ namespace System.Windows.Forms
 					if (xevent.ClientMessageEvent.message_type == (IntPtr)PostAtom)
 					{
 						DebugHelper.Indent();
-						DebugHelper.WriteLine(String.Format("Posted message:" + (Msg)xevent.ClientMessageEvent.ptr2.ToInt32() + " for 0x{0:x}", xevent.ClientMessageEvent.ptr1.ToInt32()));
+						DriverDebug(String.Format("Posted message:" + (Msg)xevent.ClientMessageEvent.ptr2.ToInt32() + " for 0x{0:x}", xevent.ClientMessageEvent.ptr1.ToInt32()));
 						DebugHelper.Unindent();
 						msg.hwnd = xevent.ClientMessageEvent.ptr1;
 						msg.message = (Msg)xevent.ClientMessageEvent.ptr2.ToInt32();
