@@ -2160,7 +2160,9 @@ namespace System.Windows.Forms
 			}
 			else
 			{
-				Console.WriteLine("X11 Error encountered: {0}{1}\n",
+				//Use DriverDebug() instead of Console.WriteLine() because the latter messes up unit testing since
+				//we write the test results to the standard output.
+				DriverDebug("X11 Error encountered: {0}{1}\n",
 								  XException.GetMessage(error_event.display, error_event.resourceid,
 														error_event.serial, error_event.error_code,
 														error_event.request_code, error_event.minor_code),
@@ -3955,7 +3957,7 @@ namespace System.Windows.Forms
 				if (messageHold[key] != null)
 				{
 					messageHold[key] = ((int)messageHold[key]) - 1;
-					DebugHelper.WriteLine("Got " + msg + " for " + key);
+					DriverDebug("Got " + msg + " for " + key);
 				}
 			}
 
