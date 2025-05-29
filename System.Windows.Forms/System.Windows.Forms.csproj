@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Copyright>(c) Various Mono authors, Daniel Van Noord 2019</Copyright>
     <Authors>Various Mono authors, Daniel Van Noord, Matt Feemster</Authors>

@@ -534,7 +534,7 @@ namespace System.Drawing
             Save(outputStream, -1, -1);
         }
 
-        internal Bitmap BuildBitmapOnWin32()
+        public Bitmap BuildBitmapOnWin32()
         {
             Bitmap bmp;
 

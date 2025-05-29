@@ -1065,12 +1065,15 @@ namespace System.Windows.Forms
 			if (mouse_currently_over != null && !(mouse_currently_over is ToolStripControlHost) && mouse_currently_over.Enabled)
 			{
 				// Fire our ItemClicked event, but only for a left mouse click.
-				if (mea.Button == MouseButtons.Left)
-					OnItemClicked (new ToolStripItemClickedEventArgs (mouse_currently_over));
-
+				if (Capture && mea.Button == MouseButtons.Left)
+				{
+					Capture = false;
+					OnItemClicked(new ToolStripItemClickedEventArgs(mouse_currently_over));
+				}
+				
 				// Fire the item's MouseUp event
 				if (mouse_currently_over != null)
-					mouse_currently_over.FireEvent (mea, ToolStripItemEventType.MouseUp);
+					mouse_currently_over.FireEvent(mea, ToolStripItemEventType.MouseUp);
 
 				// The event handler may have blocked until the mouse moved off of the ToolStripItem
 				if (mouse_currently_over == null)

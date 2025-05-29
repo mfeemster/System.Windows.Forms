@@ -305,7 +305,7 @@ namespace System.Windows.Forms.Layout
 			if (row.Count == 0) return 0;
 
 			int rowTop = int.MaxValue;
-			int rowBottom = 0;
+			int rowBottom = int.MinValue;
 			bool allDockFill = true;
 			bool noAuto = true;
 
@@ -329,13 +329,13 @@ namespace System.Windows.Forms.Layout
 			}
 
 			// Find the tallest control that is AutoSize = true
-			if (rowBottom == 0)
+			if (rowBottom == int.MinValue)
 				foreach (IArrangedElement c in row)
 					if (c.Dock != DockStyle.Fill && c.AutoSize == true)
 						rowBottom = Math.Max (rowBottom, c.Bounds.Bottom + c.Margin.Bottom);
 
 			// Find the tallest control that is Dock = Fill
-			if (rowBottom == 0)
+			if (rowBottom == int.MinValue)
 				foreach (IArrangedElement c in row)
 					if (c.Dock == DockStyle.Fill)
 						rowBottom = Math.Max (rowBottom, c.Bounds.Bottom + c.Margin.Bottom);
@@ -354,7 +354,7 @@ namespace System.Windows.Forms.Layout
 					c.SetBounds (c.Bounds.Left, ((rowBottom - rowTop) / 2) - (c.Bounds.Height / 2) + (int)Math.Floor (((c.Margin.Top - c.Margin.Bottom) / 2.0)) + rowTop, c.Bounds.Width, c.Bounds.Height, BoundsSpecified.None);
 
 			// Return bottom y of this row used
-			if (rowBottom == 0)
+			if (rowBottom == int.MinValue)
 				return rowTop;
 
 			return rowBottom;

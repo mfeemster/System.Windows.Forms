@@ -121,6 +121,10 @@ namespace System.Windows.Forms
 		// Last window containing the pointer
 		static IntPtr LastPointerWindow;    // The last window containing the pointer
 
+		// Fixes extension
+		int? fixesMajorVersion;
+		int HideCursorCount;
+
 		// Shape extension
 		bool? hasShapeExtension;
 
@@ -2161,7 +2165,7 @@ namespace System.Windows.Forms
 			else
 			{
 				//Use DriverDebug() instead of Console.WriteLine() because the latter messes up unit testing since
-				//we write the test results to the standard output.
+				//we write the test results to the standard output.//Keysharp
 				DriverDebug("X11 Error encountered: {0}{1}\n",
 								  XException.GetMessage(error_event.display, error_event.resourceid,
 														error_event.serial, error_event.error_code,
@@ -2851,15 +2855,16 @@ namespace System.Windows.Forms
 
 		internal override void ClientToScreen(IntPtr handle, ref int x, ref int y)
 		{
-			int dest_x_return;
-			int dest_y_return;
+			int dest_x_return = 0;
+			int dest_y_return = 0;
 			IntPtr child;
 			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			lock (XlibLock)
 			{
-				XTranslateCoordinates(DisplayHandle, hwnd.client_window, RootWindow, x, y, out dest_x_return, out dest_y_return, out child);
+				if (hwnd != null)
+					XTranslateCoordinates(DisplayHandle, hwnd.client_window, RootWindow, x, y, out dest_x_return, out dest_y_return, out child);
 			}
 
 			x = dest_x_return;
@@ -4675,7 +4680,8 @@ namespace System.Windows.Forms
 							leaveEvent.CrossingEvent.y = y;
 							leaveEvent.CrossingEvent.mode = NotifyMode.NotifyNormal;
 							Hwnd last_pointer_hwnd = Hwnd.ObjectFromHandle(LastPointerWindow);
-							last_pointer_hwnd.Queue.EnqueueLocked(leaveEvent);
+							if (last_pointer_hwnd != null) 
+								last_pointer_hwnd.Queue.EnqueueLocked(leaveEvent);
 						}
 					}
 
@@ -5111,9 +5117,11 @@ namespace System.Windows.Forms
 			int x_root, y_root;
 			GetCursorPos(IntPtr.Zero, out x_root, out y_root);
 			Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
-			SendNetWMMessage(hwnd.whole_window, _NET_WM_MOVERESIZE, (IntPtr)x_root, (IntPtr)y_root,
-							 (IntPtr)NetWmMoveResize._NET_WM_MOVERESIZE_SIZE_BOTTOMRIGHT,
-							 (IntPtr)1); // left button
+			if (hwnd == null)
+				return;
+				SendNetWMMessage(hwnd.whole_window, _NET_WM_MOVERESIZE, (IntPtr)x_root, (IntPtr)y_root,
+							 	(IntPtr)NetWmMoveResize._NET_WM_MOVERESIZE_SIZE_BOTTOMRIGHT,
+							 	(IntPtr)1); // left button
 		}
 
 		internal override bool GetText(IntPtr handle, out string text)
@@ -5189,6 +5197,9 @@ namespace System.Windows.Forms
 			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
+			if (hwnd == null)
+				return (FormWindowState)(-1);
+
 			if (hwnd.cached_window_state == (FormWindowState)(-1))
 				hwnd.cached_window_state = UpdateWindowState(handle);
 
@@ -5208,6 +5219,10 @@ namespace System.Windows.Forms
 			XWindowAttributes attributes;
 			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
+			
+			if (hwnd == null)
+				return (FormWindowState)(-1);
+
 			maximized = 0;
 			minimized = false;
 			XGetWindowProperty(DisplayHandle, hwnd.whole_window, _NET_WM_STATE, IntPtr.Zero, new IntPtr(256), false, (IntPtr)Atom.XA_ATOM, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
@@ -5393,6 +5408,8 @@ namespace System.Windows.Forms
 			IntPtr child;
 			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
+			if (hwnd == null)
+				return;
 
 			lock (XlibLock)
 			{
@@ -5627,15 +5644,16 @@ namespace System.Windows.Forms
 
 		internal override void ScreenToClient(IntPtr handle, ref int x, ref int y)
 		{
-			int dest_x_return;
-			int dest_y_return;
+			int dest_x_return = 0;
+			int	dest_y_return = 0;
 			IntPtr child;
 			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			lock (XlibLock)
 			{
-				XTranslateCoordinates(DisplayHandle, RootWindow, hwnd.client_window, x, y, out dest_x_return, out dest_y_return, out child);
+				if (hwnd != null)
+					XTranslateCoordinates(DisplayHandle, RootWindow, hwnd.client_window, x, y, out dest_x_return, out dest_y_return, out child);
 			}
 
 			x = dest_x_return;
@@ -5644,15 +5662,16 @@ namespace System.Windows.Forms
 
 		internal override void ScreenToMenu(IntPtr handle, ref int x, ref int y)
 		{
-			int dest_x_return;
-			int dest_y_return;
+			int	dest_x_return = 0;
+			int	dest_y_return = 0;
 			IntPtr child;
 			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			lock (XlibLock)
 			{
-				XTranslateCoordinates(DisplayHandle, RootWindow, hwnd.whole_window, x, y, out dest_x_return, out dest_y_return, out child);
+				if (hwnd != null)
+					XTranslateCoordinates(DisplayHandle, RootWindow, hwnd.whole_window, x, y, out dest_x_return, out dest_y_return, out child);
 			}
 
 			Form form = Control.FromHandle(handle) as Form;
@@ -5701,12 +5720,14 @@ namespace System.Windows.Forms
 			IntPtr gc;
 			XGCValues gc_values;
 			hwnd = Hwnd.ObjectFromHandle(handle);
-			Rectangle r = Rectangle.Intersect(hwnd.Invalid, area);
+			if (hwnd == null)
+				return;
 
-			if (!r.IsEmpty)
-			{
-				/*  We have an invalid area in the window we're scrolling.
-				    Adjust our stored invalid rectangle to to match the scrolled amount */
+			Rectangle r = Rectangle.Intersect (hwnd.Invalid, area);
+			if (!r.IsEmpty) {
+				/* We have an invalid area in the window we're scrolling. 
+				   Adjust our stored invalid rectangle to to match the scrolled amount */
+
 				r.X += XAmount;
 				r.Y += YAmount;
 
@@ -5810,6 +5831,9 @@ namespace System.Windows.Forms
 			Hwnd hwnd;
 			XEvent xevent = new XEvent();
 			hwnd = Hwnd.ObjectFromHandle(method.Handle);
+			if (hwnd == null)
+				return;
+
 			xevent.type = XEventName.ClientMessage;
 			xevent.ClientMessageEvent.display = DisplayHandle;
 			xevent.ClientMessageEvent.window = method.Handle;
@@ -5851,33 +5875,29 @@ namespace System.Windows.Forms
 		}
 
 		internal override int SendInput(IntPtr handle, Queue keys)
-		{
+		{ 
 			if (handle == IntPtr.Zero)
 				return 0;
 
 			int count = keys.Count;
 			Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
 
-			while (keys.Count > 0)
-			{
+			while (keys.Count > 0) {
+			
 				MSG msg = (MSG)keys.Dequeue();
-				XEvent xevent = new XEvent();
+
+				XEvent xevent = new XEvent ();
+
 				xevent.type = (msg.message == Msg.WM_KEYUP ? XEventName.KeyRelease : XEventName.KeyPress);
 				xevent.KeyEvent.display = DisplayHandle;
 
 				if (hwnd != null)
 				{
 					xevent.KeyEvent.window = hwnd.whole_window;
+					xevent.KeyEvent.keycode = Keyboard.ToKeycode((int)msg.wParam);
+					hwnd.Queue.EnqueueLocked(xevent);
 				}
-				else
-				{
-					xevent.KeyEvent.window = IntPtr.Zero;
-				}
-
-				xevent.KeyEvent.keycode = Keyboard.ToKeycode((int)msg.wParam);
-				hwnd.Queue.EnqueueLocked(xevent);
 			}
-
 			return count;
 		}
 
@@ -5931,6 +5951,40 @@ namespace System.Windows.Forms
 					ShowCaret();
 					Caret.Timer.Start();
 				}
+			}
+		}
+		
+		internal int FixesMajorVersion
+		{
+			get
+			{
+				if (!fixesMajorVersion.HasValue)
+				{
+					try
+					{
+						bool hasFixes = XFixesQueryExtension(DisplayHandle, out _, out _);
+
+						if (hasFixes)
+						{
+							int major = 6, minor = 0;
+
+							XFixesQueryVersion(DisplayHandle, ref major, ref minor);
+
+							fixesMajorVersion = major;
+						}
+						else
+						{
+							fixesMajorVersion = 0;
+						}
+
+					}
+					catch
+					{
+						fixesMajorVersion = 0;
+					}
+				}
+
+				return fixesMajorVersion.Value;
 			}
 		}
 
@@ -6020,40 +6074,32 @@ namespace System.Windows.Forms
 
 		internal override void SetCursor(IntPtr handle, IntPtr cursor)
 		{
-			Hwnd hwnd;
+			Hwnd	hwnd;
 
-			if (OverrideCursorHandle == IntPtr.Zero)
-			{
-				if ((LastCursorWindow == handle) && (LastCursorHandle == cursor))
-				{
+			if (OverrideCursorHandle == IntPtr.Zero) {
+				if ((LastCursorWindow == handle) && (LastCursorHandle == cursor)) {
 					return;
 				}
 
 				LastCursorHandle = cursor;
 				LastCursorWindow = handle;
-				hwnd = Hwnd.ObjectFromHandle(handle);
 
-				lock (XlibLock)
-				{
-					if (cursor != IntPtr.Zero)
-					{
+				hwnd = Hwnd.ObjectFromHandle(handle);
+				lock (XlibLock) {
+					if (cursor != IntPtr.Zero && hwnd != null) {
 						XDefineCursor(DisplayHandle, hwnd.whole_window, cursor);
-					}
-					else
-					{
+					} else if (hwnd != null) {
 						XUndefineCursor(DisplayHandle, hwnd.whole_window);
 					}
-
 					XFlush(DisplayHandle);
 				}
-
 				return;
 			}
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
-
-			lock (XlibLock)
-			{
+			if (hwnd == null)
+				return;
+			lock (XlibLock) {
 				XDefineCursor(DisplayHandle, hwnd.whole_window, OverrideCursorHandle);
 			}
 		}
@@ -6152,9 +6198,9 @@ namespace System.Windows.Forms
 			{
 				Hwnd hwnd;
 				hwnd = Hwnd.ObjectFromHandle(handle);
-
-				lock (XlibLock)
-				{
+				if (hwnd == null)
+					return;
+				lock (XlibLock) {
 					XWarpPointer(DisplayHandle, IntPtr.Zero, hwnd.client_window, 0, 0, 0, 0, x, y);
 				}
 			}
@@ -6166,7 +6212,7 @@ namespace System.Windows.Forms
 			IntPtr prev_focus_window;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
-			if (hwnd.client_window == FocusWindow)
+			if (hwnd == null || hwnd.client_window == FocusWindow)
 			{
 				return;
 			}
@@ -6203,7 +6249,8 @@ namespace System.Windows.Forms
 		{
 			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
-			hwnd.menu = menu;
+			if (hwnd != null)
+				hwnd.menu = menu;
 			RequestNCRecalc(handle);
 		}
 
@@ -6227,6 +6274,8 @@ namespace System.Windows.Forms
 			}
 
 			Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
+			if (hwnd == null)
+				return;
 			Control ctrl = Control.FromHandle(handle);
 			SetWMStyles(hwnd, ctrl.GetCreateParams());
 		}
@@ -6235,6 +6284,8 @@ namespace System.Windows.Forms
 		{
 			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
+			if (hwnd == null)
+				return IntPtr.Zero;
 			hwnd.parent = Hwnd.ObjectFromHandle(parent);
 
 			lock (XlibLock)
@@ -6266,6 +6317,8 @@ namespace System.Windows.Forms
 		internal override bool SetTopmost(IntPtr handle, bool enabled)
 		{
 			Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
+			if (hwnd == null)
+				return true;
 			hwnd.topmost = enabled;
 
 			if (enabled)
@@ -6302,6 +6355,8 @@ namespace System.Windows.Forms
 		{
 			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
+			if (hwnd == null)
+				return true;
 
 			if (handle_owner != IntPtr.Zero)
 			{
@@ -6341,6 +6396,8 @@ namespace System.Windows.Forms
 		{
 			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
+			if (hwnd == null)
+				return true;
 			hwnd.visible = visible;
 
 			lock (XlibLock)
@@ -6496,8 +6553,11 @@ namespace System.Windows.Forms
 				lock (XlibLock)
 				{
 					Control ctrl = Control.FromHandle(handle);
-					Size TranslatedSize = TranslateWindowSizeToXWindowSize(ctrl.GetCreateParams(), new Size(width, height));
-					MoveResizeWindow(DisplayHandle, hwnd.whole_window, x, y, TranslatedSize.Width, TranslatedSize.Height);
+					if (ctrl != null)
+					{
+						Size TranslatedSize = TranslateWindowSizeToXWindowSize (ctrl.GetCreateParams (), new Size (width, height));
+						MoveResizeWindow (DisplayHandle, hwnd.whole_window, x, y, TranslatedSize.Width, TranslatedSize.Height);
+					}
 					PerformNCCalc(hwnd);
 				}
 			}
@@ -6510,6 +6570,9 @@ namespace System.Windows.Forms
 			FormWindowState current_state;
 			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
+			if (hwnd == null)
+				return;
+
 			current_state = GetWindowState(handle);
 
 			if (current_state == state)
@@ -6574,6 +6637,8 @@ namespace System.Windows.Forms
 		{
 			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
+			if (hwnd == null)
+				return;
 			SetHwndStyles(hwnd, cp);
 			SetWMStyles(hwnd, cp);
 		}
@@ -6611,8 +6676,7 @@ namespace System.Windows.Forms
 		{
 			Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
 
-			if (!hwnd.mapped)
-			{
+			if (hwnd == null || !hwnd.mapped) {
 				return false;
 			}
 
@@ -6673,7 +6737,18 @@ namespace System.Windows.Forms
 
 		internal override void ShowCursor(bool show)
 		{
-			;   // FIXME - X11 doesn't 'hide' the cursor. we could create an empty cursor
+			if (FixesMajorVersion >= 4) {
+				if (show) {
+					if (--HideCursorCount == 0) {
+						XFixesShowCursor (DisplayHandle, RootWindow);
+					}
+				}
+				else {
+					if (++HideCursorCount == 1) {
+						XFixesHideCursor (DisplayHandle, RootWindow);
+					}
+				}
+			}
 		}
 
 		internal override object StartLoop(Thread thread)
@@ -6697,6 +6772,11 @@ namespace System.Windows.Forms
 				XSizeHints size_hints;
 				Hwnd hwnd;
 				hwnd = Hwnd.ObjectFromHandle(handle);
+				if (hwnd == null)
+				{
+					tt = null;
+					return false;
+				}
 				DriverDebug("Adding Systray Whole:{0:X}, Client:{1:X}", hwnd.whole_window.ToInt32(), hwnd.client_window.ToInt32());
 
 				// Oh boy.
@@ -6803,6 +6883,8 @@ namespace System.Windows.Forms
 		internal override bool Text(IntPtr handle, string text)
 		{
 			Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
+			if (hwnd == null)
+				return true;
 			var classHints = new XClassHint
 			{
 				res_name = text,
@@ -6818,7 +6900,8 @@ namespace System.Windows.Forms
 				// text if it's latin-1, or convert it
 				// to compound text if it's in a
 				// different charset.
-				XStoreName(DisplayHandle, Hwnd.ObjectFromHandle(handle).whole_window, text);
+				XStoreName(DisplayHandle, hwnd.whole_window, text);
+
 				XSetClassHint(DisplayHandle, hwnd.whole_window, ref classHints);
 			}
 
@@ -6835,8 +6918,7 @@ namespace System.Windows.Forms
 			Hwnd hwnd;
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
-			if (!hwnd.visible || !hwnd.expose_pending || !hwnd.Mapped)
-			{
+			if (hwnd == null || !hwnd.visible || !hwnd.expose_pending || !hwnd.Mapped) {
 				return;
 			}
 
@@ -7777,8 +7859,38 @@ namespace System.Windows.Forms
 		}
 		#endregion
 
-		#region Shape extension imports
-		[DllImport("libXext", EntryPoint = "XShapeQueryExtension")]
+		#region Fixes extension imports
+		[DllImport("libXfixes", EntryPoint="XFixesQueryExtension")]
+		internal extern static bool _XFixesQueryExtension(IntPtr display, out int event_base, out int error_base);
+		internal static bool XFixesQueryExtension(IntPtr display, out int event_base, out int error_base) {
+			DebugHelper.TraceWriteLine (nameof(XFixesQueryExtension));
+			return _XFixesQueryExtension(display, out event_base, out error_base);
+		}
+
+		[DllImport("libXfixes", EntryPoint="XFixesQueryVersion")]
+		internal extern static int _XFixesQueryVersion(IntPtr display, ref int major_version, ref int minor_version);
+		internal static int XFixesQueryVersion(IntPtr display, ref int major_version, ref int minor_version) {
+			DebugHelper.TraceWriteLine (nameof(XFixesQueryVersion));
+			return _XFixesQueryVersion(display, ref major_version, ref minor_version);
+		}
+
+		[DllImport("libXfixes", EntryPoint="XFixesHideCursor")]
+		internal extern static void _XFixesHideCursor(IntPtr display, IntPtr window);
+		internal static void XFixesHideCursor(IntPtr display, IntPtr window) {
+			DebugHelper.TraceWriteLine (nameof(XFixesHideCursor));
+			_XFixesHideCursor(display, window);
+		}
+
+		[DllImport("libXfixes", EntryPoint="XFixesShowCursor")]
+		internal extern static void _XFixesShowCursor(IntPtr display, IntPtr window);
+		internal static void XFixesShowCursor(IntPtr display, IntPtr window) {
+			DebugHelper.TraceWriteLine (nameof(XFixesShowCursor));
+			_XFixesShowCursor(display, window);
+		}
+		#endregion
+
+#region Shape extension imports
+		[DllImport("libXext", EntryPoint="XShapeQueryExtension")]
 		internal extern static bool _XShapeQueryExtension(IntPtr display, out int event_base, out int error_base);
 		internal static bool XShapeQueryExtension(IntPtr display, out int event_base, out int error_base)
 		{
@@ -8190,7 +8302,21 @@ namespace System.Windows.Forms
 		internal extern static void XGetInputFocus(IntPtr display, out IntPtr focus, out IntPtr revert_to);
 		#endregion
 
-		#region Shape extension imports
+#region Fixes extension imports
+		[DllImport("libXfixes")]
+		internal extern static bool XFixesQueryExtension(IntPtr display, out int event_base, out int error_base);
+
+		[DllImport("libXfixes")]
+		internal extern static int XFixesQueryVersion(IntPtr display, ref int major_version, ref int minor_version);
+
+		[DllImport("libXfixes")]
+		internal extern static void XFixesHideCursor(IntPtr display, IntPtr window);
+
+		[DllImport("libXfixes")]
+		internal extern static void XFixesShowCursor(IntPtr display, IntPtr window);
+#endregion
+
+#region Shape extension imports
 		[DllImport("libXext")]
 		internal extern static bool XShapeQueryExtension(IntPtr display, out int event_base, out int error_base);
 

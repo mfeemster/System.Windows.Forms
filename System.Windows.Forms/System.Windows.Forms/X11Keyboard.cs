@@ -63,15 +63,16 @@ namespace System.Windows.Forms {
 		private bool initialized;
 		private bool menu_state = false;
 		private Encoding encoding;
-
+		private IntPtr fontSet;
 		private int NumLockMask;
 		private int AltGrMask;
 
-		public X11Keyboard (IntPtr display, IntPtr clientWindow)
+		public X11Keyboard(IntPtr display, IntPtr clientWindow)
 		{
 			this.display = display;
-			lookup_buffer = new StringBuilder (24);
-			EnsureLayoutInitialized ();
+			lookup_buffer = new StringBuilder(24);
+			EnsureLayoutInitialized();
+			SetupFontSet ();
 		}
 
 		private Encoding AnsiEncoding
@@ -145,6 +146,14 @@ namespace System.Windows.Forms {
 				Console.Error.WriteLine ("Could not get XIM");
 
 			initialized = true;
+		}
+
+		private void SetupFontSet ()
+		{
+			IntPtr list;
+			int count;
+			fontSet = XCreateFontSet (display, "fixed", out list, out count, IntPtr.Zero);
+			XFreeStringList (list);
 		}
 
 		void CreateXicForWindow (IntPtr window)
@@ -1005,11 +1014,7 @@ namespace System.Windows.Forms {
 
 		private IntPtr CreateOverTheSpotXic (IntPtr window, IntPtr xim)
 		{
-			IntPtr list;
-			int count;
 			Control c = Control.FromHandle (window);
-			string xlfd = String.Format ("-*-*-*-*-*-*-{0}-*-*-*-*-*-*-*", (int) c.Font.Size);
-			IntPtr fontSet = XCreateFontSet (display, xlfd, out list, out count, IntPtr.Zero);
 			XPoint spot = new XPoint ();
 			spot.X = 0;
 			spot.Y = 0;
@@ -1031,7 +1036,6 @@ namespace System.Windows.Forms {
 					Marshal.FreeHGlobal (pSL);
 				if (pFS != IntPtr.Zero)
 					Marshal.FreeHGlobal (pFS);
-				XFreeStringList (list);
 				//XplatUIX11.XFree (preedit);
 				//XFreeFontSet (fontSet);
 			}
@@ -1174,7 +1178,7 @@ namespace System.Windows.Forms {
 			if (control == null || !control.IsHandleCreated)
 				return;
 			Hwnd hwnd = Hwnd.ObjectFromHandle (client_window);
-			if (!hwnd.mapped)
+			if (hwnd == null || !hwnd.mapped)
 				return;
 
 			int dx, dy;

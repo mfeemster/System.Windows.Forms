@@ -122,8 +122,10 @@ namespace System.Windows.Forms {
 			return Formats ?? new string[0];
 		}
 
-		internal void Clear () {
-			XplatUIX11.XSetSelectionOwner (XplatUIX11.Display, Selection, IntPtr.Zero, UIntPtr.Zero);
+		internal void Clear()
+		{
+			XplatUIX11.XSetSelectionOwner(XplatUIX11.Display, Selection, IntPtr.Zero, UIntPtr.Zero);
+			ClearOwnSelection ();
 		}
 
 		internal IDataObject GetContent () {

@@ -83,38 +83,51 @@ namespace System.Windows.Forms {
 			// and name must be unique to process. If we load MWF into multiple appdomains
 			// and try to register same class name we fail.
 //			default_class_name = "SWFClass" + System.Threading.Thread.GetDomainID ().ToString ();
-
-			if (RunningOnUnix) {
+			LibraryResolver.EnsureRegistered();
+			
+			if (RunningOnUnix)
+			{
 				//if (Environment.GetEnvironmentVariable ("not_supported_MONO_MWF_USE_NEW_X11_BACKEND") != null) {
 				//        driver=XplatUIX11_new.GetInstance ();
 				//} else
-				var loadable = Environment.GetEnvironmentVariable ("MONO_MWF_DRIVER");
-				if (loadable != null){
-					var a = System.Reflection.Assembly.LoadFile (loadable);
-					var mi = a?.GetType ("Bootstrap")?.GetMethod ("CreateInstance");
+				var loadable = Environment.GetEnvironmentVariable("MONO_MWF_DRIVER");
+				if (loadable != null)
+				{
+					var a = System.Reflection.Assembly.LoadFile(loadable);
+					var mi = a?.GetType("Bootstrap")?.GetMethod("CreateInstance");
 					if (mi != null)
-						driver = (XplatUIDriver) mi.Invoke (null, null);
-				} else {
-					if (Environment.GetEnvironmentVariable ("MONO_MWF_MAC_FORCE_X11") != null) {
-						driver = XplatUIX11.GetInstance ();
-					} else {
-						IntPtr buf = Marshal.AllocHGlobal (8192);
+						driver = (XplatUIDriver)mi.Invoke(null, null);
+				}
+				else
+				{
+					if (Environment.GetEnvironmentVariable("MONO_MWF_MAC_FORCE_X11") != null)
+					{
+						driver = XplatUIX11.GetInstance();
+					}
+					else
+					{
+						IntPtr buf = Marshal.AllocHGlobal(8192);
 						// This is a hacktastic way of getting sysname from uname ()
-						if (uname (buf) != 0) {
+						if (uname(buf) != 0)
+						{
 							// WTF: We cannot run uname
-							driver=XplatUIX11.GetInstance ();
-						} else {
-							string os = Marshal.PtrToStringAnsi (buf);
-							if (os == "Darwin")
-								driver=XplatUICarbon.GetInstance ();
-							else
-								driver=XplatUIX11.GetInstance ();
+							driver = XplatUIX11.GetInstance();
 						}
-						Marshal.FreeHGlobal (buf);
+						else
+						{
+							string os = Marshal.PtrToStringAnsi(buf);
+							if (os == "Darwin")
+								driver = XplatUICarbon.GetInstance();
+							else
+								driver = XplatUIX11.GetInstance();
+						}
+						Marshal.FreeHGlobal(buf);
 					}
 				}
-			} else {
-				driver=XplatUIWin32.GetInstance ();
+			}
+			else
+			{
+				driver = XplatUIWin32.GetInstance();
 			}
 
 			driver.InitializeDriver ();

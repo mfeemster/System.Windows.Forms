@@ -5999,15 +5999,9 @@ namespace System.Windows.Forms
 			public int IndexOf(ListViewItem item)
 			{
 				if (owner != null && owner.VirtualMode)
-				{
-					for (int i = 0; i < Count; i++)
-						if (RetrieveVirtualItemFromOwner(i) == item)
-							return i;
+					return item.Index;
 
-					return -1;
-				}
-
-				return list.IndexOf(item);
+				return list.IndexOf (item);
 			}
 
 			public virtual int IndexOfKey(string key)
