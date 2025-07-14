@@ -4,7 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Authors>Various Mono authors, Daniel Van Noord, Matt Feemster</Authors>
-    <RepositoryUrl>https://bitbucket.org/mfeemster/system.windows.forms</RepositoryUrl>
+    <RepositoryUrl>https://github.com/mfeemster/System.Windows.Forms</RepositoryUrl>
     <Description>A .NET 6+ linux implementation of the Mono Web Browser library.</Description>
     <Copyright>(c) Various Mono authors, Daniel Van Noord 2019</Copyright>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

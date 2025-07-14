@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Copyright>(c) Various Mono authors, Daniel Van Noord 2019</Copyright>
     <Authors>Various Mono authors, Daniel Van Noord, Matt Feemster</Authors>
-    <RepositoryUrl>https://bitbucket.org/mfeemster/system.windows.forms</RepositoryUrl>
+    <RepositoryUrl>https://github.com/mfeemster/System.Windows.Forms</RepositoryUrl>
     <Description>A .NET 6+ linux implementation of the Mono System.Windows.Forms library. This is built on top of our custom build of System.Drawing.Common for linux.</Description>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Version>1.0.0.0</Version>

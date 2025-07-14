@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Authors>Microsoft, Matt Feemster</Authors>
-    <RepositoryUrl>https://bitbucket.org/mfeemster/system.windows.forms</RepositoryUrl>
+    <RepositoryUrl>https://github.com/mfeemster/System.Windows.Forms</RepositoryUrl>
     <Description>A .NET 6+ linux implementation of the Microsoft System.Drawing.Common library.</Description>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Version>1.0.0.0</Version>
